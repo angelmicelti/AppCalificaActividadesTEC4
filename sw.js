@@ -1,8 +1,8 @@
-const CACHE_NAME = 'tec4-cache-v4';
+const CACHE_NAME = 'tec4-cache-v5';
 const urlsToCache = [
   '.',
   './index.html',  // o el nombre de tu archivo principal
-  'manifest.json',
+  './manifest.json',
   // añade aquí todos los recursos estáticos que quieras cachear
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tec4-cache-v5';
+const CACHE_NAME = 'tec4-cache-v6';
 const urlsToCache = [
   '.',
   './index.html',  // o el nombre de tu archivo principal

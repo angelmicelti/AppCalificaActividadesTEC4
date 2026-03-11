@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>EVALUACIÓN COMPETENCIAL</title>
+    <link rel="manifest" href="manifest.json">
+    <!-- Para iOS -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="theme-color" content="#0b4b6b">
+    <link rel="icon" type="image/png" href="icons/icon-96x96.png">
+    <!-- Bootstrap 5 + Iconos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS y jsPDF+autoTable -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* ESTILOS UNIFICADOS (mejorados) */
+        body { background-color: #e9f0f5; font-family: 'Segoe UI', Roboto, sans-serif; padding: 10px; margin: 0; }
+        .container-custom { max-width: 1400px; margin: 0 auto; background: white; border-radius: 28px; box-shadow: 0 25px 45px -12px rgba(2,48,71,0.2); padding: 24px 28px; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .section-card { background-color: #fafcff; border-radius: 20px; padding: 20px 22px; margin-bottom: 24px; border: 1px solid #e2eaf1; box-shadow: 0 4px 12px rgba(0,49,78,0.03); transition: 0.2s; }
+        .section-card:hover { box-shadow: 0 8px 18px rgba(13,110,253,0.08); border-color: #cbdbe9; }
+        .section-title { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #0b4b6b; margin-bottom: 20px; border-bottom: 2px dashed #b8d1dc; padding-bottom: 10px; }
+        .section-title i { font-size: 1.6rem; color: #0d6efd; }
+        .section-title .help-icon { font-size: 1.2rem; color: #6c757d; cursor: help; margin-left: auto; }
+        .criteria-group { border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; background-color: #f8fbfe; border-left: 8px solid; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .group-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .student-tag { background: linear-gradient(145deg, #f0f4fa, #e3eaf0); padding: 6px 18px; border-radius: 40px; font-size: 0.9rem; margin: 4px; display: inline-block; border: 1px solid #c0d3df; box-shadow: 0 2px 3px rgba(0,0,0,0.02); }
+        .student-tag i { margin-left: 5px; cursor: pointer; }
+        .badge-criteria { background-color: #0d4e6e; color: white; font-size: 0.8rem; margin-right: 6px; padding: 6px 12px; border-radius: 20px; font-weight: 500; cursor: pointer; }
+        .import-label { background-color: #ecf3f7; padding: 8px 20px; border-radius: 30px; cursor: pointer; border: 1px solid #adc6d3; font-weight: 500; }
+        .hidden { display: none; }
+        .validation-warning { background-color: #fff3cd; border-left: 6px solid #ffc107; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; font-weight: 500; }
+        .table-custom th { background-color: #e9f0f5; color: #064663; }
+        .modal-header { background: linear-gradient(145deg, #0d6efd, #0b5ed7); color: white; }
+        .penalty-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-top: 5px; }
+        .penalty-option { display: flex; align-items: center; gap: 6px; padding: 8px; background-color: white; border-radius: 6px; border: 2px solid #e0edff; cursor: pointer; transition: 0.2s; }
+        .penalty-option:hover { border-color: #3498db; background-color: #f0f7ff; }
+        .penalty-option.selected { border-color: #2980b9; background-color: #e3f2fd; }
+        .grade-select { width: 100%; padding: 6px 10px; border: 2px solid #d1e3ff; border-radius: 8px; background-color: white; font-size: 0.9rem; }
+        .unanswered-field { background-color: #f0f4fa; border: 2px solid #e2eaf1; border-radius: 8px; padding: 8px 10px; text-align: center; font-weight: 600; color: #0b4b6b; }
+        .home-card { transition: transform 0.2s; cursor: pointer; border: 2px solid #dee2e6; border-radius: 20px; }
+        .home-card:hover { transform: scale(1.02); border-color: #0d6efd; box-shadow: 0 10px 25px rgba(13,110,253,0.2); }
+        .app-switcher .btn { border-radius: 30px; margin-left: 6px; }
+        @media (max-width: 768px) { .container-custom { padding: 16px; } .section-card { padding: 16px; } }
+        /* Intro overlay */
+        #intro-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 30%, #0b4b6b, #062c3b);
+            color: white; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; text-align: center; padding: 20px; transition: opacity 1s ease; opacity: 1; pointer-events: all;
+        }
+        #intro-overlay.fade-out { opacity: 0; pointer-events: none; }
+        .intro-title { font-size: clamp(2rem, 8vw, 4rem); font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.4); background: linear-gradient(135deg, #e0f0ff, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; }
+        .intro-subtitle { font-size: clamp(1rem, 3vw, 1.8rem); font-weight: 300; color: #f0f7ff; position: absolute; bottom: 40px; right: 40px; font-style: italic; }
+        .intro-subtitle::before { content: "✦"; color: #a5d6a7; margin-right: 8px; }
+    </style>
+</head>
+<body>
+    <!-- INTRO CON FADE -->
+    <div id="intro-overlay">
+        <div class="intro-title">EVALUACIÓN TEC4<br>COMPETENCIAL</div>
+        <div class="intro-subtitle">by @angelmicelti</div>
+    </div>
+
+<div class="container-custom">
+    <!-- CABECERA FIJA CON CAMBIADOR -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <h1 class="fw-bold" style="color: #0b4b6b;"><i class="bi bi-diagram-3 me-2" style="color: #0d6efd;"></i>EVALUACIÓN TEC4</h1>
+        <div class="app-switcher btn-group" role="group">
+            <button type="button" class="btn btn-outline-secondary" id="btnHome"><i class="fas fa-home"></i> Inicio</button>
+            <button type="button" class="btn btn-outline-primary" id="btnAppExam"><i class="bi bi-pencil-square"></i> Por preguntas</button>
+            <button type="button" class="btn btn-outline-success" id="btnAppTest"><i class="fas fa-calculator"></i> Tipo test</button>
+            <button type="button" class="btn btn-outline-warning" id="btnAppGeneric"><i class="bi bi-check2-circle"></i> Genérica</button>
+        </div>
+    </div>
+
+    <!-- ========== PANTALLA DE INICIO (HOME) ========== -->
+    <div id="homeScreen" class="screen active">
+        <div class="text-center my-4">
+            <i class="bi bi-trophy-fill" style="font-size: 4rem; color: #28a745;"></i>
+            <h2 class="mt-2" style="color: #0b4b6b;">Sistema de Evaluación TEC4</h2>
+            <p class="lead text-muted">Selecciona el tipo de actividad</p>
+        </div>
+        <div class="row g-4 justify-content-center mt-2">
+            <div class="col-md-4">
+                <div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardExam">
+                    <i class="bi bi-pencil-square" style="font-size: 3rem; color: #0d6efd;"></i>
+                    <h3 class="mt-3 fw-bold">Examen por preguntas</h3>
+                    <p class="text-muted flex-grow-1">Asigna criterios a cada pregunta y califica individualmente.</p>
+                    <button class="btn btn-primary mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardTest">
+                    <i class="fas fa-calculator" style="font-size: 3rem; color: #198754;"></i>
+                    <h3 class="mt-3 fw-bold">Examen tipo test</h3>
+                    <p class="text-muted flex-grow-1">Aciertos, fallos, penalización. Misma nota para todos los criterios.</p>
+                    <button class="btn btn-success mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardGeneric">
+                    <i class="bi bi-check2-circle" style="font-size: 3rem; color: #fd7e14;"></i>
+                    <h3 class="mt-3 fw-bold">Tarea por criterios</h3>
+                    <p class="text-muted flex-grow-1">Califica directamente cada criterio con nota 0-10.</p>
+                    <button class="btn btn-warning mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-info mt-5 text-center">
+            <i class="bi bi-info-circle"></i> Criterios TEC.4.X.Y. (Tecnología 4º ESO LOMLOE)
+        </div>
+    </div>
+
+    <!-- ========== APLICACIÓN 1: EXAMEN POR PREGUNTAS ========== -->
+    <div id="appExamContainer" class="screen">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold"><i class="bi bi-pencil-square" style="color:#0d6efd;"></i> Examen por preguntas · TEC4</h3>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" id="examNavConfig">⚙️ Configuración</button>
+                <button type="button" class="btn btn-outline-primary" id="examNavGrade">📝 Calificación</button>
+                <button type="button" class="btn btn-outline-primary" id="examNavResults">📊 Resultados</button>
+            </div>
+        </div>
+        <!-- Configuración EXAMEN -->
+        <div id="examScreenConfig" class="screen active">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-pencil-square"></i> Identificación del examen <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nombre y curso del examen."></i></div>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4"><label class="form-label fw-semibold">📌 Nombre</label><input type="text" id="examNameInput" class="form-control" value="Examen sin título"></div>
+                    <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="examCourseInput" class="form-control" value="Tecnología Ciclos" placeholder="Ej: 4º ESO, 2º Bach..."></div>
+                    <div class="col-md-5 d-flex flex-wrap justify-content-end gap-2">
+                        <button id="examExportConfigBtn" class="btn btn-outline-primary"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
+                        <button id="examImportConfigBtn" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
+                        <input type="file" id="examImportConfigFile" accept=".json" class="hidden">
+                        <button id="examSaveToLocalBtn" class="btn btn-outline-success"><i class="bi bi-save"></i> Guardar local</button>
+                        <button id="examLoadFromLocalBtn" class="btn btn-outline-info"><i class="bi bi-folder-symlink"></i> Cargar local</button>
+                        <button id="examResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button>
+                    </div>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-question-circle"></i> Gestión de preguntas y criterios <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Define preguntas y asigna criterios."></i></div>
+                <div class="row g-3 align-items-end mb-4">
+                    <div class="col-md-3"><label class="form-label fw-semibold">Número de preguntas</label><input type="number" id="examInputNumQuestions" class="form-control" min="1" value="3"></div>
+                    <div class="col-md-3"><button id="examBtnSetQuestions" class="btn btn-primary">📌 Generar / Resetear preguntas</button></div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#examGlobalCriteriaModal"><i class="bi bi-check2-square"></i> Criterios TEC.4.X.Y.</button>
+                        <span id="examSelectedCriteriaBadges" class="ms-2"></span>
+                    </div>
+                </div>
+                <div id="examOrphanedCriteriaWarning" class="validation-warning" style="display:none;"><span id="examOrphanedCriteriaMessage"></span></div>
+                <div class="table-responsive mt-3"><table class="table table-bordered align-middle table-custom" id="examQuestionsTable"><thead><tr><th>Pregunta</th><th>Cal. máxima</th><th>Criterios</th><th>Acciones</th></tr></thead><tbody id="examQuestionsTbody"></tbody></table></div>
+                <div class="d-flex justify-content-end mt-2"><button id="examAppendQuestionBtn" class="btn btn-success btn-sm"><i class="bi bi-plus-circle"></i> Añadir pregunta</button></div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <div class="d-flex"><input type="text" id="examStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="examBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
+                    <div><label for="examImportFile" class="import-label"><i class="bi bi-file-earmark-arrow-up"></i> Importar Excel/JSON</label><input type="file" id="examImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
+                    <button id="examBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
+                </div>
+                <div id="examStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="examStudentCountBadge">0</span> alumnos<div id="examStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
+                <div id="examDuplicateMessage" class="small text-danger mt-2"></div>
+            </div>
+        </div>
+        <!-- Calificación EXAMEN -->
+        <div id="examScreenGrade" class="screen">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por pregunta <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Introduce nota 0-10. Se guardan localmente al pulsar Guardar."></i></div>
+                <div id="examGradeTableWrapper" class="table-responsive" style="max-height:500px; overflow-y:auto;"><table class="table table-bordered table-striped" id="examGradeTable"><thead class="sticky-top bg-white"></thead><tbody id="examGradeTbody"></tbody></table></div>
+                <div class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
+                    <button id="examBtnSaveScores" class="btn btn-primary"><i class="bi bi-save"></i> Guardar calificaciones</button>
+                    <button id="examExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
+                    <button id="examImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
+                    <input type="file" id="examImportScoresFile" accept=".json" class="hidden">
+                    <button id="examRecoverScoresBtn" class="btn btn-outline-info"><i class="bi bi-arrow-repeat"></i> Recuperar calificaciones</button>
+                </div>
+                <div class="alert alert-info mt-3 small" id="examGradeMessage"></div>
+            </div>
+        </div>
+        <!-- Resultados EXAMEN -->
+        <div id="examScreenResults" class="screen">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-bar-chart-line"></i> Resultados por alumno y criterio <span id="examResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span> <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nota de criterio = (suma notas / suma máximos) * 10. Calificación = media de criterios."></i></div>
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="examShowGlobalGrade" checked><label class="form-check-label" for="examShowGlobalGrade">Mostrar columna Calificación</label></div>
+                <div id="examResultsTableWrapper" class="table-responsive"><table class="table table-bordered table-hover" id="examResultsTable"><thead class="table-secondary"></thead><tbody id="examResultsTbody"></tbody></table></div>
+                <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-download"></i> Exportar resultados:</span>
+                    <div><button id="examExportJSON" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#examExportModal"><i class="bi bi-filetype-json"></i> JSON</button><button id="examExportExcel" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#examExportModal"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="examExportPDF" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#examExportModal"><i class="bi bi-file-pdf"></i> PDF</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== APLICACIÓN 2: TIPO TEST ========== -->
+    <div id="appTestContainer" class="screen">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold"><i class="fas fa-calculator" style="color:#198754;"></i> Examen tipo test · TEC4</h3>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary active" id="testNavConfig">⚙️ Configuración</button>
+                <button type="button" class="btn btn-outline-primary" id="testNavGrade">📝 Calificación</button>
+                <button type="button" class="btn btn-outline-primary" id="testNavResults">📊 Resultados</button>
+            </div>
+        </div>
+        <!-- Configuración TEST -->
+        <div id="testScreenConfig" class="screen active">
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-clipboard-list"></i> Datos generales <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Título y curso."></i></div>
+                <div class="row g-4">
+                    <div class="col-md-6"><label class="form-label fw-semibold">📌 Título</label><input type="text" id="testExamTitleInput" class="form-control" value="Examen tipo test"></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="testCourseInput" class="form-control" value="Tecnología Ciclos" placeholder="Ej: 4º ESO, 2º Bach..."></div>
+                </div>
+                <div class="d-flex justify-content-end mt-2"><button id="testResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button></div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-question-circle"></i> Configuración del test <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nº preguntas y penalización."></i></div>
+                <div class="row g-4">
+                    <div class="col-md-6"><label class="form-label fw-semibold">Nº total preguntas:</label><input type="number" id="testTotalQuestions" class="form-control" min="1" value="20"></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">Penalización:</label>
+                        <div class="penalty-options" id="testPenaltyOptions">
+                            <div class="penalty-option" data-value="0"><input type="radio" name="penalty" id="testPenalty0" value="0" checked><label for="testPenalty0">Sin penalización</label></div>
+                            <div class="penalty-option" data-value="0.2"><input type="radio" name="penalty" id="testPenalty5" value="0.2"><label for="testPenalty5">1/5</label></div>
+                            <div class="penalty-option" data-value="0.25"><input type="radio" name="penalty" id="testPenalty4" value="0.25"><label for="testPenalty4">1/4</label></div>
+                            <div class="penalty-option" data-value="0.333"><input type="radio" name="penalty" id="testPenalty3" value="0.333"><label for="testPenalty3">1/3</label></div>
+                            <div class="penalty-option" data-value="0.5"><input type="radio" name="penalty" id="testPenalty2" value="0.5"><label for="testPenalty2">1/2</label></div>
+                            <div class="penalty-option" data-value="1"><input type="radio" name="penalty" id="testPenalty1" value="1"><label for="testPenalty1">Igual</label></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-check-double"></i> Criterios TEC.4.X.Y. <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Selecciona criterios que evaluará el test."></i></div>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testGlobalCriteriaModal"><i class="fas fa-tags"></i> Seleccionar criterios</button>
+                    <span id="testSelectedCriteriaBadges" class="d-flex flex-wrap gap-1"></span>
+                </div>
+                <div id="testNoCriteriaWarning" class="text-danger small mt-2 fw-bold" style="display:none;"><i class="fas fa-exclamation-triangle"></i> Debes seleccionar al menos un criterio.</div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-users"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <div class="d-flex"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
+                    <div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
+                    <button id="testBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar</button>
+                </div>
+                <div id="testStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="testStudentCountBadge">0</span> alumnos<div id="testStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
+                <div id="testDuplicateMessage" class="small text-danger mt-2"></div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-end gap-2 mt-2">
+                <button id="testExportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="fas fa-download"></i> Exportar JSON</button>
+                <button id="testImportConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="fas fa-upload"></i> Importar JSON</button>
+                <input type="file" id="testImportConfigFile" accept=".json" class="hidden">
+                <button id="testSaveToLocalBtn" class="btn btn-outline-success btn-sm"><i class="fas fa-save"></i> Guardar local</button>
+                <button id="testLoadFromLocalBtn" class="btn btn-outline-info btn-sm"><i class="fas fa-folder-open"></i> Cargar local</button>
+            </div>
+        </div>
+        <!-- Calificación TEST -->
+        <div id="testScreenGrade" class="screen">
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-pencil-alt"></i> Calificaciones por alumno <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Selecciona aciertos y fallos."></i></div>
+                <div id="testGradeTableWrapper" class="table-responsive" style="max-height:600px;"><table class="table table-bordered table-striped" id="testGradeTable"><thead class="table-secondary sticky-top"></thead><tbody id="testGradeTbody"></tbody></table></div>
+                <div class="mt-3 d-flex justify-content-end"><button id="testBtnSaveScores" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button></div>
+                <div class="alert alert-info mt-3 small" id="testGradeMessage"></div>
+            </div>
+        </div>
+        <!-- Resultados TEST -->
+        <div id="testScreenResults" class="screen">
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-chart-line"></i> Resultados por alumno y criterio <span id="testResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span> <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Misma nota en todos los criterios."></i></div>
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="testShowGlobalGrade" checked><label class="form-check-label" for="testShowGlobalGrade">Mostrar columna Calificación</label></div>
+                <div id="testResultsTableWrapper" class="table-responsive"><table class="table table-bordered table-hover" id="testResultsTable"><thead class="table-secondary"></thead><tbody id="testResultsTbody"></tbody></table></div>
+                <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="fas fa-download"></i> Exportar:</span>
+                    <div><button id="testExportJSON" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#testExportModal"><i class="bi bi-filetype-json"></i> JSON</button><button id="testExportExcel" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#testExportModal"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="testExportPDF" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#testExportModal"><i class="bi bi-file-pdf"></i> PDF</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== APLICACIÓN 3: EVALUACIÓN GENÉRICA ========== -->
+    <div id="appGenericContainer" class="screen">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold"><i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Tarea por criterios · TEC4</h3>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary active" id="genericNavConfig">⚙️ Configuración</button>
+                <button type="button" class="btn btn-outline-primary" id="genericNavGrade">📝 Calificación</button>
+                <button type="button" class="btn btn-outline-primary" id="genericNavResults">📊 Resultados</button>
+            </div>
+        </div>
+        <!-- Configuración GENÉRICA -->
+        <div id="genericScreenConfig" class="screen active">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-pencil-square"></i> Configuración de la actividad <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nombre y curso."></i></div>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4"><label class="form-label fw-semibold">📌 Nombre</label><input type="text" id="genericExamNameInput" class="form-control" value="Actividad sin título"></div>
+                    <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="genericCourseInput" class="form-control" value="Tecnología Ciclos" placeholder="Ej: 4º ESO, 2º Bach..."></div>
+                    <div class="col-md-5 d-flex flex-wrap justify-content-end gap-2">
+                        <button id="genericExportConfigBtn" class="btn btn-outline-primary"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
+                        <button id="genericImportConfigBtn" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
+                        <input type="file" id="genericImportConfigFile" accept=".json" class="hidden">
+                        <button id="genericSaveToLocalBtn" class="btn btn-outline-success"><i class="bi bi-save"></i> Guardar local</button>
+                        <button id="genericLoadFromLocalBtn" class="btn btn-outline-info"><i class="bi bi-folder-symlink"></i> Cargar local</button>
+                        <button id="genericResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button>
+                    </div>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-check2-square"></i> Gestión de criterios <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Selecciona criterios a evaluar."></i></div>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#genericGlobalCriteriaModal"><i class="bi bi-check2-square"></i> Seleccionar criterios TEC.4.X.Y.</button>
+                    <span id="genericSelectedCriteriaBadges" class="d-flex flex-wrap gap-1"></span>
+                </div>
+                <div id="genericOrphanedCriteriaWarning" class="validation-warning mt-3" style="display:none;"><span id="genericOrphanedCriteriaMessage"></span></div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <div class="d-flex"><input type="text" id="genericStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="genericBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
+                    <div><label for="genericImportFile" class="import-label"><i class="bi bi-file-earmark-arrow-up"></i> Importar</label><input type="file" id="genericImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
+                    <button id="genericBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar</button>
+                </div>
+                <div id="genericStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="genericStudentCountBadge">0</span> alumnos<div id="genericStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
+                <div id="genericDuplicateMessage" class="small text-danger mt-2"></div>
+            </div>
+        </div>
+        <!-- Calificación GENÉRICA -->
+        <div id="genericScreenGrade" class="screen">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por criterio <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Introduce nota 0-10 para cada criterio."></i></div>
+                <div id="genericGradeTableWrapper" class="table-responsive" style="max-height:500px;"><table class="table table-bordered table-striped" id="genericGradeTable"><thead class="sticky-top bg-white"></thead><tbody id="genericGradeTbody"></tbody></table></div>
+                <div class="mt-3 d-flex justify-content-end"><button id="genericBtnSaveScores" class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button></div>
+                <div class="alert alert-info mt-3 small" id="genericGradeMessage"></div>
+            </div>
+        </div>
+        <!-- Resultados GENÉRICA -->
+        <div id="genericScreenResults" class="screen">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-bar-chart-line"></i> Resultados por alumno y criterio <span id="genericResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span> <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Notas directas introducidas."></i></div>
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="genericShowGlobalGrade" checked><label class="form-check-label" for="genericShowGlobalGrade">Mostrar columna Calificación</label></div>
+                <div id="genericResultsTableWrapper" class="table-responsive"><table class="table table-bordered table-hover" id="genericResultsTable"><thead class="table-secondary"></thead><tbody id="genericResultsTbody"></tbody></table></div>
+                <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-download"></i> Exportar resultados:</span>
+                    <div><button id="genericExportJSON" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#genericExportModal"><i class="bi bi-filetype-json"></i> JSON</button><button id="genericExportExcel" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#genericExportModal"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="genericExportPDF" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#genericExportModal"><i class="bi bi-file-pdf"></i> PDF</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALES DE CRITERIOS GLOBALES -->
+    <div class="modal fade" id="examGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Examen por preguntas</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="testGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Tipo test</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="testGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="genericGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Evaluación genérica</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="genericGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <!-- Modal asignar criterios a pregunta (examen) -->
+    <div class="modal fade" id="examQuestionCriteriaModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examQuestionCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+
+    <!-- MODALES PARA EXPORTACIÓN (INCLUIR CALIFICACIÓN) -->
+    <div class="modal fade" id="examExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="examExportIncludeGrade" checked><label class="form-check-label" for="examExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examExportConfirm">Exportar</button></div></div></div></div>
+    <div class="modal fade" id="testExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="testExportIncludeGrade" checked><label class="form-check-label" for="testExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testExportConfirm">Exportar</button></div></div></div></div>
+    <div class="modal fade" id="genericExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="genericExportIncludeGrade" checked><label class="form-check-label" for="genericExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericExportConfirm">Exportar</button></div></div></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // =========================================================================
+    //   CONSTANTES Y UTILIDADES (CRITERIOS FIJOS TEC4)
+    // =========================================================================
+    const ALL_CRITERIA_CODES = [
+        "TEC.4.1.1","TEC.4.1.2","TEC.4.1.3",
+        "TEC.4.2.1","TEC.4.2.2",
+        "TEC.4.3.1","TEC.4.3.2",
+        "TEC.4.4.1","TEC.4.4.2",
+        "TEC.4.5.1",
+        "TEC.4.6.1","TEC.4.6.2","TEC.4.6.3"
+    ];
+    const competenceColors = ['#0d6efd', '#198754', '#fd7e14', '#6f42c1', '#d63384', '#20c997', '#0dcaf0', '#ffc107'];
+    function getCriteriaDescription(code) { return `Criterio ${code}.`; } // placeholder
+
+    function groupCriteriaByCompetence(criteriaArray) {
+        const groups = {};
+        criteriaArray.forEach(code => {
+            const match = code.match(/^(TEC\.4\.[1-6])/);
+            if (match) {
+                if (!groups[match[1]]) groups[match[1]] = [];
+                groups[match[1]].push(code);
+            } else {
+                if (!groups['Otros']) groups['Otros'] = [];
+                groups['Otros'].push(code);
+            }
+        });
+        return groups;
+    }
+
+    function uuid() { return Date.now()+'-'+Math.random(); }
+    function sanitizeFilename(str) { return str.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_áéíóúÁÉÍÓÚñÑüÜ\-]/g,''); }
+    function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+    function capitalizeBasename(name) { return name.split('_').map(capitalizeFirst).join('_'); }
+
+    // =========================================================================
+    //   ESTADOS GLOBALES
+    // =========================================================================
+    const examState = {
+        examName: "Examen sin título", course: "Tecnología Ciclos",
+        students: [], questions: [{id:1, maxScore:10, criteriaCodes:[]}],
+        globalCriteria: [], scores: [],
+        duplicateMessageId: 'examDuplicateMessage'
+    };
+    const testState = {
+        examName: "Examen tipo test", course: "Tecnología Ciclos",
+        totalQuestions: 20, penaltyFactor: 0,
+        globalCriteria: [], students: [], studentScores: [],
+        duplicateMessageId: 'testDuplicateMessage'
+    };
+    const genericState = {
+        examName: "Actividad sin título", course: "Tecnología Ciclos",
+        students: [], globalCriteria: [], scores: [],
+        duplicateMessageId: 'genericDuplicateMessage'
+    };
+
+    // =========================================================================
+    //   FUNCIONES COMUNES DE ALUMNOS (con edición)
+    // =========================================================================
+    function sortStudents(state, scoresField = 'scores') {
+        const indices = state.students.map((_,i)=>i).sort((a,b)=> state.students[a].fullName.localeCompare(state.students[b].fullName,'es',{sensitivity:'base'}));
+        state.students = indices.map(i=>state.students[i]);
+        if (scoresField === 'scores' && state.scores) state.scores = indices.map(i=>state.scores[i] || []);
+        else if (scoresField === 'studentScores' && state.studentScores) state.studentScores = indices.map(i=>state.studentScores[i]);
+    }
+    function isStudentDuplicate(state, name) {
+        return state.students.some(s => s.fullName.trim().toLowerCase() === name.trim().toLowerCase());
+    }
+    function renderStudentTags(state, containerId, countId, changeCallback) {
+        const tagsDiv = document.getElementById(containerId);
+        const countSpan = document.getElementById(countId);
+        if (!tagsDiv) return;
+        tagsDiv.innerHTML = '';
+        countSpan.textContent = state.students.length;
+        state.students.forEach((student, idx) => {
+            const span = document.createElement('span'); span.className = 'student-tag';
+            span.innerHTML = `${student.fullName} 
+                <i class="bi bi-pencil-fill text-primary" data-stuidx="${idx}" data-action="edit"></i>
+                <i class="bi bi-x-circle-fill text-danger" data-stuidx="${idx}" data-action="delete"></i>`;
+            tagsDiv.appendChild(span);
+        });
+        tagsDiv.querySelectorAll('i[data-action="delete"]').forEach(icon => {
+            icon.addEventListener('click', function(e) {
+                e.stopPropagation(); const idx = parseInt(this.dataset.stuidx);
+                state.students.splice(idx, 1);
+                if (state.scores) state.scores.splice(idx, 1);
+                if (state.studentScores) state.studentScores.splice(idx, 1);
+                if (changeCallback) changeCallback();
+            });
+        });
+        tagsDiv.querySelectorAll('i[data-action="edit"]').forEach(icon => {
+            icon.addEventListener('click', function(e) {
+                e.stopPropagation(); const idx = parseInt(this.dataset.stuidx);
+                const oldName = state.students[idx].fullName;
+                const newName = prompt('Editar nombre del alumno:', oldName);
+                if (newName && newName.trim() !== '' && newName.trim() !== oldName) {
+                    state.students[idx].fullName = newName.trim();
+                    if (changeCallback) changeCallback();
+                }
+            });
+        });
+    }
+    function showDuplicateMessage(containerId, text) {
+        const msg = document.getElementById(containerId);
+        if (msg) msg.innerHTML = text ? `<i class="bi bi-exclamation-triangle-fill"></i> ${text}` : '';
+    }
+
+    // =========================================================================
+    //   IMPORTAR ALUMNOS DESDE ARCHIVO
+    // =========================================================================
+    function importStudentsFromFile(file, state, scoresField, afterImportCallback) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let importedNames = [];
+            if (ext === 'json') {
+                try { importedNames = JSON.parse(e.target.result); } catch { alert('JSON inválido'); return; }
+                if (!Array.isArray(importedNames)) importedNames = Object.values(importedNames);
+            } else if (['xlsx','xls'].includes(ext)) {
+                try {
+                    const wb = XLSX.read(e.target.result, { type: 'binary' });
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    importedNames = data.slice(1).map(row => row[0]).filter(v => v && typeof v === 'string');
+                } catch { alert('Error al leer Excel'); return; }
+            } else { alert('Formato no soportado'); return; }
+            let added = 0, skipped = 0;
+            importedNames.forEach(name => {
+                if (name && name.trim()) {
+                    const trimmed = name.trim();
+                    if (!isStudentDuplicate(state, trimmed)) {
+                        state.students.push({ id: uuid(), fullName: trimmed });
+                        if (scoresField === 'scores' && state.scores) state.scores.push(new Array(state.globalCriteria?.length || state.questions?.length || 0).fill(0));
+                        else if (scoresField === 'studentScores' && state.studentScores) {
+                            if (state.totalQuestions) state.studentScores.push({ correct:0, wrong:0, unanswered:state.totalQuestions });
+                            else state.studentScores.push({});
+                        }
+                        added++;
+                    } else skipped++;
+                }
+            });
+            if (added > 0) { sortStudents(state, scoresField); if (afterImportCallback) afterImportCallback(); }
+            showDuplicateMessage(state.duplicateMessageId, skipped>0 ? `Se omitieron ${skipped} duplicado(s).` : '');
+        };
+        if (ext === 'xlsx' || ext === 'xls') reader.readAsBinaryString(file);
+        else reader.readAsText(file);
+    }
+
+    // =========================================================================
+    //   FUNCIONES PARA MODALES DE CRITERIOS (con colores dinámicos)
+    // =========================================================================
+    function populateCriteriaModal(containerId, appPrefix, selectedArray) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        const groups = groupCriteriaByCompetence(ALL_CRITERIA_CODES);
+        const sortedGroups = Object.keys(groups).sort((a,b) => a.localeCompare(b, undefined, {numeric:true}));
+        sortedGroups.forEach((groupKey, index) => {
+            const groupDiv = document.createElement('div'); groupDiv.className = 'criteria-group';
+            groupDiv.style.borderLeftColor = competenceColors[index % competenceColors.length];
+            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${groupKey}</div><div class="row"></div>`;
+            const rowDiv = groupDiv.querySelector('.row');
+            groups[groupKey].forEach(code => {
+                const col = document.createElement('div'); col.className = 'col-md-4 mb-2';
+                const inputId = `${appPrefix}_chk_${code.replace(/\./g,'_')}`;
+                col.innerHTML = `<div class="form-check"><input class="form-check-input global-criteria-chk" type="checkbox" value="${code}" id="${inputId}"><label class="form-check-label" for="${inputId}" title="${getCriteriaDescription(code)}">${code}.</label></div>`;
+                rowDiv.appendChild(col);
+            });
+            container.appendChild(groupDiv);
+        });
+        container.querySelectorAll('.global-criteria-chk').forEach(chk => {
+            chk.checked = selectedArray.includes(chk.value);
+        });
+    }
+
+    function renderExamGlobalBadges() {
+        const container = document.getElementById('examSelectedCriteriaBadges');
+        if (!container) return;
+        container.innerHTML = '';
+        examState.globalCriteria.forEach(code => {
+            let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2 criteria-badge';
+            span.textContent = code + '.'; span.setAttribute('data-code', code); span.title = getCriteriaDescription(code);
+            container.appendChild(span);
+        });
+        if (examState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
+        validateExamCriteria();
+    }
+    function renderTestGlobalBadges() {
+        const container = document.getElementById('testSelectedCriteriaBadges');
+        if (!container) return;
+        container.innerHTML = '';
+        testState.globalCriteria.forEach(code => {
+            let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2 criteria-badge';
+            span.textContent = code + '.'; span.setAttribute('data-code', code); span.title = getCriteriaDescription(code);
+            container.appendChild(span);
+        });
+        if (testState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
+        const warn = document.getElementById('testNoCriteriaWarning'); if (warn) warn.style.display = testState.globalCriteria.length===0 ? 'block' : 'none';
+    }
+    function renderGenericGlobalBadges() {
+        const container = document.getElementById('genericSelectedCriteriaBadges');
+        if (!container) return;
+        container.innerHTML = '';
+        genericState.globalCriteria.forEach(code => {
+            let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2 criteria-badge';
+            span.textContent = code + '.'; span.setAttribute('data-code', code); span.title = getCriteriaDescription(code);
+            container.appendChild(span);
+        });
+        if (genericState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
+        validateGenericCriteria();
+    }
+
+    // =========================================================================
+    //   VALIDACIONES
+    // =========================================================================
+    function validateExamCriteria() {
+        const warning = document.getElementById('examOrphanedCriteriaWarning');
+        const msg = document.getElementById('examOrphanedCriteriaMessage');
+        if (examState.globalCriteria.length===0) { warning.style.display='block'; msg.textContent='No hay criterios globales seleccionados.'; return false; }
+        const assigned = new Set();
+        examState.questions.forEach(q => q.criteriaCodes.forEach(c=>assigned.add(c)));
+        const missing = examState.globalCriteria.filter(c=>!assigned.has(c));
+        if (missing.length>0) { warning.style.display='block'; msg.textContent = `Criterios no asignados: ${missing.map(c=>c+'.').join(', ')}`; return false; }
+        warning.style.display='none'; return true;
+    }
+    function validateGenericCriteria() {
+        const warning = document.getElementById('genericOrphanedCriteriaWarning');
+        const msg = document.getElementById('genericOrphanedCriteriaMessage');
+        if (genericState.globalCriteria.length===0) { warning.style.display='block'; msg.textContent='No hay criterios globales seleccionados.'; return false; }
+        warning.style.display='none'; return true;
+    }
+
+    // =========================================================================
+    //   FUNCIONES EXAMEN POR PREGUNTAS (con cálculo ponderado)
+    // =========================================================================
+    function renderExamQuestionsTable() {
+        const tbody = document.getElementById('examQuestionsTbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        examState.questions.forEach((q, index) => {
+            const badgesHtml = q.criteriaCodes.map(c => `<span class="badge badge-criteria me-1 criteria-badge" data-code="${c}" title="${getCriteriaDescription(c)}">${c}.</span>`).join('');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>P${q.id}</strong></td>
+                <td style="width:140px;"><input type="number" class="form-control form-control-sm max-score-input" data-qidx="${index}" value="${q.maxScore}" min="0.1" max="10" step="0.1"></td>
+                <td><span id="exam_criteriaBadges_${q.id}">${badgesHtml}</span></td>
+                <td style="width:220px;"><div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-sm btn-outline-primary assign-criteria-btn" data-qid="${q.id}" data-bs-toggle="modal" data-bs-target="#examQuestionCriteriaModal"><i class="bi bi-tags"></i> Asignar</button>
+                    <button class="btn btn-sm btn-outline-success insert-after-btn" data-index="${index}"><i class="bi bi-plus-circle"></i> + después</button>
+                    <button class="btn btn-sm btn-outline-danger delete-question-btn" data-index="${index}"><i class="bi bi-trash3"></i></button>
+                </div></td>`;
+            tbody.appendChild(tr);
+        });
+        document.querySelectorAll('#examQuestionsTbody .max-score-input').forEach(inp => inp.addEventListener('change', function(){
+            const idx = parseInt(this.dataset.qidx); if (examState.questions[idx]) examState.questions[idx].maxScore = parseFloat(this.value)||10;
+        }));
+        document.querySelectorAll('#examQuestionsTbody .assign-criteria-btn').forEach(btn => btn.addEventListener('click', function(){
+            const qid = parseInt(this.dataset.qid); const question = examState.questions.find(q=>q.id===qid);
+            document.getElementById('examModalQuestionId').textContent = qid;
+            populateExamQuestionCriteria(question);
+        }));
+        document.querySelectorAll('#examQuestionsTbody .insert-after-btn').forEach(btn => btn.addEventListener('click', function(){
+            const index = parseInt(this.dataset.index); const newId = examState.questions.length>0?Math.max(...examState.questions.map(q=>q.id))+1:1;
+            examState.questions.splice(index+1, 0, {id:newId, maxScore:10, criteriaCodes:[]});
+            examState.scores.forEach(row => row.splice(index+1,0,0));
+            reorderExamQuestionIds(); normalizeExamScores(); renderExamQuestionsTable(); document.getElementById('examInputNumQuestions').value = examState.questions.length; validateExamCriteria();
+        }));
+        document.querySelectorAll('#examQuestionsTbody .delete-question-btn').forEach(btn => btn.addEventListener('click', function(){
+            const index = parseInt(this.dataset.index); if (examState.questions.length<=1 && !confirm('¿Eliminar la última pregunta?')) return;
+            examState.questions.splice(index,1); examState.scores.forEach(row => row.splice(index,1));
+            reorderExamQuestionIds(); normalizeExamScores(); renderExamQuestionsTable(); document.getElementById('examInputNumQuestions').value = examState.questions.length; validateExamCriteria();
+        }));
+    }
+    function reorderExamQuestionIds() { examState.questions.forEach((q,i)=> q.id = i+1); }
+    function normalizeExamScores() {
+        const nQ = examState.questions.length;
+        examState.scores = examState.scores.map(row => { if (!row) return new Array(nQ).fill(0); if (row.length<nQ) return [...row, ...new Array(nQ-row.length).fill(0)]; if (row.length>nQ) return row.slice(0,nQ); return row; });
+        while (examState.scores.length < examState.students.length) examState.scores.push(new Array(nQ).fill(0));
+        if (examState.scores.length > examState.students.length) examState.scores = examState.scores.slice(0, examState.students.length);
+        clampExamScores();
+    }
+    function clampExamScores() {
+        examState.scores.forEach((studentScores, sIdx) => {
+            if (!studentScores) return;
+            studentScores.forEach((score, qIdx) => {
+                const max = examState.questions[qIdx]?.maxScore || 10;
+                if (score > max) studentScores[qIdx] = max; else if (score < 0) studentScores[qIdx] = 0;
+            });
+        });
+    }
+
+    function populateExamQuestionCriteria(question) {
+        const container = document.getElementById('examQuestionCriteriaGroupedContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        const available = examState.globalCriteria;
+        if (available.length === 0) { container.innerHTML = '<div class="alert alert-warning">Selecciona criterios globales primero.</div>'; return; }
+        const groups = groupCriteriaByCompetence(available);
+        const sortedGroups = Object.keys(groups).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+        sortedGroups.forEach((groupKey, index) => {
+            const groupDiv = document.createElement('div'); groupDiv.className = 'criteria-group'; groupDiv.style.borderLeftColor = competenceColors[index % competenceColors.length];
+            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${groupKey}</div><div class="row"></div>`;
+            const rowDiv = groupDiv.querySelector('.row');
+            groups[groupKey].forEach(code => {
+                const col = document.createElement('div'); col.className = 'col-md-6 mb-2';
+                const isChecked = question.criteriaCodes.includes(code);
+                col.innerHTML = `<div class="form-check"><input class="form-check-input question-criteria-chk" type="checkbox" value="${code}" id="qchk_${question.id}_${code.replace(/\./g,'_')}" ${isChecked?'checked':''}><label class="form-check-label" for="qchk_${question.id}_${code.replace(/\./g,'_')}" title="${getCriteriaDescription(code)}">${code}.</label></div>`;
+                rowDiv.appendChild(col);
+            });
+            container.appendChild(groupDiv);
+        });
+        document.getElementById('examSaveQuestionCriteria').onclick = function() {
+            const selected = []; container.querySelectorAll('.question-criteria-chk:checked').forEach(chk => selected.push(chk.value));
+            question.criteriaCodes = selected; renderExamQuestionsTable(); validateExamCriteria();
+        };
+    }
+
+    function renderExamGradeTable() {
+        const thead = document.querySelector('#examGradeTable thead'); const tbody = document.getElementById('examGradeTbody');
+        if (!thead||!tbody) return;
+        if (examState.students.length===0 || examState.questions.length===0) { thead.innerHTML=''; tbody.innerHTML='<tr><td class="text-center p-4">Se requieren alumnos y preguntas.</td></tr>'; return; }
+        normalizeExamScores();
+        let headerHtml = '<tr><th>Alumno</th>'; examState.questions.forEach(q=> headerHtml+=`<th>P${q.id}<br><small>max ${q.maxScore}</small></th>`); headerHtml+='</tr>';
+        thead.innerHTML = headerHtml; tbody.innerHTML = '';
+        examState.students.forEach((student,sIdx)=>{
+            const tr = document.createElement('tr'); tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
+            examState.questions.forEach((q,qIdx)=>{
+                const td = document.createElement('td'); td.style.minWidth='80px';
+                const val = examState.scores[sIdx]?.[qIdx]??0;
+                td.innerHTML = `<input type="number" class="form-control form-control-sm exam-score-input" data-student="${sIdx}" data-question="${qIdx}" value="${val}" min="0" max="${q.maxScore}" step="0.1">`;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        document.querySelectorAll('.exam-score-input').forEach(inp=> inp.addEventListener('change', function(){
+            const sIdx = parseInt(this.dataset.student); const qIdx = parseInt(this.dataset.question);
+            let val = parseFloat(this.value); if (isNaN(val)) val=0; const max = examState.questions[qIdx].maxScore;
+            if (val>max) val=max; if (val<0) val=0; this.value=val;
+            if (!examState.scores[sIdx]) examState.scores[sIdx]=[]; examState.scores[sIdx][qIdx]=val;
+        }));
+    }
+
+    function renderExamResults() {
+        const thead = document.querySelector('#examResultsTable thead'); const tbody = document.getElementById('examResultsTbody');
+        document.getElementById('examResultsExamNameSpan').textContent = `Examen: ${examState.examName}`;
+        if (examState.globalCriteria.length===0 || examState.students.length===0) { thead.innerHTML='<tr><th>Alumno</th><th>Sin criterios o alumnos</th></tr>'; tbody.innerHTML='<tr><td colspan="2" class="text-center">Agregue criterios y alumnos.</td></tr>'; return; }
+        normalizeExamScores();
+        const showGlobal = document.getElementById('examShowGlobalGrade').checked;
+        let headerRow = '<tr><th>Alumno</th>'; examState.globalCriteria.forEach(c=> headerRow+=`<th>${c}.</th>`); if (showGlobal) headerRow += '<th>Calificación</th>'; headerRow += '</tr>';
+        thead.innerHTML = headerRow; tbody.innerHTML = '';
+        examState.students.forEach((student,sIdx)=>{
+            let rowHtml = `<td><strong>${student.fullName}</strong></td>`;
+            let criteriasSum = 0, criteriasCount = 0;
+            examState.globalCriteria.forEach(crit=>{
+                const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
+                if (qIndices.length===0) { rowHtml += '<td class="text-muted">—</td>'; }
+                else {
+                    let sumaNotas = 0, sumaMaximos = 0;
+                    qIndices.forEach(qIdx => { sumaNotas += examState.scores[sIdx]?.[qIdx] || 0; sumaMaximos += examState.questions[qIdx].maxScore; });
+                    let notaCriterio = (sumaMaximos > 0) ? (sumaNotas / sumaMaximos) * 10 : 0;
+                    notaCriterio = Math.round(notaCriterio * 100) / 100;
+                    rowHtml += `<td>${notaCriterio.toFixed(2)}</td>`;
+                    criteriasSum += notaCriterio; criteriasCount++;
+                }
+            });
+            if (showGlobal) { let global = criteriasCount>0 ? (criteriasSum/criteriasCount).toFixed(2) : '—'; rowHtml += `<td><strong>${global}</strong></td>`; }
+            tbody.innerHTML += `<tr>${rowHtml}</tr>`;
+        });
+    }
+
+    // Funciones exportación EXAMEN (con wrapper objeto y nombre)
+    function exportExamJSON(includeGrade) {
+        if (!examState.students.length) return alert('No hay datos');
+        const resultados = examState.students.map((student,sIdx)=>{
+            const row = { Alumno: student.fullName };
+            let sum=0, cnt=0;
+            examState.globalCriteria.forEach(crit=>{
+                const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
+                let nota = null;
+                if (qIndices.length) {
+                    let sN=0, sM=0; qIndices.forEach(qIdx=>{ sN+=examState.scores[sIdx]?.[qIdx]||0; sM+=examState.questions[qIdx].maxScore; });
+                    nota = (sM>0)? (sN/sM)*10 : 0;
+                    nota = Math.round(nota*100)/100;
+                }
+                row[crit+'.'] = nota;
+                if (nota!==null) { sum+=nota; cnt++; }
+            });
+            if (includeGrade) row['Calificación'] = cnt>0 ? parseFloat((sum/cnt).toFixed(2)) : null;
+            return row;
+        });
+        const exportData = { examen: examState.examName, resultados };
+        const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+        const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
+        a.download = `Resultados_${base}.json`; a.click(); URL.revokeObjectURL(url);
+    }
+    function exportExamExcel(includeGrade) {
+        if (!examState.students.length) return alert('Sin datos');
+        const header = ['Alumno', ...examState.globalCriteria.map(c=>c+'.')]; if (includeGrade) header.push('Calificación');
+        const wsData = [[`Examen: ${examState.examName}`],[],header];
+        examState.students.forEach((student,sIdx)=>{
+            const row = [student.fullName];
+            let sum=0, cnt=0;
+            examState.globalCriteria.forEach(crit=>{
+                const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
+                let val = '';
+                if (qIndices.length) {
+                    let sN=0, sM=0; qIndices.forEach(qIdx=>{ sN+=examState.scores[sIdx]?.[qIdx]||0; sM+=examState.questions[qIdx].maxScore; });
+                    val = (sM>0)? Math.round(((sN/sM)*10)*100)/100 : 0;
+                }
+                row.push(val);
+                if (val!=='') { sum+=val; cnt++; }
+            });
+            if (includeGrade) row.push(cnt>0 ? parseFloat((sum/cnt).toFixed(2)) : '');
+            wsData.push(row);
+        });
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados');
+        let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
+        XLSX.writeFile(wb, `Resultados_${base}.xlsx`);
+    }
+    function exportExamPDF(includeGrade) {
+        if (!examState.students.length) return alert('Sin datos');
+        const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' });
+        doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(examState.examName.toUpperCase(), 14, 20);
+        doc.setFontSize(10); doc.setFont(undefined,'normal');
+        const headers = [['Alumno', ...examState.globalCriteria.map(c=>c+'.')]]; if (includeGrade) headers[0].push('Calificación');
+        const body = examState.students.map((student,sIdx)=>{
+            const row = [student.fullName];
+            let sum=0, cnt=0;
+            examState.globalCriteria.forEach(crit=>{
+                const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
+                let val = '-';
+                if (qIndices.length) {
+                    let sN=0, sM=0; qIndices.forEach(qIdx=>{ sN+=examState.scores[sIdx]?.[qIdx]||0; sM+=examState.questions[qIdx].maxScore; });
+                    val = ((sM>0)? (sN/sM)*10 : 0).toFixed(2);
+                    sum+=parseFloat(val); cnt++;
+                }
+                row.push(val);
+            });
+            if (includeGrade) row.push(cnt>0 ? (sum/cnt).toFixed(2) : '-');
+            return row;
+        });
+        doc.autoTable({ head: headers, body, startY:30, theme:'grid' });
+        let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
+        doc.save(`Resultados_${base}.pdf`);
+    }
+    function exportExamConfig() {
+        const cfg = { examName: examState.examName, course: examState.course, questions: examState.questions.map(q=>({...q, criteriaCodes:[...q.criteriaCodes]})), globalCriteria: [...examState.globalCriteria], students: examState.students.map(s=>({fullName:s.fullName})) };
+        const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; let base = sanitizeFilename(examState.examName); base = capitalizeBasename(base);
+        a.download = `Configuración_${base}.json`; a.click(); URL.revokeObjectURL(url);
+    }
+    function importExamConfig(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const cfg = JSON.parse(e.target.result);
+                if (!cfg.examName || !Array.isArray(cfg.questions)) throw new Error('Formato inválido');
+                examState.examName = cfg.examName; examState.course = cfg.course || examState.course;
+                examState.questions = cfg.questions.map(q=>({id:q.id, maxScore:q.maxScore, criteriaCodes:q.criteriaCodes||[]}));
+                examState.globalCriteria = cfg.globalCriteria || [];
+                examState.students = (cfg.students || []).map(s=>({id:uuid(), fullName:s.fullName}));
+                examState.scores = examState.students.map(()=> new Array(examState.questions.length).fill(0));
+                document.getElementById('examNameInput').value = examState.examName;
+                document.getElementById('examCourseInput').value = examState.course;
+                document.getElementById('examInputNumQuestions').value = examState.questions.length;
+                sortStudents(examState,'scores'); renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags();
+                alert('✅ Configuración importada.');
+            } catch(err) { alert('Error al importar: '+err.message); }
+        }; reader.readAsText(file);
+    }
+    // Gestión de calificaciones examen
+    function exportExamScores() {
+        if (!examState.students.length || !examState.questions.length) return alert('No hay datos');
+        const data = { examName: examState.examName, course: examState.course, students: examState.students.map(s=>s.fullName), questions: examState.questions.map(q=>({id:q.id, maxScore:q.maxScore})), scores: examState.scores };
+        const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
+        a.download = `Calificaciones_${base}.json`; a.click(); URL.revokeObjectURL(url);
+    }
+    function importExamScores(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (!data.examName || !Array.isArray(data.students) || !Array.isArray(data.questions) || !Array.isArray(data.scores)) throw new Error('Formato inválido');
+                if (data.students.length !== examState.students.length || data.questions.length !== examState.questions.length) {
+                    if (!confirm('El número de alumnos o preguntas no coincide. ¿Continuar?')) return;
+                }
+                examState.scores = data.scores; normalizeExamScores(); renderExamGradeTable();
+                document.getElementById('examGradeMessage').innerHTML = '<i class="bi bi-check-circle"></i> Calificaciones importadas.';
+                setTimeout(()=>document.getElementById('examGradeMessage').innerHTML='',3000);
+            } catch(err) { alert('Error: '+err.message); }
+        }; reader.readAsText(file);
+    }
+    function recoverExamScores() {
+        const saved = localStorage.getItem('exam_scores_backup');
+        if (!saved) return alert('No hay copia local.');
+        try {
+            const data = JSON.parse(saved);
+            if (data.students && data.questions && data.scores) {
+                examState.scores = data.scores; normalizeExamScores(); renderExamGradeTable();
+                document.getElementById('examGradeMessage').innerHTML = '<i class="bi bi-check-circle"></i> Calificaciones recuperadas.';
+                setTimeout(()=>document.getElementById('examGradeMessage').innerHTML='',3000);
+            } else alert('Formato de copia no válido.');
+        } catch(e) { alert('Error: '+e.message); }
+    }
+
+    function renderExamStudentTags() {
+        renderStudentTags(examState, 'examStudentTags', 'examStudentCountBadge', () => {
+            sortStudents(examState,'scores'); normalizeExamScores(); renderExamStudentTags();
+            if (currentApp==='exam' && document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable();
+        });
+    }
+
+    // =========================================================================
+    //   FUNCIONES TIPO TEST
+    // =========================================================================
+    function computeTestGrade(correct, wrong) {
+        if (testState.totalQuestions <= 0) return 0;
+        const valuePerCorrect = 10 / testState.totalQuestions;
+        let grade = correct * valuePerCorrect - wrong * valuePerCorrect * testState.penaltyFactor;
+        grade = Math.max(0, Math.min(10, grade));
+        return Math.round(grade * 100) / 100;
+    }
+    function renderTestGradeTable() {
+        const thead = document.querySelector('#testGradeTable thead'); const tbody = document.getElementById('testGradeTbody');
+        if (!thead||!tbody) return;
+        if (testState.students.length===0) { thead.innerHTML=''; tbody.innerHTML='<tr><td colspan="4" class="text-center p-4">Añade alumnos en Configuración.</td></tr>'; return; }
+        let headerHtml = '<tr><th>Alumno</th><th>Aciertos</th><th>Fallos</th><th>NS/NC</th>';
+        testState.globalCriteria.forEach(crit => headerHtml += `<th>${crit}.</th>`); headerHtml += '</tr>';
+        thead.innerHTML = headerHtml; tbody.innerHTML = '';
+        testState.students.forEach((student, sIdx) => {
+            if (!testState.studentScores[sIdx]) testState.studentScores[sIdx] = { studentId: student.id, correct: 0, wrong: 0, unanswered: testState.totalQuestions };
+            const scores = testState.studentScores[sIdx];
+            let sum = scores.correct + scores.wrong + scores.unanswered;
+            if (sum !== testState.totalQuestions) scores.unanswered = Math.max(0, testState.totalQuestions - scores.correct - scores.wrong);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
+            const tdCorrect = document.createElement('td');
+            const selectCorrect = document.createElement('select'); selectCorrect.className = 'grade-select test-correct-select'; selectCorrect.dataset.student = sIdx;
+            for (let i=0;i<=testState.totalQuestions;i++) { let opt = document.createElement('option'); opt.value=i; opt.textContent=i; if(i===scores.correct) opt.selected=true; selectCorrect.appendChild(opt); }
+            tdCorrect.appendChild(selectCorrect); tr.appendChild(tdCorrect);
+            const tdWrong = document.createElement('td');
+            const selectWrong = document.createElement('select'); selectWrong.className = 'grade-select test-wrong-select'; selectWrong.dataset.student = sIdx;
+            const maxWrong = testState.totalQuestions - scores.correct;
+            for (let i=0;i<=maxWrong;i++) { let opt = document.createElement('option'); opt.value=i; opt.textContent=i; if(i===scores.wrong) opt.selected=true; selectWrong.appendChild(opt); }
+            tdWrong.appendChild(selectWrong); tr.appendChild(tdWrong);
+            const tdUnanswered = document.createElement('td');
+            const spanUnanswered = document.createElement('span'); spanUnanswered.className = 'unanswered-field d-block'; spanUnanswered.id = `test_unanswered_${sIdx}`; spanUnanswered.textContent = scores.unanswered;
+            tdUnanswered.appendChild(spanUnanswered); tr.appendChild(tdUnanswered);
+            const grade = computeTestGrade(scores.correct, scores.wrong);
+            testState.globalCriteria.forEach(() => { let td = document.createElement('td'); td.className='text-center fw-bold'; td.textContent=grade.toFixed(2); tr.appendChild(td); });
+            tbody.appendChild(tr);
+        });
+        attachTestGradeEvents();
+    }
+    function attachTestGradeEvents() {
+        document.querySelectorAll('.test-correct-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const sIdx = parseInt(this.dataset.student); const newCorrect = parseInt(this.value);
+                testState.studentScores[sIdx].correct = newCorrect;
+                const wrongSelect = document.querySelector(`.test-wrong-select[data-student="${sIdx}"]`);
+                const total = testState.totalQuestions; const maxWrong = total - newCorrect;
+                const currentWrong = testState.studentScores[sIdx].wrong;
+                wrongSelect.innerHTML = '';
+                for (let i=0;i<=maxWrong;i++) { let opt = document.createElement('option'); opt.value=i; opt.textContent=i; if (i===currentWrong && currentWrong<=maxWrong) opt.selected=true; wrongSelect.appendChild(opt); }
+                if (currentWrong > maxWrong) { wrongSelect.value = maxWrong; testState.studentScores[sIdx].wrong = maxWrong; }
+                const wrong = parseInt(wrongSelect.value); const unanswered = total - newCorrect - wrong;
+                testState.studentScores[sIdx].unanswered = unanswered;
+                document.getElementById(`test_unanswered_${sIdx}`).textContent = unanswered;
+                updateTestGradeRow(sIdx);
+            });
+        });
+        document.querySelectorAll('.test-wrong-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const sIdx = parseInt(this.dataset.student); const newWrong = parseInt(this.value);
+                testState.studentScores[sIdx].wrong = newWrong;
+                const correct = testState.studentScores[sIdx].correct; const total = testState.totalQuestions;
+                const unanswered = total - correct - newWrong;
+                testState.studentScores[sIdx].unanswered = unanswered;
+                document.getElementById(`test_unanswered_${sIdx}`).textContent = unanswered;
+                updateTestGradeRow(sIdx);
+            });
+        });
+    }
+    function updateTestGradeRow(sIdx) {
+        const scores = testState.studentScores[sIdx]; const grade = computeTestGrade(scores.correct, scores.wrong);
+        const row = document.querySelector(`#testGradeTbody tr:nth-child(${sIdx+1})`);
+        if (row) { const cells = row.querySelectorAll('td'); for (let i=4; i<cells.length; i++) cells[i].textContent = grade.toFixed(2); }
+    }
+    function renderTestResults() {
+        const thead = document.querySelector('#testResultsTable thead'); const tbody = document.getElementById('testResultsTbody');
+        document.getElementById('testResultsExamNameSpan').innerHTML = `Test: "${testState.examName}"`;
+        if (testState.globalCriteria.length===0 || testState.students.length===0) { thead.innerHTML='<tr><th>Alumno</th><th>Sin criterios o alumnos</th></tr>'; tbody.innerHTML='<tr><td colspan="2" class="text-center">Agregue criterios y alumnos.</td></tr>'; return; }
+        const showGlobal = document.getElementById('testShowGlobalGrade').checked;
+        let headerRow = '<tr><th>Alumno</th>'; testState.globalCriteria.forEach(crit => headerRow+=`<th>${crit}.</th>`); if (showGlobal) headerRow += '<th>Calificación</th>'; headerRow += '</tr>';
+        thead.innerHTML = headerRow; tbody.innerHTML = '';
+        testState.students.forEach((student,sIdx)=>{
+            const scores = testState.studentScores[sIdx]||{correct:0,wrong:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
+            let rowHtml = `<td><strong>${student.fullName}</strong></td>`;
+            testState.globalCriteria.forEach(()=> rowHtml += `<td class="text-center">${grade.toFixed(2)}</td>`);
+            if (showGlobal) rowHtml += `<td class="text-center fw-bold">${grade.toFixed(2)}</td>`;
+            tbody.innerHTML += `<tr>${rowHtml}</tr>`;
+        });
+    }
+    // *** CORREGIDO: exportTestJSON (faltaba definir url) ***
+    function exportTestJSON(includeGrade) {
+        if (!testState.students.length) return alert('No hay datos');
+        const resultados = testState.students.map((student,sIdx)=>{
+            const scores = testState.studentScores[sIdx]||{correct:0,wrong:0,unanswered:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
+            const row = { Alumno: student.fullName, Aciertos: scores.correct, Fallos: scores.wrong, "NS/NC": scores.unanswered };
+            testState.globalCriteria.forEach(crit => row[crit+'.'] = grade);
+            if (includeGrade) row['Calificación'] = grade;
+            return row;
+        });
+        const exportData = { examen: testState.examName, resultados };
+        const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+        const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; let base = sanitizeFilename(testState.examName+'_'+testState.course); base = capitalizeBasename(base);
+        a.download = `Resultados_${base}.json`; a.click(); URL.revokeObjectURL(url);
+    }
+    function exportTestExcel(includeGrade) {
+        if (!testState.students.length) return alert('Sin datos');
+        const header = ['Alumno','Aciertos','Fallos','NS/NC', ...testState.globalCriteria.map(c=>c+'.')]; if (includeGrade) header.push('Calificación');
+        const wsData = [[`Examen: ${testState.examName}`],[],header];
+        testState.students.forEach((student,sIdx)=>{
+            const scores = testState.studentScores[sIdx]||{correct:0,wrong:0,unanswered:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
+            const row = [student.fullName, scores.correct, scores.wrong, scores.unanswered, ...testState.globalCriteria.map(()=>grade)];
+            if (includeGrade) row.push(grade);
+            wsData.push(row);
+        });
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados');
+        let base = sanitizeFilename(testState.examName+'_'+testState.course); base = capitalizeBasename(base);
+        XLSX.writeFile(wb, `Resultados_${base}.xlsx`);
+    }
+    function exportTestPDF(includeGrade) {
+        if (!testState.students.length) return alert('Sin datos');
+        const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' });
+        doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(testState.examName.toUpperCase(), 14, 20);
+        doc.setFontSize(10);
+        const headers = [['Alumno', ...testState.globalCriteria.map(c=>c+'.')]]; if (includeGrade) headers[0].push('Calificación');
+        const body = testState.students.map((student,sIdx)=>{
+            const scores = testState.studentScores[sIdx]||{correct:0,wrong:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
+            const row = [student.fullName, ...testState.globalCriteria.map(()=>grade.toFixed(2))];
+            if (includeGrade) row.push(grade.toFixed(2));
+            return row;
+        });
+        doc.autoTable({ head: headers, body, startY:30, theme:'grid' });
+        let base = sanitizeFilename(testState.examName+'_'+testState.course); base = capitalizeBasename(base);
+        doc.save(`Resultados_${base}.pdf`);
+    }
+    function exportTestConfig() {
+        const cfg = { examName: testState.examName, course: testState.course, totalQuestions: testState.totalQuestions, penaltyFactor: testState.penaltyFactor, globalCriteria: [...testState.globalCriteria], students: testState.students.map(s=>({fullName:s.fullName})), studentScores: testState.studentScores.map(ss=>({...ss})) };
+        const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); let base = sanitizeFilename(testState.examName); base = capitalizeBasename(base);
+        a.download = `Configuración_${base}.json`; a.click(); URL.revokeObjectURL(blob);
+    }
+    function importTestConfig(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const cfg = JSON.parse(e.target.result);
+                if (!cfg.totalQuestions || !Array.isArray(cfg.globalCriteria)) throw new Error('Formato inválido');
+                testState.examName = cfg.examName || 'Examen tipo test'; testState.course = cfg.course || 'Tecnología Ciclos';
+                testState.totalQuestions = cfg.totalQuestions; testState.penaltyFactor = cfg.penaltyFactor || 0;
+                testState.globalCriteria = cfg.globalCriteria;
+                testState.students = (cfg.students || []).map(s=>({id:uuid(), fullName:s.fullName}));
+                testState.studentScores = cfg.studentScores || testState.students.map(()=>({correct:0,wrong:0,unanswered:testState.totalQuestions}));
+                document.getElementById('testExamTitleInput').value = testState.examName;
+                document.getElementById('testCourseInput').value = testState.course;
+                document.getElementById('testTotalQuestions').value = testState.totalQuestions;
+                document.querySelectorAll('input[name="penalty"]').forEach(r => { if (parseFloat(r.value) === testState.penaltyFactor) r.checked = true; });
+                document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked));
+                sortStudents(testState,'studentScores'); renderTestGlobalBadges(); renderTestStudentTags();
+                alert('✅ Configuración importada.');
+            } catch(err) { alert('Error al importar: '+err.message); }
+        }; reader.readAsText(file);
+    }
+    function renderTestStudentTags() {
+        renderStudentTags(testState, 'testStudentTags', 'testStudentCountBadge', () => {
+            sortStudents(testState,'studentScores');
+            testState.studentScores = testState.studentScores.map(ss => ({ ...ss, unanswered: testState.totalQuestions - (ss.correct||0) - (ss.wrong||0) }));
+            renderTestStudentTags();
+            if (currentApp==='test' && document.getElementById('testScreenGrade').classList.contains('active')) renderTestGradeTable();
+        });
+    }
+
+    // =========================================================================
+    //   FUNCIONES GENÉRICA
+    // =========================================================================
+    function normalizeGenericScores() {
+        const nC = genericState.globalCriteria.length;
+        genericState.scores = genericState.scores.map(row => { if (!row) return new Array(nC).fill(0); if (row.length<nC) return [...row, ...new Array(nC-row.length).fill(0)]; if (row.length>nC) return row.slice(0,nC); return row; });
+        while (genericState.scores.length < genericState.students.length) genericState.scores.push(new Array(nC).fill(0));
+        if (genericState.scores.length > genericState.students.length) genericState.scores = genericState.scores.slice(0, genericState.students.length);
+        genericState.scores.forEach(studentScores => { if (studentScores) studentScores.forEach((s,i) => { if (s>10) studentScores[i]=10; else if (s<0) studentScores[i]=0; }); });
+    }
+    function renderGenericGradeTable() {
+        const thead = document.querySelector('#genericGradeTable thead'); const tbody = document.getElementById('genericGradeTbody');
+        if (!thead||!tbody) return;
+        if (genericState.students.length===0 || genericState.globalCriteria.length===0) { thead.innerHTML=''; tbody.innerHTML='<tr><td class="text-center p-4">Se requieren alumnos y criterios.</td></tr>'; return; }
+        normalizeGenericScores();
+        let headerHtml = '<tr><th>Alumno</th>'; genericState.globalCriteria.forEach(crit=> headerHtml+=`<th>${crit}.<br><small>(0-10)</small></th>`); headerHtml+='</tr>';
+        thead.innerHTML = headerHtml; tbody.innerHTML = '';
+        genericState.students.forEach((student,sIdx)=>{
+            const tr = document.createElement('tr'); tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
+            genericState.globalCriteria.forEach((crit,cIdx)=>{
+                const td = document.createElement('td'); td.style.minWidth='100px';
+                const val = genericState.scores[sIdx]?.[cIdx]??0;
+                td.innerHTML = `<input type="number" class="form-control form-control-sm generic-score-input" data-student="${sIdx}" data-criterion="${cIdx}" value="${val}" min="0" max="10" step="0.1">`;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        document.querySelectorAll('.generic-score-input').forEach(inp=> inp.addEventListener('change', function(){
+            const sIdx = parseInt(this.dataset.student); const cIdx = parseInt(this.dataset.criterion);
+            let val = parseFloat(this.value); if (isNaN(val)) val=0; val = Math.min(Math.max(val,0),10); this.value=val;
+            if (!genericState.scores[sIdx]) genericState.scores[sIdx]=[]; genericState.scores[sIdx][cIdx]=val;
+        }));
+    }
+    function renderGenericResults() {
+        const thead = document.querySelector('#genericResultsTable thead'); const tbody = document.getElementById('genericResultsTbody');
+        document.getElementById('genericResultsExamNameSpan').textContent = `Actividad: ${genericState.examName}`;
+        if (genericState.globalCriteria.length===0 || genericState.students.length===0) { thead.innerHTML='<tr><th>Alumno</th><th>Sin criterios o alumnos</th></tr>'; tbody.innerHTML='<tr><td colspan="2" class="text-center">Agregue criterios y alumnos.</td></tr>'; return; }
+        normalizeGenericScores();
+        const showGlobal = document.getElementById('genericShowGlobalGrade').checked;
+        let headerRow = '<tr><th>Alumno</th>'; genericState.globalCriteria.forEach(crit=> headerRow+=`<th>${crit}.</th>`); if (showGlobal) headerRow += '<th>Calificación</th>'; headerRow += '</tr>';
+        thead.innerHTML = headerRow; tbody.innerHTML = '';
+        genericState.students.forEach((student,sIdx)=>{
+            let rowHtml = `<td><strong>${student.fullName}</strong></td>`;
+            let sum = 0;
+            genericState.globalCriteria.forEach((crit,cIdx)=>{ let val = genericState.scores[sIdx]?.[cIdx]??0; rowHtml += `<td>${val.toFixed(2)}</td>`; sum += val; });
+            if (showGlobal) { let global = (sum / genericState.globalCriteria.length).toFixed(2); rowHtml += `<td><strong>${global}</strong></td>`; }
+            tbody.innerHTML += `<tr>${rowHtml}</tr>`;
+        });
+    }
+    // *** CORREGIDO: exportGenericJSON (faltaba url y asignación) ***
+    function exportGenericJSON(includeGrade) {
+        if (!genericState.students.length) return alert('No hay datos');
+        const resultados = genericState.students.map((student,sIdx)=>{
+            const row = { Alumno: student.fullName };
+            genericState.globalCriteria.forEach((crit,cIdx)=> row[crit+'.'] = genericState.scores[sIdx]?.[cIdx]??0);
+            if (includeGrade) { let sum = genericState.scores[sIdx].reduce((a,b)=>a+b,0); row['Calificación'] = parseFloat((sum / genericState.globalCriteria.length).toFixed(2)); }
+            return row;
+        });
+        const exportData = { actividad: genericState.examName, resultados };
+        const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+        const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; let base = sanitizeFilename(genericState.examName+'_'+genericState.course);
+        a.download = `Resultados_${base}.json`; a.click(); URL.revokeObjectURL(url);
+    }
+    function exportGenericExcel(includeGrade) {
+        if (!genericState.students.length) return alert('Sin datos');
+        const header = ['Alumno', ...genericState.globalCriteria.map(c=>c+'.')]; if (includeGrade) header.push('Calificación');
+        const wsData = [[`Actividad: ${genericState.examName}`],[],header];
+        genericState.students.forEach((student,sIdx)=>{
+            const row = [student.fullName];
+            genericState.globalCriteria.forEach((crit,cIdx)=> row.push(genericState.scores[sIdx]?.[cIdx]??0));
+            if (includeGrade) { let sum = genericState.scores[sIdx].reduce((a,b)=>a+b,0); row.push(parseFloat((sum / genericState.globalCriteria.length).toFixed(2))); }
+            wsData.push(row);
+        });
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados');
+        let base = sanitizeFilename(genericState.examName+'_'+genericState.course);
+        XLSX.writeFile(wb, `Resultados_${base}.xlsx`);
+    }
+    function exportGenericPDF(includeGrade) {
+        if (!genericState.students.length) return alert('Sin datos');
+        const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' });
+        doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(genericState.examName.toUpperCase(), 14, 20);
+        doc.setFontSize(10);
+        const headers = [['Alumno', ...genericState.globalCriteria.map(c=>c+'.')]]; if (includeGrade) headers[0].push('Calificación');
+        const body = genericState.students.map((student,sIdx)=>{
+            const row = [student.fullName];
+            genericState.globalCriteria.forEach((crit,cIdx)=> row.push((genericState.scores[sIdx]?.[cIdx]??0).toFixed(2)));
+            if (includeGrade) { let sum = genericState.scores[sIdx].reduce((a,b)=>a+b,0); row.push((sum / genericState.globalCriteria.length).toFixed(2)); }
+            return row;
+        });
+        doc.autoTable({ head: headers, body, startY:30, theme:'grid' });
+        let base = sanitizeFilename(genericState.examName+'_'+genericState.course);
+        doc.save(`Resultados_${base}.pdf`);
+    }
+    function exportGenericConfig() {
+        const cfg = { examName: genericState.examName, course: genericState.course, globalCriteria: [...genericState.globalCriteria], students: genericState.students.map(s=>({fullName:s.fullName})) };
+        const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); let base = sanitizeFilename(genericState.examName); base = capitalizeBasename(base);
+        a.download = `Configuración_${base}.json`; a.click(); URL.revokeObjectURL(blob);
+    }
+    function importGenericConfig(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const cfg = JSON.parse(e.target.result);
+                if (!cfg.examName || !Array.isArray(cfg.globalCriteria)) throw new Error('Formato inválido');
+                genericState.examName = cfg.examName; genericState.course = cfg.course || genericState.course;
+                genericState.globalCriteria = cfg.globalCriteria;
+                genericState.students = (cfg.students || []).map(s=>({id:uuid(), fullName:s.fullName}));
+                genericState.scores = genericState.students.map(()=> new Array(genericState.globalCriteria.length).fill(0));
+                document.getElementById('genericExamNameInput').value = genericState.examName;
+                document.getElementById('genericCourseInput').value = genericState.course;
+                sortStudents(genericState,'scores'); renderGenericGlobalBadges(); renderGenericStudentTags();
+                alert('✅ Configuración importada.');
+            } catch(err) { alert('Error al importar: '+err.message); }
+        }; reader.readAsText(file);
+    }
+    function renderGenericStudentTags() {
+        renderStudentTags(genericState, 'genericStudentTags', 'genericStudentCountBadge', () => {
+            sortStudents(genericState,'scores'); normalizeGenericScores(); renderGenericStudentTags();
+            if (currentApp==='generic' && document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable();
+        });
+    }
+
+    // =========================================================================
+    //   REINICIAR ESTADOS
+    // =========================================================================
+    function resetExamState() {
+        if (!confirm('¿Reiniciar todos los datos del examen?')) return;
+        examState.examName = "Examen sin título"; examState.course = "Tecnología Ciclos";
+        examState.students = []; examState.questions = [{id:1, maxScore:10, criteriaCodes:[]}];
+        examState.globalCriteria = []; examState.scores = [];
+        document.getElementById('examNameInput').value = examState.examName;
+        document.getElementById('examCourseInput').value = examState.course;
+        document.getElementById('examInputNumQuestions').value = examState.questions.length;
+        renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags();
+        localStorage.removeItem('tec4_exam_app'); alert('✅ Datos reiniciados.');
+    }
+    function resetTestState() {
+        if (!confirm('¿Reiniciar todos los datos del test?')) return;
+        testState.examName = "Examen tipo test"; testState.course = "Tecnología Ciclos";
+        testState.totalQuestions = 20; testState.penaltyFactor = 0;
+        testState.globalCriteria = []; testState.students = []; testState.studentScores = [];
+        document.getElementById('testExamTitleInput').value = testState.examName;
+        document.getElementById('testCourseInput').value = testState.course;
+        document.getElementById('testTotalQuestions').value = testState.totalQuestions;
+        document.querySelectorAll('#testPenaltyOptions .penalty-option input').forEach(r => { if (r.value == 0) r.checked = true; });
+        document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked));
+        renderTestGlobalBadges(); renderTestStudentTags();
+        localStorage.removeItem('tec4_test_app'); alert('✅ Datos reiniciados.');
+    }
+    function resetGenericState() {
+        if (!confirm('¿Reiniciar todos los datos de la actividad genérica?')) return;
+        genericState.examName = "Actividad sin título"; genericState.course = "Tecnología Ciclos";
+        genericState.globalCriteria = []; genericState.students = []; genericState.scores = [];
+        document.getElementById('genericExamNameInput').value = genericState.examName;
+        document.getElementById('genericCourseInput').value = genericState.course;
+        renderGenericGlobalBadges(); renderGenericStudentTags();
+        localStorage.removeItem('tec4_generic_app'); alert('✅ Datos reiniciados.');
+    }
+
+    // =========================================================================
+    //   CONTROL DE APLICACIÓN ACTIVA Y NAVEGACIÓN
+    // =========================================================================
+    let currentApp = 'home';
+    function showHome() { hideAllApps(); document.getElementById('homeScreen').classList.add('active'); currentApp = 'home'; }
+    function showApp(appId) { hideAllApps(); document.getElementById(appId).classList.add('active'); 
+        if (appId === 'appExamContainer') { currentApp = 'exam'; showExamScreen('config'); }
+        else if (appId === 'appTestContainer') { currentApp = 'test'; showTestScreen('config'); }
+        else if (appId === 'appGenericContainer') { currentApp = 'generic'; showGenericScreen('config'); }
+    }
+    function hideAllApps() {
+        document.getElementById('homeScreen').classList.remove('active');
+        document.getElementById('appExamContainer').classList.remove('active');
+        document.getElementById('appTestContainer').classList.remove('active');
+        document.getElementById('appGenericContainer').classList.remove('active');
+    }
+    function showExamScreen(screen) {
+        document.querySelectorAll('#appExamContainer .screen').forEach(s=>s.classList.remove('active'));
+        document.getElementById('examScreen'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        document.querySelectorAll('#appExamContainer .btn-group .btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('examNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        if (screen==='grade') renderExamGradeTable(); else if (screen==='results') renderExamResults();
+    }
+    function showTestScreen(screen) {
+        document.querySelectorAll('#appTestContainer .screen').forEach(s=>s.classList.remove('active'));
+        document.getElementById('testScreen'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        document.querySelectorAll('#appTestContainer .btn-group .btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('testNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        if (screen==='grade') renderTestGradeTable(); else if (screen==='results') renderTestResults();
+    }
+    function showGenericScreen(screen) {
+        document.querySelectorAll('#appGenericContainer .screen').forEach(s=>s.classList.remove('active'));
+        document.getElementById('genericScreen'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        document.querySelectorAll('#appGenericContainer .btn-group .btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('genericNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        if (screen==='grade') renderGenericGradeTable(); else if (screen==='results') renderGenericResults();
+    }
+
+    // =========================================================================
+    //   EVENTO GLOBAL PARA MOSTRAR DESCRIPCIÓN AL HACER CLIC EN CRITERIO
+    // =========================================================================
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('criteria-badge')) {
+            const code = e.target.getAttribute('data-code');
+            if (code) alert(getCriteriaDescription(code));
+            e.preventDefault(); e.stopPropagation();
+        }
+    });
+
+    // =========================================================================
+    //   INICIALIZACIÓN Y EVENTOS
+    // =========================================================================
+    window.onload = function() {
+        // Tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+
+        // Poblar modales con criterios fijos y estados actuales
+        populateCriteriaModal('examGlobalCriteriaGroupedContainer', 'exam', examState.globalCriteria);
+        populateCriteriaModal('testGlobalCriteriaGroupedContainer', 'test', testState.globalCriteria);
+        populateCriteriaModal('genericGlobalCriteriaGroupedContainer', 'generic', genericState.globalCriteria);
+        renderExamGlobalBadges(); renderTestGlobalBadges(); renderGenericGlobalBadges();
+        renderExamQuestionsTable(); renderExamStudentTags(); renderTestStudentTags(); renderGenericStudentTags();
+
+        // Navegación
+        document.getElementById('btnHome').addEventListener('click', showHome);
+        document.getElementById('btnAppExam').addEventListener('click', ()=> showApp('appExamContainer'));
+        document.getElementById('btnAppTest').addEventListener('click', ()=> showApp('appTestContainer'));
+        document.getElementById('btnAppGeneric').addEventListener('click', ()=> showApp('appGenericContainer'));
+        document.getElementById('cardExam').addEventListener('click', ()=> showApp('appExamContainer'));
+        document.getElementById('cardTest').addEventListener('click', ()=> showApp('appTestContainer'));
+        document.getElementById('cardGeneric').addEventListener('click', ()=> showApp('appGenericContainer'));
+
+        // ========== EXAMEN ==========
+        document.getElementById('examSaveGlobalCriteria').addEventListener('click', function(){
+            const checked = []; document.querySelectorAll('#examGlobalCriteriaGroupedContainer .global-criteria-chk:checked').forEach(chk=>checked.push(chk.value));
+            examState.globalCriteria = checked; renderExamGlobalBadges();
+        });
+        document.getElementById('examNavConfig').addEventListener('click', ()=> showExamScreen('config'));
+        document.getElementById('examNavGrade').addEventListener('click', function(){ 
+            if (examState.students.length===0) { alert('No hay alumnos.'); return; }
+            if (validateExamCriteria()) showExamScreen('grade'); else alert('Complete la asignación de criterios.');
+        });
+        document.getElementById('examNavResults').addEventListener('click', function(){
+            if (examState.students.length===0) { alert('No hay alumnos.'); return; }
+            if (!validateExamCriteria()) { alert('Criterios no asignados correctamente.'); return; }
+            showExamScreen('results');
+        });
+        document.getElementById('examBtnSetQuestions').addEventListener('click', function(){
+            let num = parseInt(document.getElementById('examInputNumQuestions').value)||1;
+            examState.questions = Array.from({length: num}, (_,i)=>({id:i+1, maxScore:10, criteriaCodes:[]}));
+            normalizeExamScores(); renderExamQuestionsTable(); validateExamCriteria();
+        });
+        document.getElementById('examAppendQuestionBtn').addEventListener('click', function(){
+            const newId = examState.questions.length>0?Math.max(...examState.questions.map(q=>q.id))+1:1;
+            examState.questions.push({id:newId, maxScore:10, criteriaCodes:[]});
+            examState.scores.forEach(row=>row.push(0)); reorderExamQuestionIds(); normalizeExamScores(); renderExamQuestionsTable(); document.getElementById('examInputNumQuestions').value = examState.questions.length; validateExamCriteria();
+        });
+        document.getElementById('examBtnAddStudent').addEventListener('click', function(){
+            const input = document.getElementById('examStudentNameInput'); const name = input.value.trim();
+            if (name) {
+                if (isStudentDuplicate(examState,name)) { showDuplicateMessage('examDuplicateMessage',`El alumno "${name}" ya existe.`); input.value=''; return; }
+                examState.students.push({id:uuid(), fullName:name}); normalizeExamScores(); sortStudents(examState,'scores'); renderExamStudentTags(); input.value=''; showDuplicateMessage('examDuplicateMessage','');
+            }
+        });
+        document.getElementById('examBtnClearStudents').addEventListener('click', function(){ examState.students=[]; examState.scores=[]; renderExamStudentTags(); });
+        document.getElementById('examImportFile').addEventListener('change', function(e) {
+            if (this.files.length) importStudentsFromFile(this.files[0], examState, 'scores', ()=>{ renderExamStudentTags(); if (document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable(); });
+            this.value = '';
+        });
+        document.getElementById('examExportConfigBtn').addEventListener('click', exportExamConfig);
+        document.getElementById('examImportConfigBtn').addEventListener('click', ()=> document.getElementById('examImportConfigFile').click());
+        document.getElementById('examImportConfigFile').addEventListener('change', function(e) { if (this.files.length) importExamConfig(this.files[0]); this.value = ''; });
+        document.getElementById('examSaveToLocalBtn').addEventListener('click', function(){ localStorage.setItem('tec4_exam_app',JSON.stringify(examState)); alert('✅ Configuración guardada.'); });
+        document.getElementById('examLoadFromLocalBtn').addEventListener('click', function(){
+            let saved = localStorage.getItem('tec4_exam_app');
+            if(saved) { try { Object.assign(examState, JSON.parse(saved)); examState.students = examState.students.map(s=>({...s, id:s.id||uuid()})); normalizeExamScores(); renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags(); document.getElementById('examNameInput').value = examState.examName; document.getElementById('examCourseInput').value = examState.course; document.getElementById('examInputNumQuestions').value = examState.questions.length; } catch(e) { alert('Error al cargar'); } } else alert('No hay datos guardados.');
+        });
+        document.getElementById('examBtnSaveScores').addEventListener('click', function(){
+            const backup = { students: examState.students.map(s=>s.fullName), questions: examState.questions.map(q=>({id:q.id, maxScore:q.maxScore})), scores: examState.scores };
+            localStorage.setItem('exam_scores_backup', JSON.stringify(backup));
+            document.getElementById('examGradeMessage').innerHTML='<i class="bi bi-check-circle"></i> Calificaciones guardadas localmente.';
+            setTimeout(()=>document.getElementById('examGradeMessage').innerHTML='',3000);
+        });
+        document.getElementById('examExportScoresBtn').addEventListener('click', exportExamScores);
+        document.getElementById('examImportScoresBtn').addEventListener('click', ()=> document.getElementById('examImportScoresFile').click());
+        document.getElementById('examImportScoresFile').addEventListener('change', function(e) { if (this.files.length) importExamScores(this.files[0]); this.value = ''; });
+        document.getElementById('examRecoverScoresBtn').addEventListener('click', recoverExamScores);
+        document.getElementById('examResetAllBtn').addEventListener('click', resetExamState);
+        document.getElementById('examNameInput').addEventListener('input', e=> examState.examName = e.target.value);
+        document.getElementById('examCourseInput').addEventListener('input', e=> examState.course = e.target.value);
+        document.getElementById('examShowGlobalGrade').addEventListener('change', renderExamResults);
+        // Export modals exam
+        let examExportType = '';
+        document.getElementById('examExportJSON').addEventListener('click', function(){ examExportType='json'; document.getElementById('examExportIncludeGrade').checked = document.getElementById('examShowGlobalGrade').checked; });
+        document.getElementById('examExportExcel').addEventListener('click', function(){ examExportType='excel'; document.getElementById('examExportIncludeGrade').checked = document.getElementById('examShowGlobalGrade').checked; });
+        document.getElementById('examExportPDF').addEventListener('click', function(){ examExportType='pdf'; document.getElementById('examExportIncludeGrade').checked = document.getElementById('examShowGlobalGrade').checked; });
+        document.getElementById('examExportConfirm').addEventListener('click', function(){
+            const incl = document.getElementById('examExportIncludeGrade').checked;
+            if (examExportType==='json') exportExamJSON(incl);
+            else if (examExportType==='excel') exportExamExcel(incl);
+            else if (examExportType==='pdf') exportExamPDF(incl);
+            bootstrap.Modal.getInstance(document.getElementById('examExportModal')).hide();
+        });
+
+        // ========== TEST ==========
+        document.getElementById('testSaveGlobalCriteria').addEventListener('click', function(){
+            const checked = []; document.querySelectorAll('#testGlobalCriteriaGroupedContainer .global-criteria-chk:checked').forEach(chk=>checked.push(chk.value));
+            testState.globalCriteria = checked; renderTestGlobalBadges();
+        });
+        document.getElementById('testNavConfig').addEventListener('click', ()=> showTestScreen('config'));
+        document.getElementById('testNavGrade').addEventListener('click', function(){ 
+            if (testState.students.length===0) { alert('No hay alumnos.'); return; }
+            if (testState.globalCriteria.length===0) alert('Selecciona al menos un criterio.'); else showTestScreen('grade');
+        });
+        document.getElementById('testNavResults').addEventListener('click', function(){
+            if (testState.students.length===0) { alert('No hay alumnos.'); return; }
+            if (testState.globalCriteria.length===0) { alert('Selecciona al menos un criterio.'); return; }
+            showTestScreen('results');
+        });
+        document.getElementById('testExamTitleInput').addEventListener('input', e=> testState.examName = e.target.value);
+        document.getElementById('testCourseInput').addEventListener('input', e=> testState.course = e.target.value);
+        document.getElementById('testTotalQuestions').addEventListener('input', function(){
+            let val = parseInt(this.value)||1; if (val<1) val=1; this.value=val; testState.totalQuestions=val;
+            testState.studentScores = testState.students.map(()=>({correct:0,wrong:0,unanswered:val}));
+            if (document.getElementById('testScreenGrade').classList.contains('active')) renderTestGradeTable();
+        });
+        document.querySelectorAll('#testPenaltyOptions .penalty-option').forEach(opt => {
+            opt.addEventListener('click', function(){
+                this.querySelector('input').checked=true;
+                testState.penaltyFactor = parseFloat(this.querySelector('input').value);
+                document.querySelectorAll('.penalty-option').forEach(o=>o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        document.querySelectorAll('#testPenaltyOptions .penalty-option input:checked').forEach(inp => inp.closest('.penalty-option').classList.add('selected'));
+        document.getElementById('testBtnAddStudent').addEventListener('click', function(){
+            const input = document.getElementById('testStudentNameInput'); const name = input.value.trim();
+            if (name) {
+                if (isStudentDuplicate(testState,name)) { showDuplicateMessage('testDuplicateMessage',`El alumno "${name}" ya existe.`); input.value=''; return; }
+                testState.students.push({id:uuid(), fullName:name}); testState.studentScores.push({correct:0,wrong:0,unanswered:testState.totalQuestions});
+                sortStudents(testState,'studentScores'); renderTestStudentTags(); input.value=''; showDuplicateMessage('testDuplicateMessage','');
+            }
+        });
+        document.getElementById('testBtnClearStudents').addEventListener('click', function(){ testState.students=[]; testState.studentScores=[]; renderTestStudentTags(); });
+        document.getElementById('testImportFile').addEventListener('change', function(e) {
+            if (this.files.length) importStudentsFromFile(this.files[0], testState, 'studentScores', ()=>{ renderTestStudentTags(); if (document.getElementById('testScreenGrade').classList.contains('active')) renderTestGradeTable(); });
+            this.value = '';
+        });
+        document.getElementById('testExportConfigBtn').addEventListener('click', exportTestConfig);
+        document.getElementById('testImportConfigBtn').addEventListener('click', ()=> document.getElementById('testImportConfigFile').click());
+        document.getElementById('testImportConfigFile').addEventListener('change', function(e) { if (this.files.length) importTestConfig(this.files[0]); this.value = ''; });
+        document.getElementById('testSaveToLocalBtn').addEventListener('click', function(){ localStorage.setItem('tec4_test_app',JSON.stringify(testState)); alert('✅ Configuración guardada.'); });
+        document.getElementById('testLoadFromLocalBtn').addEventListener('click', function(){
+            let saved = localStorage.getItem('tec4_test_app');
+            if(saved) { try { Object.assign(testState, JSON.parse(saved)); testState.students = testState.students.map(s=>({...s, id:s.id||uuid()})); if(!testState.studentScores) testState.studentScores = testState.students.map(()=>({correct:0,wrong:0,unanswered:testState.totalQuestions})); sortStudents(testState,'studentScores'); renderTestGlobalBadges(); renderTestStudentTags(); document.getElementById('testExamTitleInput').value = testState.examName; document.getElementById('testCourseInput').value = testState.course; document.getElementById('testTotalQuestions').value = testState.totalQuestions; document.querySelectorAll('input[name="penalty"]').forEach(r => { if (parseFloat(r.value) === testState.penaltyFactor) r.checked = true; }); document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked)); } catch(e) { alert('Error al cargar'); } } else alert('No hay datos guardados.');
+        });
+        document.getElementById('testBtnSaveScores').addEventListener('click', function(){ document.getElementById('testGradeMessage').innerHTML='<i class="fas fa-check-circle"></i> Calificaciones guardadas.'; setTimeout(()=>document.getElementById('testGradeMessage').innerHTML='',3000); });
+        document.getElementById('testResetAllBtn').addEventListener('click', resetTestState);
+        let testExportType = '';
+        document.getElementById('testExportJSON').addEventListener('click', function(){ testExportType='json'; document.getElementById('testExportIncludeGrade').checked = document.getElementById('testShowGlobalGrade').checked; });
+        document.getElementById('testExportExcel').addEventListener('click', function(){ testExportType='excel'; document.getElementById('testExportIncludeGrade').checked = document.getElementById('testShowGlobalGrade').checked; });
+        document.getElementById('testExportPDF').addEventListener('click', function(){ testExportType='pdf'; document.getElementById('testExportIncludeGrade').checked = document.getElementById('testShowGlobalGrade').checked; });
+        document.getElementById('testExportConfirm').addEventListener('click', function(){
+            const incl = document.getElementById('testExportIncludeGrade').checked;
+            if (testExportType==='json') exportTestJSON(incl);
+            else if (testExportType==='excel') exportTestExcel(incl);
+            else if (testExportType==='pdf') exportTestPDF(incl);
+            bootstrap.Modal.getInstance(document.getElementById('testExportModal')).hide();
+        });
+        document.getElementById('testShowGlobalGrade').addEventListener('change', renderTestResults);
+
+        // ========== GENÉRICA ==========
+        document.getElementById('genericSaveGlobalCriteria').addEventListener('click', function(){
+            const checked = []; document.querySelectorAll('#genericGlobalCriteriaGroupedContainer .global-criteria-chk:checked').forEach(chk=>checked.push(chk.value));
+            genericState.globalCriteria = checked; renderGenericGlobalBadges(); normalizeGenericScores(); if (document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable();
+        });
+        document.getElementById('genericNavConfig').addEventListener('click', ()=> showGenericScreen('config'));
+        document.getElementById('genericNavGrade').addEventListener('click', function(){ 
+            if (genericState.students.length===0) { alert('No hay alumnos.'); return; }
+            if (validateGenericCriteria()) showGenericScreen('grade'); else alert('Selecciona al menos un criterio.');
+        });
+        document.getElementById('genericNavResults').addEventListener('click', function(){
+            if (genericState.students.length===0) { alert('No hay alumnos.'); return; }
+            if (!validateGenericCriteria()) { alert('Selecciona al menos un criterio.'); return; }
+            showGenericScreen('results');
+        });
+        document.getElementById('genericExamNameInput').addEventListener('input', e=> genericState.examName = e.target.value);
+        document.getElementById('genericCourseInput').addEventListener('input', e=> genericState.course = e.target.value);
+        document.getElementById('genericBtnAddStudent').addEventListener('click', function(){
+            const input = document.getElementById('genericStudentNameInput'); const name = input.value.trim();
+            if (name) {
+                if (isStudentDuplicate(genericState,name)) { showDuplicateMessage('genericDuplicateMessage',`El alumno "${name}" ya existe.`); input.value=''; return; }
+                genericState.students.push({id:uuid(), fullName:name}); normalizeGenericScores(); sortStudents(genericState,'scores'); renderGenericStudentTags(); input.value=''; showDuplicateMessage('genericDuplicateMessage','');
+            }
+        });
+        document.getElementById('genericBtnClearStudents').addEventListener('click', function(){ genericState.students=[]; genericState.scores=[]; renderGenericStudentTags(); });
+        document.getElementById('genericImportFile').addEventListener('change', function(e) {
+            if (this.files.length) importStudentsFromFile(this.files[0], genericState, 'scores', ()=>{ renderGenericStudentTags(); if (document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable(); });
+            this.value = '';
+        });
+        document.getElementById('genericExportConfigBtn').addEventListener('click', exportGenericConfig);
+        document.getElementById('genericImportConfigBtn').addEventListener('click', ()=> document.getElementById('genericImportConfigFile').click());
+        document.getElementById('genericImportConfigFile').addEventListener('change', function(e) { if (this.files.length) importGenericConfig(this.files[0]); this.value = ''; });
+        document.getElementById('genericSaveToLocalBtn').addEventListener('click', function(){ localStorage.setItem('tec4_generic_app',JSON.stringify(genericState)); alert('✅ Configuración guardada.'); });
+        document.getElementById('genericLoadFromLocalBtn').addEventListener('click', function(){
+            let saved = localStorage.getItem('tec4_generic_app');
+            if(saved) { try { Object.assign(genericState, JSON.parse(saved)); genericState.students = genericState.students.map(s=>({...s, id:s.id||uuid()})); normalizeGenericScores(); renderGenericGlobalBadges(); renderGenericStudentTags(); document.getElementById('genericExamNameInput').value = genericState.examName; document.getElementById('genericCourseInput').value = genericState.course; } catch(e) { alert('Error al cargar'); } } else alert('No hay datos guardados.');
+        });
+        document.getElementById('genericBtnSaveScores').addEventListener('click', function(){ document.getElementById('genericGradeMessage').innerHTML='<i class="bi bi-check-circle"></i> Calificaciones guardadas.'; setTimeout(()=>document.getElementById('genericGradeMessage').innerHTML='',3000); });
+        document.getElementById('genericResetAllBtn').addEventListener('click', resetGenericState);
+        let genericExportType = '';
+        document.getElementById('genericExportJSON').addEventListener('click', function(){ genericExportType='json'; document.getElementById('genericExportIncludeGrade').checked = document.getElementById('genericShowGlobalGrade').checked; });
+        document.getElementById('genericExportExcel').addEventListener('click', function(){ genericExportType='excel'; document.getElementById('genericExportIncludeGrade').checked = document.getElementById('genericShowGlobalGrade').checked; });
+        document.getElementById('genericExportPDF').addEventListener('click', function(){ genericExportType='pdf'; document.getElementById('genericExportIncludeGrade').checked = document.getElementById('genericShowGlobalGrade').checked; });
+        document.getElementById('genericExportConfirm').addEventListener('click', function(){
+            const incl = document.getElementById('genericExportIncludeGrade').checked;
+            if (genericExportType==='json') exportGenericJSON(incl);
+            else if (genericExportType==='excel') exportGenericExcel(incl);
+            else if (genericExportType==='pdf') exportGenericPDF(incl);
+            bootstrap.Modal.getInstance(document.getElementById('genericExportModal')).hide();
+        });
+        document.getElementById('genericShowGlobalGrade').addEventListener('change', renderGenericResults);
+
+        showHome();
+
+        // Intro overlay fade-out
+        const intro = document.getElementById('intro-overlay');
+        if (intro) {
+            setTimeout(() => intro.classList.add('fade-out'), 5000);
+            document.addEventListener('click', function fadeIntro() { intro.classList.add('fade-out'); }, { once: true });
+        }
+    };
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').catch(err => console.error('SW error', err));
+        });
+    }
+</script>
+</body>
+</html>

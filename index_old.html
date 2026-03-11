@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>EVALUACIÓN COMPETENCIAL</title>
-    <link rel="manifest" href="manifest.json">
-    <!-- Para iOS -->
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <meta name="theme-color" content="#0b4b6b">
-    <link rel="icon" type="image/png" href="icons/icon-96x96.png">
+    <title>EVALUACIÓN TEC4 · PORTAL COMPLETO</title>
+	
+	<link rel="manifest" href="manifest.json">
+	
     <!-- Bootstrap 5 + Iconos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -18,8 +16,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
-        /* ESTILOS UNIFICADOS (mejorados) */
-        body { background-color: #e9f0f5; font-family: 'Segoe UI', Roboto, sans-serif; padding: 10px; margin: 0; }
+        /* ESTILOS UNIFICADOS (igual que en los originales) */
+        body { background-color: #e9f0f5; font-family: 'Segoe UI', Roboto, sans-serif; padding: 10px; }
         .container-custom { max-width: 1400px; margin: 0 auto; background: white; border-radius: 28px; box-shadow: 0 25px 45px -12px rgba(2,48,71,0.2); padding: 24px 28px; }
         .screen { display: none; }
         .screen.active { display: block; }
@@ -27,12 +25,16 @@
         .section-card:hover { box-shadow: 0 8px 18px rgba(13,110,253,0.08); border-color: #cbdbe9; }
         .section-title { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #0b4b6b; margin-bottom: 20px; border-bottom: 2px dashed #b8d1dc; padding-bottom: 10px; }
         .section-title i { font-size: 1.6rem; color: #0d6efd; }
-        .section-title .help-icon { font-size: 1.2rem; color: #6c757d; cursor: help; margin-left: auto; }
         .criteria-group { border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; background-color: #f8fbfe; border-left: 8px solid; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
         .group-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .group-tec41 { border-left-color: #0d6efd; background-color: #f0f7ff; }
+        .group-tec42 { border-left-color: #198754; background-color: #f0faf4; }
+        .group-tec43 { border-left-color: #fd7e14; background-color: #fff4e8; }
+        .group-tec44 { border-left-color: #6f42c1; background-color: #f5f0ff; }
+        .group-tec45 { border-left-color: #d63384; background-color: #fff0f6; }
+        .group-tec46 { border-left-color: #20c997; background-color: #e6faf3; }
         .student-tag { background: linear-gradient(145deg, #f0f4fa, #e3eaf0); padding: 6px 18px; border-radius: 40px; font-size: 0.9rem; margin: 4px; display: inline-block; border: 1px solid #c0d3df; box-shadow: 0 2px 3px rgba(0,0,0,0.02); }
-        .student-tag i { margin-left: 5px; cursor: pointer; }
-        .badge-criteria { background-color: #0d4e6e; color: white; font-size: 0.8rem; margin-right: 6px; padding: 6px 12px; border-radius: 20px; font-weight: 500; cursor: pointer; }
+        .badge-criteria { background-color: #0d4e6e; color: white; font-size: 0.8rem; margin-right: 6px; padding: 6px 12px; border-radius: 20px; font-weight: 500; }
         .import-label { background-color: #ecf3f7; padding: 8px 20px; border-radius: 30px; cursor: pointer; border: 1px solid #adc6d3; font-weight: 500; }
         .hidden { display: none; }
         .validation-warning { background-color: #fff3cd; border-left: 6px solid #ffc107; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; font-weight: 500; }
@@ -44,33 +46,15 @@
         .penalty-option.selected { border-color: #2980b9; background-color: #e3f2fd; }
         .grade-select { width: 100%; padding: 6px 10px; border: 2px solid #d1e3ff; border-radius: 8px; background-color: white; font-size: 0.9rem; }
         .unanswered-field { background-color: #f0f4fa; border: 2px solid #e2eaf1; border-radius: 8px; padding: 8px 10px; text-align: center; font-weight: 600; color: #0b4b6b; }
+        @media (max-width: 768px) { .container-custom { padding: 16px; } .section-card { padding: 16px; } }
         .home-card { transition: transform 0.2s; cursor: pointer; border: 2px solid #dee2e6; border-radius: 20px; }
         .home-card:hover { transform: scale(1.02); border-color: #0d6efd; box-shadow: 0 10px 25px rgba(13,110,253,0.2); }
         .app-switcher .btn { border-radius: 30px; margin-left: 6px; }
-        @media (max-width: 768px) { .container-custom { padding: 16px; } .section-card { padding: 16px; } }
-        /* Intro overlay */
-        #intro-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 20% 30%, #0b4b6b, #062c3b);
-            color: white; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; text-align: center; padding: 20px; transition: opacity 1s ease; opacity: 1; pointer-events: all;
-        }
-        #intro-overlay.fade-out { opacity: 0; pointer-events: none; }
-        .intro-title { font-size: clamp(2rem, 8vw, 4rem); font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.4); background: linear-gradient(135deg, #e0f0ff, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; }
-        .intro-subtitle { font-size: clamp(1rem, 3vw, 1.8rem); font-weight: 300; color: #f0f7ff; position: absolute; bottom: 40px; right: 40px; font-style: italic; }
-        .intro-subtitle::before { content: "✦"; color: #a5d6a7; margin-right: 8px; }
     </style>
 </head>
 <body>
-    <!-- INTRO CON FADE -->
-    <div id="intro-overlay">
-        <div class="intro-title">EVALUACIÓN TEC4<br>COMPETENCIAL</div>
-        <div class="intro-subtitle">by @angelmicelti</div>
-    </div>
-
 <div class="container-custom">
-    <!-- CABECERA FIJA CON CAMBIADOR -->
+    <!-- ========== CABECERA FIJA CON CAMBIADOR DE APLICACIONES ========== -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3">
         <h1 class="fw-bold" style="color: #0b4b6b;"><i class="bi bi-diagram-3 me-2" style="color: #0d6efd;"></i>EVALUACIÓN TEC4</h1>
         <div class="app-switcher btn-group" role="group">
@@ -83,45 +67,40 @@
 
     <!-- ========== PANTALLA DE INICIO (HOME) ========== -->
     <div id="homeScreen" class="screen active">
-        <div class="text-center my-4">
-            <i class="bi bi-trophy-fill" style="font-size: 4rem; color: #28a745;"></i>
-            <h2 class="mt-2" style="color: #0b4b6b;">Sistema de Evaluación TEC4</h2>
-            <p class="lead text-muted">Selecciona el tipo de actividad</p>
-        </div>
         <div class="row g-4 justify-content-center mt-2">
             <div class="col-md-4">
-                <div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardExam">
+                <div class="card home-card p-4 text-center h-100" id="cardExam">
                     <i class="bi bi-pencil-square" style="font-size: 3rem; color: #0d6efd;"></i>
                     <h3 class="mt-3 fw-bold">Examen por preguntas</h3>
-                    <p class="text-muted flex-grow-1">Asigna criterios a cada pregunta y califica individualmente.</p>
-                    <button class="btn btn-primary mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
+                    <p class="text-muted">Asigna criterios a cada pregunta y califica individualmente.</p>
+                    <button class="btn btn-primary mt-3"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardTest">
+                <div class="card home-card p-4 text-center h-100" id="cardTest">
                     <i class="fas fa-calculator" style="font-size: 3rem; color: #198754;"></i>
                     <h3 class="mt-3 fw-bold">Examen tipo test</h3>
-                    <p class="text-muted flex-grow-1">Aciertos, fallos, penalización. Misma nota para todos los criterios.</p>
-                    <button class="btn btn-success mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
+                    <p class="text-muted">Aciertos, fallos, penalización. Misma nota para todos los criterios.</p>
+                    <button class="btn btn-success mt-3"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardGeneric">
+                <div class="card home-card p-4 text-center h-100" id="cardGeneric">
                     <i class="bi bi-check2-circle" style="font-size: 3rem; color: #fd7e14;"></i>
-                    <h3 class="mt-3 fw-bold">Tarea por criterios</h3>
-                    <p class="text-muted flex-grow-1">Califica directamente cada criterio con nota 0-10.</p>
-                    <button class="btn btn-warning mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
+                    <h3 class="mt-3 fw-bold">Evaluación de actividad criterial</h3>
+                    <p class="text-muted">Califica directamente cada criterio con nota 0-10.</p>
+                    <button class="btn btn-warning mt-3"><i class="bi bi-box-arrow-in-right"></i> Usar</button>
                 </div>
             </div>
         </div>
         <div class="alert alert-info mt-5 text-center">
-            <i class="bi bi-info-circle"></i> Criterios TEC.4.X.Y. (Tecnología 4º ESO LOMLOE)
+            <i class="bi bi-info-circle"></i> Selecciona una herramienta. Puedes cambiar entre ellas en cualquier momento desde el menú superior.
         </div>
     </div>
 
     <!-- ========== APLICACIÓN 1: EXAMEN POR PREGUNTAS ========== -->
     <div id="appExamContainer" class="screen">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="fw-bold"><i class="bi bi-pencil-square" style="color:#0d6efd;"></i> Examen por preguntas · TEC4</h3>
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="examNavConfig">⚙️ Configuración</button>
@@ -129,25 +108,22 @@
                 <button type="button" class="btn btn-outline-primary" id="examNavResults">📊 Resultados</button>
             </div>
         </div>
-        <!-- Configuración EXAMEN -->
+        <!-- Pantalla CONFIGURACIÓN EXAMEN -->
         <div id="examScreenConfig" class="screen active">
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-pencil-square"></i> Identificación del examen <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nombre y curso del examen."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-pencil-square"></i> Identificación del examen</div>
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4"><label class="form-label fw-semibold">📌 Nombre</label><input type="text" id="examNameInput" class="form-control" value="Examen sin título"></div>
-                    <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="examCourseInput" class="form-control" value="Tecnología Ciclos" placeholder="Ej: 4º ESO, 2º Bach..."></div>
-                    <div class="col-md-5 d-flex flex-wrap justify-content-end gap-2">
+                    <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><select id="examCourseSelect" class="form-select"><option value="Tecnología Ciclos" selected>Tecnología Ciclos</option><option value="Tecnología Bachillerato">Tecnología Bachillerato</option></select></div>
+                    <div class="col-md-5 d-flex justify-content-end gap-2">
                         <button id="examExportConfigBtn" class="btn btn-outline-primary"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
                         <button id="examImportConfigBtn" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
                         <input type="file" id="examImportConfigFile" accept=".json" class="hidden">
                         <button id="examSaveToLocalBtn" class="btn btn-outline-success"><i class="bi bi-save"></i> Guardar local</button>
                         <button id="examLoadFromLocalBtn" class="btn btn-outline-info"><i class="bi bi-folder-symlink"></i> Cargar local</button>
-                        <button id="examResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                     </div>
                 </div>
             </div>
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-question-circle"></i> Gestión de preguntas y criterios <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Define preguntas y asigna criterios."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-question-circle"></i> Gestión de preguntas y criterios</div>
                 <div class="row g-3 align-items-end mb-4">
                     <div class="col-md-3"><label class="form-label fw-semibold">Número de preguntas</label><input type="number" id="examInputNumQuestions" class="form-control" min="1" value="3"></div>
                     <div class="col-md-3"><button id="examBtnSetQuestions" class="btn btn-primary">📌 Generar / Resetear preguntas</button></div>
@@ -157,11 +133,12 @@
                     </div>
                 </div>
                 <div id="examOrphanedCriteriaWarning" class="validation-warning" style="display:none;"><span id="examOrphanedCriteriaMessage"></span></div>
-                <div class="table-responsive mt-3"><table class="table table-bordered align-middle table-custom" id="examQuestionsTable"><thead><tr><th>Pregunta</th><th>Cal. máxima</th><th>Criterios</th><th>Acciones</th></tr></thead><tbody id="examQuestionsTbody"></tbody></table></div>
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered align-middle table-custom" id="examQuestionsTable"><thead><tr><th>Pregunta</th><th>Cal. máxima</th><th>Criterios</th><th>Acciones</th></tr></thead><tbody id="examQuestionsTbody"></tbody></table>
+                </div>
                 <div class="d-flex justify-content-end mt-2"><button id="examAppendQuestionBtn" class="btn btn-success btn-sm"><i class="bi bi-plus-circle"></i> Añadir pregunta</button></div>
             </div>
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético)</div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="d-flex"><input type="text" id="examStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="examBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
                     <div><label for="examImportFile" class="import-label"><i class="bi bi-file-earmark-arrow-up"></i> Importar Excel/JSON</label><input type="file" id="examImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
@@ -171,30 +148,21 @@
                 <div id="examDuplicateMessage" class="small text-danger mt-2"></div>
             </div>
         </div>
-        <!-- Calificación EXAMEN -->
+        <!-- Pantalla CALIFICACIÓN EXAMEN -->
         <div id="examScreenGrade" class="screen">
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por pregunta <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Introduce nota 0-10. Se guardan localmente al pulsar Guardar."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por pregunta</div>
                 <div id="examGradeTableWrapper" class="table-responsive" style="max-height:500px; overflow-y:auto;"><table class="table table-bordered table-striped" id="examGradeTable"><thead class="sticky-top bg-white"></thead><tbody id="examGradeTbody"></tbody></table></div>
-                <div class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
-                    <button id="examBtnSaveScores" class="btn btn-primary"><i class="bi bi-save"></i> Guardar calificaciones</button>
-                    <button id="examExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
-                    <button id="examImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
-                    <input type="file" id="examImportScoresFile" accept=".json" class="hidden">
-                    <button id="examRecoverScoresBtn" class="btn btn-outline-info"><i class="bi bi-arrow-repeat"></i> Recuperar calificaciones</button>
-                </div>
+                <div class="mt-3 d-flex justify-content-end"><button id="examBtnSaveScores" class="btn btn-primary"><i class="bi bi-save"></i> Guardar calificaciones</button></div>
                 <div class="alert alert-info mt-3 small" id="examGradeMessage"></div>
             </div>
         </div>
-        <!-- Resultados EXAMEN -->
+        <!-- Pantalla RESULTADOS EXAMEN -->
         <div id="examScreenResults" class="screen">
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-bar-chart-line"></i> Resultados por alumno y criterio <span id="examResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span> <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nota de criterio = (suma notas / suma máximos) * 10. Calificación = media de criterios."></i></div>
-                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="examShowGlobalGrade" checked><label class="form-check-label" for="examShowGlobalGrade">Mostrar columna Calificación</label></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-bar-chart-line"></i> Resultados por alumno y criterio <span id="examResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span></div>
                 <div id="examResultsTableWrapper" class="table-responsive"><table class="table table-bordered table-hover" id="examResultsTable"><thead class="table-secondary"></thead><tbody id="examResultsTbody"></tbody></table></div>
                 <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between align-items-center">
                     <span class="fw-bold"><i class="bi bi-download"></i> Exportar resultados:</span>
-                    <div><button id="examExportJSON" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#examExportModal"><i class="bi bi-filetype-json"></i> JSON</button><button id="examExportExcel" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#examExportModal"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="examExportPDF" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#examExportModal"><i class="bi bi-file-pdf"></i> PDF</button></div>
+                    <div><button id="examExportJSON" class="btn btn-outline-dark"><i class="bi bi-filetype-json"></i> JSON</button><button id="examExportExcel" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="examExportPDF" class="btn btn-outline-danger"><i class="bi bi-file-pdf"></i> PDF</button></div>
                 </div>
             </div>
         </div>
@@ -202,7 +170,7 @@
 
     <!-- ========== APLICACIÓN 2: TIPO TEST ========== -->
     <div id="appTestContainer" class="screen">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="fw-bold"><i class="fas fa-calculator" style="color:#198754;"></i> Examen tipo test · TEC4</h3>
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary active" id="testNavConfig">⚙️ Configuración</button>
@@ -210,18 +178,15 @@
                 <button type="button" class="btn btn-outline-primary" id="testNavResults">📊 Resultados</button>
             </div>
         </div>
-        <!-- Configuración TEST -->
+        <!-- Pantalla CONFIGURACIÓN TEST -->
         <div id="testScreenConfig" class="screen active">
-            <div class="section-card">
-                <div class="section-title"><i class="fas fa-clipboard-list"></i> Datos generales <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Título y curso."></i></div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-clipboard-list"></i> Datos generales</div>
                 <div class="row g-4">
                     <div class="col-md-6"><label class="form-label fw-semibold">📌 Título</label><input type="text" id="testExamTitleInput" class="form-control" value="Examen tipo test"></div>
-                    <div class="col-md-6"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="testCourseInput" class="form-control" value="Tecnología Ciclos" placeholder="Ej: 4º ESO, 2º Bach..."></div>
+                    <div class="col-md-6"><label class="form-label fw-semibold">📚 Clase</label><select id="testCourseSelect" class="form-select"><option value="Tecnología Bachillerato">Tecnología Bachillerato</option><option value="Tecnología Ciclos" selected>Tecnología Ciclos</option></select></div>
                 </div>
-                <div class="d-flex justify-content-end mt-2"><button id="testResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button></div>
             </div>
-            <div class="section-card">
-                <div class="section-title"><i class="fas fa-question-circle"></i> Configuración del test <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nº preguntas y penalización."></i></div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-question-circle"></i> Configuración del test</div>
                 <div class="row g-4">
                     <div class="col-md-6"><label class="form-label fw-semibold">Nº total preguntas:</label><input type="number" id="testTotalQuestions" class="form-control" min="1" value="20"></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">Penalización:</label>
@@ -236,16 +201,14 @@
                     </div>
                 </div>
             </div>
-            <div class="section-card">
-                <div class="section-title"><i class="fas fa-check-double"></i> Criterios TEC.4.X.Y. <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Selecciona criterios que evaluará el test."></i></div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-check-double"></i> Criterios TEC.4.X.Y.</div>
                 <div class="d-flex flex-wrap align-items-center gap-3">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testGlobalCriteriaModal"><i class="fas fa-tags"></i> Seleccionar criterios</button>
                     <span id="testSelectedCriteriaBadges" class="d-flex flex-wrap gap-1"></span>
                 </div>
                 <div id="testNoCriteriaWarning" class="text-danger small mt-2 fw-bold" style="display:none;"><i class="fas fa-exclamation-triangle"></i> Debes seleccionar al menos un criterio.</div>
             </div>
-            <div class="section-card">
-                <div class="section-title"><i class="fas fa-users"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-users"></i> Alumnado</div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="d-flex"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
                     <div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
@@ -262,24 +225,21 @@
                 <button id="testLoadFromLocalBtn" class="btn btn-outline-info btn-sm"><i class="fas fa-folder-open"></i> Cargar local</button>
             </div>
         </div>
-        <!-- Calificación TEST -->
+        <!-- Pantalla CALIFICACIÓN TEST -->
         <div id="testScreenGrade" class="screen">
-            <div class="section-card">
-                <div class="section-title"><i class="fas fa-pencil-alt"></i> Calificaciones por alumno <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Selecciona aciertos y fallos."></i></div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-pencil-alt"></i> Calificaciones por alumno</div>
                 <div id="testGradeTableWrapper" class="table-responsive" style="max-height:600px;"><table class="table table-bordered table-striped" id="testGradeTable"><thead class="table-secondary sticky-top"></thead><tbody id="testGradeTbody"></tbody></table></div>
                 <div class="mt-3 d-flex justify-content-end"><button id="testBtnSaveScores" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button></div>
                 <div class="alert alert-info mt-3 small" id="testGradeMessage"></div>
             </div>
         </div>
-        <!-- Resultados TEST -->
+        <!-- Pantalla RESULTADOS TEST -->
         <div id="testScreenResults" class="screen">
-            <div class="section-card">
-                <div class="section-title"><i class="fas fa-chart-line"></i> Resultados por alumno y criterio <span id="testResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span> <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Misma nota en todos los criterios."></i></div>
-                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="testShowGlobalGrade" checked><label class="form-check-label" for="testShowGlobalGrade">Mostrar columna Calificación</label></div>
+            <div class="section-card"><div class="section-title"><i class="fas fa-chart-line"></i> Resultados por alumno y criterio <span id="testResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span></div>
                 <div id="testResultsTableWrapper" class="table-responsive"><table class="table table-bordered table-hover" id="testResultsTable"><thead class="table-secondary"></thead><tbody id="testResultsTbody"></tbody></table></div>
                 <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between align-items-center">
                     <span class="fw-bold"><i class="fas fa-download"></i> Exportar:</span>
-                    <div><button id="testExportJSON" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#testExportModal"><i class="bi bi-filetype-json"></i> JSON</button><button id="testExportExcel" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#testExportModal"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="testExportPDF" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#testExportModal"><i class="bi bi-file-pdf"></i> PDF</button></div>
+                    <div><button id="testExportJSON" class="btn btn-outline-dark"><i class="bi bi-filetype-json"></i> JSON</button><button id="testExportExcel" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="testExportPDF" class="btn btn-outline-danger"><i class="bi bi-file-pdf"></i> PDF</button></div>
                 </div>
             </div>
         </div>
@@ -287,41 +247,37 @@
 
     <!-- ========== APLICACIÓN 3: EVALUACIÓN GENÉRICA ========== -->
     <div id="appGenericContainer" class="screen">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold"><i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Tarea por criterios · TEC4</h3>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold"><i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Actividad criterial TEC4</h3>
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary active" id="genericNavConfig">⚙️ Configuración</button>
                 <button type="button" class="btn btn-outline-primary" id="genericNavGrade">📝 Calificación</button>
                 <button type="button" class="btn btn-outline-primary" id="genericNavResults">📊 Resultados</button>
             </div>
         </div>
-        <!-- Configuración GENÉRICA -->
+        <!-- Pantalla CONFIGURACIÓN GENÉRICA -->
         <div id="genericScreenConfig" class="screen active">
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-pencil-square"></i> Configuración de la actividad <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Nombre y curso."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-pencil-square"></i> Identificación de la actividad</div>
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4"><label class="form-label fw-semibold">📌 Nombre</label><input type="text" id="genericExamNameInput" class="form-control" value="Actividad sin título"></div>
-                    <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="genericCourseInput" class="form-control" value="Tecnología Ciclos" placeholder="Ej: 4º ESO, 2º Bach..."></div>
-                    <div class="col-md-5 d-flex flex-wrap justify-content-end gap-2">
+                    <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><select id="genericCourseSelect" class="form-select"><option value="Tecnología Ciclos" selected>Tecnología Ciclos</option><option value="Tecnología Bachillerato">Tecnología Bachillerato</option></select></div>
+                    <div class="col-md-5 d-flex justify-content-end gap-2">
                         <button id="genericExportConfigBtn" class="btn btn-outline-primary"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
                         <button id="genericImportConfigBtn" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
                         <input type="file" id="genericImportConfigFile" accept=".json" class="hidden">
                         <button id="genericSaveToLocalBtn" class="btn btn-outline-success"><i class="bi bi-save"></i> Guardar local</button>
                         <button id="genericLoadFromLocalBtn" class="btn btn-outline-info"><i class="bi bi-folder-symlink"></i> Cargar local</button>
-                        <button id="genericResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                     </div>
                 </div>
             </div>
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-check2-square"></i> Gestión de criterios <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Selecciona criterios a evaluar."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-check2-square"></i> Gestión de criterios</div>
                 <div class="d-flex align-items-center gap-3 flex-wrap">
                     <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#genericGlobalCriteriaModal"><i class="bi bi-check2-square"></i> Seleccionar criterios TEC.4.X.Y.</button>
                     <span id="genericSelectedCriteriaBadges" class="d-flex flex-wrap gap-1"></span>
                 </div>
                 <div id="genericOrphanedCriteriaWarning" class="validation-warning mt-3" style="display:none;"><span id="genericOrphanedCriteriaMessage"></span></div>
             </div>
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético)</div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="d-flex"><input type="text" id="genericStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="genericBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
                     <div><label for="genericImportFile" class="import-label"><i class="bi bi-file-earmark-arrow-up"></i> Importar</label><input type="file" id="genericImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
@@ -331,46 +287,38 @@
                 <div id="genericDuplicateMessage" class="small text-danger mt-2"></div>
             </div>
         </div>
-        <!-- Calificación GENÉRICA -->
+        <!-- Pantalla CALIFICACIÓN GENÉRICA -->
         <div id="genericScreenGrade" class="screen">
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por criterio <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Introduce nota 0-10 para cada criterio."></i></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por criterio</div>
                 <div id="genericGradeTableWrapper" class="table-responsive" style="max-height:500px;"><table class="table table-bordered table-striped" id="genericGradeTable"><thead class="sticky-top bg-white"></thead><tbody id="genericGradeTbody"></tbody></table></div>
                 <div class="mt-3 d-flex justify-content-end"><button id="genericBtnSaveScores" class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button></div>
                 <div class="alert alert-info mt-3 small" id="genericGradeMessage"></div>
             </div>
         </div>
-        <!-- Resultados GENÉRICA -->
+        <!-- Pantalla RESULTADOS GENÉRICA -->
         <div id="genericScreenResults" class="screen">
-            <div class="section-card">
-                <div class="section-title"><i class="bi bi-bar-chart-line"></i> Resultados por alumno y criterio <span id="genericResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span> <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Notas directas introducidas."></i></div>
-                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="genericShowGlobalGrade" checked><label class="form-check-label" for="genericShowGlobalGrade">Mostrar columna Calificación</label></div>
+            <div class="section-card"><div class="section-title"><i class="bi bi-bar-chart-line"></i> Resultados por alumno y criterio <span id="genericResultsExamNameSpan" class="badge bg-info ms-3 fs-6"></span></div>
                 <div id="genericResultsTableWrapper" class="table-responsive"><table class="table table-bordered table-hover" id="genericResultsTable"><thead class="table-secondary"></thead><tbody id="genericResultsTbody"></tbody></table></div>
                 <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between align-items-center">
                     <span class="fw-bold"><i class="bi bi-download"></i> Exportar resultados:</span>
-                    <div><button id="genericExportJSON" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#genericExportModal"><i class="bi bi-filetype-json"></i> JSON</button><button id="genericExportExcel" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#genericExportModal"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="genericExportPDF" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#genericExportModal"><i class="bi bi-file-pdf"></i> PDF</button></div>
+                    <div><button id="genericExportJSON" class="btn btn-outline-dark"><i class="bi bi-filetype-json"></i> JSON</button><button id="genericExportExcel" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel"></i> Excel</button><button id="genericExportPDF" class="btn btn-outline-danger"><i class="bi bi-file-pdf"></i> PDF</button></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODALES DE CRITERIOS GLOBALES -->
-    <div class="modal fade" id="examGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Examen por preguntas</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
-    <div class="modal fade" id="testGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Tipo test</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="testGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
-    <div class="modal fade" id="genericGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Evaluación genérica</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="genericGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
-    <!-- Modal asignar criterios a pregunta (examen) -->
-    <div class="modal fade" id="examQuestionCriteriaModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examQuestionCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
-
-    <!-- MODALES PARA EXPORTACIÓN (INCLUIR CALIFICACIÓN) -->
-    <div class="modal fade" id="examExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="examExportIncludeGrade" checked><label class="form-check-label" for="examExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examExportConfirm">Exportar</button></div></div></div></div>
-    <div class="modal fade" id="testExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="testExportIncludeGrade" checked><label class="form-check-label" for="testExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testExportConfirm">Exportar</button></div></div></div></div>
-    <div class="modal fade" id="genericExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="genericExportIncludeGrade" checked><label class="form-check-label" for="genericExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericExportConfirm">Exportar</button></div></div></div></div>
+    <!-- ========== MODALES DE CRITERIOS GLOBALES ========== -->
+    <div class="modal fade" id="examGlobalCriteriaModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Examen por preguntas</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="examGlobalCriteriaGroupedContainer"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="testGlobalCriteriaModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Tipo test</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="testGlobalCriteriaGroupedContainer"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="genericGlobalCriteriaModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Evaluación genérica</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="genericGlobalCriteriaGroupedContainer"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <!-- Modal asignar criterios a pregunta (solo para examen) -->
+    <div class="modal fade" id="examQuestionCriteriaModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="examQuestionCriteriaGroupedContainer"></div></div><div class="modal-footer"><button type="button" class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // =========================================================================
-    //   CONSTANTES Y UTILIDADES (CRITERIOS FIJOS TEC4)
+    //   CONSTANTES Y UTILIDADES COMUNES (REFACTORIZADAS 100% FUNCIONALES)
     // =========================================================================
     const ALL_CRITERIA_CODES = [
         "TEC.4.1.1","TEC.4.1.2","TEC.4.1.3",
@@ -380,52 +328,22 @@
         "TEC.4.5.1",
         "TEC.4.6.1","TEC.4.6.2","TEC.4.6.3"
     ];
-    const competenceColors = ['#0d6efd', '#198754', '#fd7e14', '#6f42c1', '#d63384', '#20c997', '#0dcaf0', '#ffc107'];
-    function getCriteriaDescription(code) { return `Criterio ${code}.`; } // placeholder
-
+    const groupStyles = {
+        "TEC.4.1":"group-tec41","TEC.4.2":"group-tec42","TEC.4.3":"group-tec43",
+        "TEC.4.4":"group-tec44","TEC.4.5":"group-tec45","TEC.4.6":"group-tec46"
+    };
     function groupCriteriaByCompetence(criteriaArray) {
-        const groups = {};
-        criteriaArray.forEach(code => {
-            const match = code.match(/^(TEC\.4\.[1-6])/);
-            if (match) {
-                if (!groups[match[1]]) groups[match[1]] = [];
-                groups[match[1]].push(code);
-            } else {
-                if (!groups['Otros']) groups['Otros'] = [];
-                groups['Otros'].push(code);
-            }
-        });
+        const groups = {"TEC.4.1":[],"TEC.4.2":[],"TEC.4.3":[],"TEC.4.4":[],"TEC.4.5":[],"TEC.4.6":[]};
+        criteriaArray.forEach(code => { let m = code.match(/^(TEC\.4\.[1-6])/); if(m && groups[m[1]]) groups[m[1]].push(code); });
         return groups;
     }
-
     function uuid() { return Date.now()+'-'+Math.random(); }
     function sanitizeFilename(str) { return str.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_áéíóúÁÉÍÓÚñÑüÜ\-]/g,''); }
-    function capitalizeFirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+    function capitalizeFirst(str) { if (!str) return ''; return str.charAt(0).toUpperCase() + str.slice(1); }
     function capitalizeBasename(name) { return name.split('_').map(capitalizeFirst).join('_'); }
 
     // =========================================================================
-    //   ESTADOS GLOBALES
-    // =========================================================================
-    const examState = {
-        examName: "Examen sin título", course: "Tecnología Ciclos",
-        students: [], questions: [{id:1, maxScore:10, criteriaCodes:[]}],
-        globalCriteria: [], scores: [],
-        duplicateMessageId: 'examDuplicateMessage'
-    };
-    const testState = {
-        examName: "Examen tipo test", course: "Tecnología Ciclos",
-        totalQuestions: 20, penaltyFactor: 0,
-        globalCriteria: [], students: [], studentScores: [],
-        duplicateMessageId: 'testDuplicateMessage'
-    };
-    const genericState = {
-        examName: "Actividad sin título", course: "Tecnología Ciclos",
-        students: [], globalCriteria: [], scores: [],
-        duplicateMessageId: 'genericDuplicateMessage'
-    };
-
-    // =========================================================================
-    //   FUNCIONES COMUNES DE ALUMNOS (con edición)
+    //   FUNCIONES COMUNES PARA GESTIÓN DE ALUMNOS (PARAMETRIZADAS)
     // =========================================================================
     function sortStudents(state, scoresField = 'scores') {
         const indices = state.students.map((_,i)=>i).sort((a,b)=> state.students[a].fullName.localeCompare(state.students[b].fullName,'es',{sensitivity:'base'}));
@@ -436,37 +354,22 @@
     function isStudentDuplicate(state, name) {
         return state.students.some(s => s.fullName.trim().toLowerCase() === name.trim().toLowerCase());
     }
-    function renderStudentTags(state, containerId, countId, changeCallback) {
-        const tagsDiv = document.getElementById(containerId);
-        const countSpan = document.getElementById(countId);
+    function renderStudentTags(state, containerId, countId, deleteCallback) {
+        const tagsDiv = document.getElementById(containerId); const countSpan = document.getElementById(countId);
         if (!tagsDiv) return;
-        tagsDiv.innerHTML = '';
-        countSpan.textContent = state.students.length;
+        tagsDiv.innerHTML = ''; countSpan.textContent = state.students.length;
         state.students.forEach((student, idx) => {
             const span = document.createElement('span'); span.className = 'student-tag';
-            span.innerHTML = `${student.fullName} 
-                <i class="bi bi-pencil-fill text-primary" data-stuidx="${idx}" data-action="edit"></i>
-                <i class="bi bi-x-circle-fill text-danger" data-stuidx="${idx}" data-action="delete"></i>`;
+            span.innerHTML = `${student.fullName} <i class="bi bi-x-circle-fill text-danger" style="cursor:pointer;" data-stuidx="${idx}"></i>`;
             tagsDiv.appendChild(span);
         });
-        tagsDiv.querySelectorAll('i[data-action="delete"]').forEach(icon => {
+        tagsDiv.querySelectorAll('i.bi-x-circle-fill').forEach(icon => {
             icon.addEventListener('click', function(e) {
-                e.stopPropagation(); const idx = parseInt(this.dataset.stuidx);
-                state.students.splice(idx, 1);
-                if (state.scores) state.scores.splice(idx, 1);
-                if (state.studentScores) state.studentScores.splice(idx, 1);
-                if (changeCallback) changeCallback();
-            });
-        });
-        tagsDiv.querySelectorAll('i[data-action="edit"]').forEach(icon => {
-            icon.addEventListener('click', function(e) {
-                e.stopPropagation(); const idx = parseInt(this.dataset.stuidx);
-                const oldName = state.students[idx].fullName;
-                const newName = prompt('Editar nombre del alumno:', oldName);
-                if (newName && newName.trim() !== '' && newName.trim() !== oldName) {
-                    state.students[idx].fullName = newName.trim();
-                    if (changeCallback) changeCallback();
-                }
+                const idx = parseInt(this.dataset.stuidx);
+                state.students.splice(idx,1);
+                if (state.scores) state.scores.splice(idx,1);
+                if (state.studentScores) state.studentScores.splice(idx,1);
+                if (deleteCallback) deleteCallback();
             });
         });
     }
@@ -476,7 +379,7 @@
     }
 
     // =========================================================================
-    //   IMPORTAR ALUMNOS DESDE ARCHIVO
+    //   FUNCIONES COMUNES PARA IMPORTAR ALUMNOS DESDE EXCEL/JSON
     // =========================================================================
     function importStudentsFromFile(file, state, scoresField, afterImportCallback) {
         const ext = file.name.split('.').pop().toLowerCase();
@@ -509,7 +412,10 @@
                     } else skipped++;
                 }
             });
-            if (added > 0) { sortStudents(state, scoresField); if (afterImportCallback) afterImportCallback(); }
+            if (added > 0) {
+                sortStudents(state, scoresField);
+                if (afterImportCallback) afterImportCallback();
+            }
             showDuplicateMessage(state.duplicateMessageId, skipped>0 ? `Se omitieron ${skipped} duplicado(s).` : '');
         };
         if (ext === 'xlsx' || ext === 'xls') reader.readAsBinaryString(file);
@@ -517,72 +423,76 @@
     }
 
     // =========================================================================
-    //   FUNCIONES PARA MODALES DE CRITERIOS (con colores dinámicos)
+    //   ESTADOS GLOBALES DE CADA APLICACIÓN (INDEPENDIENTES)
     // =========================================================================
-    function populateCriteriaModal(containerId, appPrefix, selectedArray) {
-        const container = document.getElementById(containerId);
+    const examState = {
+        examName: "Examen sin título", course: "Tecnología Ciclos",
+        students: [], questions: [{id:1, maxScore:10, criteriaCodes:[]}],
+        globalCriteria: [], scores: [],
+        duplicateMessageId: 'examDuplicateMessage'
+    };
+    const testState = {
+        examName: "Examen tipo test", course: "Tecnología Ciclos",
+        totalQuestions: 20, penaltyFactor: 0,
+        globalCriteria: [], students: [], studentScores: [],
+        duplicateMessageId: 'testDuplicateMessage'
+    };
+    const genericState = {
+        examName: "Actividad sin título", course: "Tecnología Ciclos",
+        students: [], globalCriteria: [], scores: [],
+        duplicateMessageId: 'genericDuplicateMessage'
+    };
+
+    // =========================================================================
+    //   CONTROL DE APLICACIÓN ACTIVA Y NAVEGACIÓN
+    // =========================================================================
+    let currentApp = 'home';
+    function showHome() { hideAllApps(); document.getElementById('homeScreen').classList.add('active'); currentApp = 'home'; }
+    function showApp(appId) {
+        hideAllApps(); document.getElementById(appId).classList.add('active');
+        if (appId === 'appExamContainer') { currentApp = 'exam'; showExamScreen('config'); }
+        else if (appId === 'appTestContainer') { currentApp = 'test'; showTestScreen('config'); }
+        else if (appId === 'appGenericContainer') { currentApp = 'generic'; showGenericScreen('config'); }
+    }
+    function hideAllApps() {
+        document.getElementById('homeScreen').classList.remove('active');
+        document.getElementById('appExamContainer').classList.remove('active');
+        document.getElementById('appTestContainer').classList.remove('active');
+        document.getElementById('appGenericContainer').classList.remove('active');
+    }
+
+    // =========================================================================
+    //   APLICACIÓN 1: EXAMEN POR PREGUNTAS (COMPLETA Y FUNCIONAL)
+    // =========================================================================
+    function populateExamGlobalModal() {
+        const container = document.getElementById('examGlobalCriteriaGroupedContainer');
         if (!container) return;
         container.innerHTML = '';
         const groups = groupCriteriaByCompetence(ALL_CRITERIA_CODES);
-        const sortedGroups = Object.keys(groups).sort((a,b) => a.localeCompare(b, undefined, {numeric:true}));
-        sortedGroups.forEach((groupKey, index) => {
-            const groupDiv = document.createElement('div'); groupDiv.className = 'criteria-group';
-            groupDiv.style.borderLeftColor = competenceColors[index % competenceColors.length];
-            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${groupKey}</div><div class="row"></div>`;
+        Object.keys(groups).sort().forEach(comp => {
+            if (!groups[comp].length) return;
+            const groupDiv = document.createElement('div'); groupDiv.className = `criteria-group ${groupStyles[comp]}`;
+            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${comp}</div><div class="row"></div>`;
             const rowDiv = groupDiv.querySelector('.row');
-            groups[groupKey].forEach(code => {
+            groups[comp].forEach(code => {
                 const col = document.createElement('div'); col.className = 'col-md-4 mb-2';
-                const inputId = `${appPrefix}_chk_${code.replace(/\./g,'_')}`;
-                col.innerHTML = `<div class="form-check"><input class="form-check-input global-criteria-chk" type="checkbox" value="${code}" id="${inputId}"><label class="form-check-label" for="${inputId}" title="${getCriteriaDescription(code)}">${code}.</label></div>`;
+                col.innerHTML = `<div class="form-check"><input class="form-check-input global-criteria-chk" type="checkbox" value="${code}" id="exam_chk_${code.replace(/\./g,'_')}"><label class="form-check-label" for="exam_chk_${code.replace(/\./g,'_')}">${code}</label></div>`;
                 rowDiv.appendChild(col);
             });
             container.appendChild(groupDiv);
         });
-        container.querySelectorAll('.global-criteria-chk').forEach(chk => {
-            chk.checked = selectedArray.includes(chk.value);
+        document.querySelectorAll('#examGlobalCriteriaGroupedContainer .global-criteria-chk').forEach(chk => {
+            chk.checked = examState.globalCriteria.includes(chk.value);
         });
     }
-
     function renderExamGlobalBadges() {
         const container = document.getElementById('examSelectedCriteriaBadges');
         if (!container) return;
         container.innerHTML = '';
-        examState.globalCriteria.forEach(code => {
-            let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2 criteria-badge';
-            span.textContent = code + '.'; span.setAttribute('data-code', code); span.title = getCriteriaDescription(code);
-            container.appendChild(span);
-        });
+        examState.globalCriteria.forEach(code => { let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2'; span.textContent = code; container.appendChild(span); });
         if (examState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
         validateExamCriteria();
     }
-    function renderTestGlobalBadges() {
-        const container = document.getElementById('testSelectedCriteriaBadges');
-        if (!container) return;
-        container.innerHTML = '';
-        testState.globalCriteria.forEach(code => {
-            let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2 criteria-badge';
-            span.textContent = code + '.'; span.setAttribute('data-code', code); span.title = getCriteriaDescription(code);
-            container.appendChild(span);
-        });
-        if (testState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
-        const warn = document.getElementById('testNoCriteriaWarning'); if (warn) warn.style.display = testState.globalCriteria.length===0 ? 'block' : 'none';
-    }
-    function renderGenericGlobalBadges() {
-        const container = document.getElementById('genericSelectedCriteriaBadges');
-        if (!container) return;
-        container.innerHTML = '';
-        genericState.globalCriteria.forEach(code => {
-            let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2 criteria-badge';
-            span.textContent = code + '.'; span.setAttribute('data-code', code); span.title = getCriteriaDescription(code);
-            container.appendChild(span);
-        });
-        if (genericState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
-        validateGenericCriteria();
-    }
-
-    // =========================================================================
-    //   VALIDACIONES
-    // =========================================================================
     function validateExamCriteria() {
         const warning = document.getElementById('examOrphanedCriteriaWarning');
         const msg = document.getElementById('examOrphanedCriteriaMessage');
@@ -590,35 +500,27 @@
         const assigned = new Set();
         examState.questions.forEach(q => q.criteriaCodes.forEach(c=>assigned.add(c)));
         const missing = examState.globalCriteria.filter(c=>!assigned.has(c));
-        if (missing.length>0) { warning.style.display='block'; msg.textContent = `Criterios no asignados: ${missing.map(c=>c+'.').join(', ')}`; return false; }
+        if (missing.length>0) { warning.style.display='block'; msg.textContent = `Criterios no asignados: ${missing.join(', ')}`; return false; }
         warning.style.display='none'; return true;
     }
-    function validateGenericCriteria() {
-        const warning = document.getElementById('genericOrphanedCriteriaWarning');
-        const msg = document.getElementById('genericOrphanedCriteriaMessage');
-        if (genericState.globalCriteria.length===0) { warning.style.display='block'; msg.textContent='No hay criterios globales seleccionados.'; return false; }
-        warning.style.display='none'; return true;
-    }
-
-    // =========================================================================
-    //   FUNCIONES EXAMEN POR PREGUNTAS (con cálculo ponderado)
-    // =========================================================================
     function renderExamQuestionsTable() {
         const tbody = document.getElementById('examQuestionsTbody');
         if (!tbody) return;
         tbody.innerHTML = '';
         examState.questions.forEach((q, index) => {
-            const badgesHtml = q.criteriaCodes.map(c => `<span class="badge badge-criteria me-1 criteria-badge" data-code="${c}" title="${getCriteriaDescription(c)}">${c}.</span>`).join('');
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>P${q.id}</strong></td>
                 <td style="width:140px;"><input type="number" class="form-control form-control-sm max-score-input" data-qidx="${index}" value="${q.maxScore}" min="0.1" max="10" step="0.1"></td>
-                <td><span id="exam_criteriaBadges_${q.id}">${badgesHtml}</span></td>
-                <td style="width:220px;"><div class="d-flex flex-wrap gap-1">
-                    <button class="btn btn-sm btn-outline-primary assign-criteria-btn" data-qid="${q.id}" data-bs-toggle="modal" data-bs-target="#examQuestionCriteriaModal"><i class="bi bi-tags"></i> Asignar</button>
-                    <button class="btn btn-sm btn-outline-success insert-after-btn" data-index="${index}"><i class="bi bi-plus-circle"></i> + después</button>
-                    <button class="btn btn-sm btn-outline-danger delete-question-btn" data-index="${index}"><i class="bi bi-trash3"></i></button>
-                </div></td>`;
+                <td><span id="exam_criteriaBadges_${q.id}">${q.criteriaCodes.map(c=>`<span class="badge badge-criteria me-1">${c}</span>`).join('')}</span></td>
+                <td style="width:220px;">
+                    <div class="d-flex flex-wrap gap-1">
+                        <button class="btn btn-sm btn-outline-primary assign-criteria-btn" data-qid="${q.id}" data-bs-toggle="modal" data-bs-target="#examQuestionCriteriaModal"><i class="bi bi-tags"></i> Asignar</button>
+                        <button class="btn btn-sm btn-outline-success insert-after-btn" data-index="${index}"><i class="bi bi-plus-circle"></i> + después</button>
+                        <button class="btn btn-sm btn-outline-danger delete-question-btn" data-index="${index}"><i class="bi bi-trash3"></i></button>
+                    </div>
+                </td>
+            `;
             tbody.appendChild(tr);
         });
         document.querySelectorAll('#examQuestionsTbody .max-score-input').forEach(inp => inp.addEventListener('change', function(){
@@ -647,51 +549,42 @@
         examState.scores = examState.scores.map(row => { if (!row) return new Array(nQ).fill(0); if (row.length<nQ) return [...row, ...new Array(nQ-row.length).fill(0)]; if (row.length>nQ) return row.slice(0,nQ); return row; });
         while (examState.scores.length < examState.students.length) examState.scores.push(new Array(nQ).fill(0));
         if (examState.scores.length > examState.students.length) examState.scores = examState.scores.slice(0, examState.students.length);
-        clampExamScores();
     }
-    function clampExamScores() {
-        examState.scores.forEach((studentScores, sIdx) => {
-            if (!studentScores) return;
-            studentScores.forEach((score, qIdx) => {
-                const max = examState.questions[qIdx]?.maxScore || 10;
-                if (score > max) studentScores[qIdx] = max; else if (score < 0) studentScores[qIdx] = 0;
-            });
-        });
-    }
-
     function populateExamQuestionCriteria(question) {
         const container = document.getElementById('examQuestionCriteriaGroupedContainer');
         if (!container) return;
         container.innerHTML = '';
-        const available = examState.globalCriteria;
-        if (available.length === 0) { container.innerHTML = '<div class="alert alert-warning">Selecciona criterios globales primero.</div>'; return; }
-        const groups = groupCriteriaByCompetence(available);
-        const sortedGroups = Object.keys(groups).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-        sortedGroups.forEach((groupKey, index) => {
-            const groupDiv = document.createElement('div'); groupDiv.className = 'criteria-group'; groupDiv.style.borderLeftColor = competenceColors[index % competenceColors.length];
-            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${groupKey}</div><div class="row"></div>`;
+        if (examState.globalCriteria.length===0) { container.innerHTML = '<div class="alert alert-warning">No hay criterios globales.</div>'; return; }
+        const groups = groupCriteriaByCompetence(examState.globalCriteria);
+        Object.keys(groups).sort().forEach(comp => {
+            if (!groups[comp].length) return;
+            const groupDiv = document.createElement('div'); groupDiv.className = `criteria-group ${groupStyles[comp]} mb-3`;
+            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${comp}</div><div class="row"></div>`;
             const rowDiv = groupDiv.querySelector('.row');
-            groups[groupKey].forEach(code => {
+            groups[comp].forEach(code => {
                 const col = document.createElement('div'); col.className = 'col-md-6 mb-2';
                 const isChecked = question.criteriaCodes.includes(code);
-                col.innerHTML = `<div class="form-check"><input class="form-check-input question-criteria-chk" type="checkbox" value="${code}" id="qchk_${question.id}_${code.replace(/\./g,'_')}" ${isChecked?'checked':''}><label class="form-check-label" for="qchk_${question.id}_${code.replace(/\./g,'_')}" title="${getCriteriaDescription(code)}">${code}.</label></div>`;
+                col.innerHTML = `<div class="form-check"><input class="form-check-input question-criteria-chk" type="checkbox" value="${code}" id="exam_qchk_${question.id}_${code.replace(/\./g,'_')}" ${isChecked?'checked':''}><label class="form-check-label" for="exam_qchk_${question.id}_${code.replace(/\./g,'_')}">${code}</label></div>`;
                 rowDiv.appendChild(col);
             });
             container.appendChild(groupDiv);
         });
-        document.getElementById('examSaveQuestionCriteria').onclick = function() {
-            const selected = []; container.querySelectorAll('.question-criteria-chk:checked').forEach(chk => selected.push(chk.value));
-            question.criteriaCodes = selected; renderExamQuestionsTable(); validateExamCriteria();
+        const saveBtn = document.getElementById('examSaveQuestionCriteria');
+        saveBtn.onclick = function() {
+            const selected = [];
+            document.querySelectorAll('#examQuestionCriteriaGroupedContainer .question-criteria-chk:checked').forEach(chk => selected.push(chk.value));
+            question.criteriaCodes = selected;
+            renderExamQuestionsTable(); validateExamCriteria();
         };
     }
-
     function renderExamGradeTable() {
         const thead = document.querySelector('#examGradeTable thead'); const tbody = document.getElementById('examGradeTbody');
         if (!thead||!tbody) return;
         if (examState.students.length===0 || examState.questions.length===0) { thead.innerHTML=''; tbody.innerHTML='<tr><td class="text-center p-4">Se requieren alumnos y preguntas.</td></tr>'; return; }
         normalizeExamScores();
         let headerHtml = '<tr><th>Alumno</th>'; examState.questions.forEach(q=> headerHtml+=`<th>P${q.id}<br><small>max ${q.maxScore}</small></th>`); headerHtml+='</tr>';
-        thead.innerHTML = headerHtml; tbody.innerHTML = '';
+        thead.innerHTML = headerHtml;
+        tbody.innerHTML = '';
         examState.students.forEach((student,sIdx)=>{
             const tr = document.createElement('tr'); tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
             examState.questions.forEach((q,qIdx)=>{
@@ -709,116 +602,72 @@
             if (!examState.scores[sIdx]) examState.scores[sIdx]=[]; examState.scores[sIdx][qIdx]=val;
         }));
     }
-
     function renderExamResults() {
         const thead = document.querySelector('#examResultsTable thead'); const tbody = document.getElementById('examResultsTbody');
+        if (!thead||!tbody) return;
         document.getElementById('examResultsExamNameSpan').textContent = `Examen: ${examState.examName}`;
         if (examState.globalCriteria.length===0 || examState.students.length===0) { thead.innerHTML='<tr><th>Alumno</th><th>Sin criterios o alumnos</th></tr>'; tbody.innerHTML='<tr><td colspan="2" class="text-center">Agregue criterios y alumnos.</td></tr>'; return; }
         normalizeExamScores();
-        const showGlobal = document.getElementById('examShowGlobalGrade').checked;
-        let headerRow = '<tr><th>Alumno</th>'; examState.globalCriteria.forEach(c=> headerRow+=`<th>${c}.</th>`); if (showGlobal) headerRow += '<th>Calificación</th>'; headerRow += '</tr>';
-        thead.innerHTML = headerRow; tbody.innerHTML = '';
+        let headerRow = '<tr><th>Alumno</th>'; examState.globalCriteria.forEach(crit=> headerRow+=`<th>${crit}.</th>`); headerRow+='</tr>'; thead.innerHTML = headerRow;
+        tbody.innerHTML = '';
         examState.students.forEach((student,sIdx)=>{
             let rowHtml = `<td><strong>${student.fullName}</strong></td>`;
-            let criteriasSum = 0, criteriasCount = 0;
             examState.globalCriteria.forEach(crit=>{
                 const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
-                if (qIndices.length===0) { rowHtml += '<td class="text-muted">—</td>'; }
-                else {
-                    let sumaNotas = 0, sumaMaximos = 0;
-                    qIndices.forEach(qIdx => { sumaNotas += examState.scores[sIdx]?.[qIdx] || 0; sumaMaximos += examState.questions[qIdx].maxScore; });
-                    let notaCriterio = (sumaMaximos > 0) ? (sumaNotas / sumaMaximos) * 10 : 0;
-                    notaCriterio = Math.round(notaCriterio * 100) / 100;
-                    rowHtml += `<td>${notaCriterio.toFixed(2)}</td>`;
-                    criteriasSum += notaCriterio; criteriasCount++;
-                }
+                if (qIndices.length===0) rowHtml += '<td class="text-muted">—</td>';
+                else { let sum = qIndices.reduce((s,i)=> s+(examState.scores[sIdx]?.[i]||0),0); rowHtml += `<td>${(sum/qIndices.length).toFixed(2)}</td>`; }
             });
-            if (showGlobal) { let global = criteriasCount>0 ? (criteriasSum/criteriasCount).toFixed(2) : '—'; rowHtml += `<td><strong>${global}</strong></td>`; }
             tbody.innerHTML += `<tr>${rowHtml}</tr>`;
         });
     }
-
-    // Funciones exportación EXAMEN (con wrapper objeto y nombre)
-    function exportExamJSON(includeGrade) {
-        if (!examState.students.length) return alert('No hay datos');
-        const resultados = examState.students.map((student,sIdx)=>{
+    function exportExamJSON() {
+        if (examState.students.length===0) return alert('No hay datos');
+        const exportData = examState.students.map((student,sIdx)=>{
             const row = { Alumno: student.fullName };
-            let sum=0, cnt=0;
             examState.globalCriteria.forEach(crit=>{
                 const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
-                let nota = null;
-                if (qIndices.length) {
-                    let sN=0, sM=0; qIndices.forEach(qIdx=>{ sN+=examState.scores[sIdx]?.[qIdx]||0; sM+=examState.questions[qIdx].maxScore; });
-                    nota = (sM>0)? (sN/sM)*10 : 0;
-                    nota = Math.round(nota*100)/100;
-                }
-                row[crit+'.'] = nota;
-                if (nota!==null) { sum+=nota; cnt++; }
+                let avg = qIndices.length ? (qIndices.reduce((s,i)=> s+(examState.scores[sIdx]?.[i]||0),0)/qIndices.length) : null;
+                row[crit+'.'] = avg!==null ? parseFloat(avg.toFixed(2)) : null;
             });
-            if (includeGrade) row['Calificación'] = cnt>0 ? parseFloat((sum/cnt).toFixed(2)) : null;
             return row;
         });
-        const exportData = { examen: examState.examName, resultados };
         const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
         const url = URL.createObjectURL(blob); const a = document.createElement('a');
-        a.href = url; let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
-        a.download = `Resultados_${base}.json`; a.click(); URL.revokeObjectURL(url);
+        a.href = url; a.download = `resultados_${sanitizeFilename(examState.examName)}.json`; a.click(); URL.revokeObjectURL(url);
     }
-    function exportExamExcel(includeGrade) {
-        if (!examState.students.length) return alert('Sin datos');
-        const header = ['Alumno', ...examState.globalCriteria.map(c=>c+'.')]; if (includeGrade) header.push('Calificación');
-        const wsData = [[`Examen: ${examState.examName}`],[],header];
+    function exportExamExcel() {
+        if (examState.students.length===0) return alert('Sin datos');
+        const wsData = [['Alumno', ...examState.globalCriteria.map(c=>c+'.')]];
         examState.students.forEach((student,sIdx)=>{
             const row = [student.fullName];
-            let sum=0, cnt=0;
             examState.globalCriteria.forEach(crit=>{
                 const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
-                let val = '';
-                if (qIndices.length) {
-                    let sN=0, sM=0; qIndices.forEach(qIdx=>{ sN+=examState.scores[sIdx]?.[qIdx]||0; sM+=examState.questions[qIdx].maxScore; });
-                    val = (sM>0)? Math.round(((sN/sM)*10)*100)/100 : 0;
-                }
-                row.push(val);
-                if (val!=='') { sum+=val; cnt++; }
+                let avg = qIndices.length ? (qIndices.reduce((s,i)=> s+(examState.scores[sIdx]?.[i]||0),0)/qIndices.length) : '';
+                row.push(avg!=='' ? parseFloat(avg.toFixed(2)) : '');
             });
-            if (includeGrade) row.push(cnt>0 ? parseFloat((sum/cnt).toFixed(2)) : '');
             wsData.push(row);
         });
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados');
-        let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
-        XLSX.writeFile(wb, `Resultados_${base}.xlsx`);
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados'); XLSX.writeFile(wb, `resultados_${sanitizeFilename(examState.examName)}.xlsx`);
     }
-    function exportExamPDF(includeGrade) {
-        if (!examState.students.length) return alert('Sin datos');
+    function exportExamPDF() {
+        if (examState.students.length===0) return alert('Sin datos');
         const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' });
-        doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(examState.examName.toUpperCase(), 14, 20);
-        doc.setFontSize(10); doc.setFont(undefined,'normal');
-        const headers = [['Alumno', ...examState.globalCriteria.map(c=>c+'.')]]; if (includeGrade) headers[0].push('Calificación');
+        const headers = [['Alumno', ...examState.globalCriteria.map(c=>c+'.')]];
         const body = examState.students.map((student,sIdx)=>{
             const row = [student.fullName];
-            let sum=0, cnt=0;
             examState.globalCriteria.forEach(crit=>{
                 const qIndices = examState.questions.reduce((acc,q,qIdx)=> q.criteriaCodes.includes(crit)?[...acc,qIdx]:acc, []);
-                let val = '-';
-                if (qIndices.length) {
-                    let sN=0, sM=0; qIndices.forEach(qIdx=>{ sN+=examState.scores[sIdx]?.[qIdx]||0; sM+=examState.questions[qIdx].maxScore; });
-                    val = ((sM>0)? (sN/sM)*10 : 0).toFixed(2);
-                    sum+=parseFloat(val); cnt++;
-                }
-                row.push(val);
+                let avg = qIndices.length ? (qIndices.reduce((s,i)=> s+(examState.scores[sIdx]?.[i]||0),0)/qIndices.length) : '';
+                row.push(avg!=='' ? avg.toFixed(2) : '-');
             });
-            if (includeGrade) row.push(cnt>0 ? (sum/cnt).toFixed(2) : '-');
             return row;
         });
-        doc.autoTable({ head: headers, body, startY:30, theme:'grid' });
-        let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
-        doc.save(`Resultados_${base}.pdf`);
+        doc.autoTable({ head: headers, body, startY:20, theme:'grid' }); doc.save(`resultados_${sanitizeFilename(examState.examName)}.pdf`);
     }
     function exportExamConfig() {
         const cfg = { examName: examState.examName, course: examState.course, questions: examState.questions.map(q=>({...q, criteriaCodes:[...q.criteriaCodes]})), globalCriteria: [...examState.globalCriteria], students: examState.students.map(s=>({fullName:s.fullName})) };
         const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
-        a.href = url; let base = sanitizeFilename(examState.examName); base = capitalizeBasename(base);
-        a.download = `Configuración_${base}.json`; a.click(); URL.revokeObjectURL(url);
+        a.href = url; a.download = `config_${sanitizeFilename(examState.examName)}.json`; a.click(); URL.revokeObjectURL(url);
     }
     function importExamConfig(file) {
         const reader = new FileReader();
@@ -832,73 +681,68 @@
                 examState.students = (cfg.students || []).map(s=>({id:uuid(), fullName:s.fullName}));
                 examState.scores = examState.students.map(()=> new Array(examState.questions.length).fill(0));
                 document.getElementById('examNameInput').value = examState.examName;
-                document.getElementById('examCourseInput').value = examState.course;
+                document.getElementById('examCourseSelect').value = examState.course;
                 document.getElementById('examInputNumQuestions').value = examState.questions.length;
-                sortStudents(examState,'scores'); renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags();
-                alert('✅ Configuración importada.');
+                sortStudents(examState,'scores'); renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags(); alert('✅ Configuración importada.');
             } catch(err) { alert('Error al importar: '+err.message); }
-        }; reader.readAsText(file);
+        };
+        reader.readAsText(file);
     }
-    // Gestión de calificaciones examen
-    function exportExamScores() {
-        if (!examState.students.length || !examState.questions.length) return alert('No hay datos');
-        const data = { examName: examState.examName, course: examState.course, students: examState.students.map(s=>s.fullName), questions: examState.questions.map(q=>({id:q.id, maxScore:q.maxScore})), scores: examState.scores };
-        const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
-        a.href = url; let base = sanitizeFilename(examState.examName+'_'+examState.course); base = capitalizeBasename(base);
-        a.download = `Calificaciones_${base}.json`; a.click(); URL.revokeObjectURL(url);
+    function showExamScreen(screen) {
+        document.querySelectorAll('#appExamContainer .screen').forEach(s=>s.classList.remove('active'));
+        document.getElementById('examScreen'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        document.querySelectorAll('#appExamContainer .btn-group .btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('examNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        if (screen==='grade') renderExamGradeTable(); else if (screen==='results') renderExamResults();
     }
-    function importExamScores(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                if (!data.examName || !Array.isArray(data.students) || !Array.isArray(data.questions) || !Array.isArray(data.scores)) throw new Error('Formato inválido');
-                if (data.students.length !== examState.students.length || data.questions.length !== examState.questions.length) {
-                    if (!confirm('El número de alumnos o preguntas no coincide. ¿Continuar?')) return;
-                }
-                examState.scores = data.scores; normalizeExamScores(); renderExamGradeTable();
-                document.getElementById('examGradeMessage').innerHTML = '<i class="bi bi-check-circle"></i> Calificaciones importadas.';
-                setTimeout(()=>document.getElementById('examGradeMessage').innerHTML='',3000);
-            } catch(err) { alert('Error: '+err.message); }
-        }; reader.readAsText(file);
-    }
-    function recoverExamScores() {
-        const saved = localStorage.getItem('exam_scores_backup');
-        if (!saved) return alert('No hay copia local.');
-        try {
-            const data = JSON.parse(saved);
-            if (data.students && data.questions && data.scores) {
-                examState.scores = data.scores; normalizeExamScores(); renderExamGradeTable();
-                document.getElementById('examGradeMessage').innerHTML = '<i class="bi bi-check-circle"></i> Calificaciones recuperadas.';
-                setTimeout(()=>document.getElementById('examGradeMessage').innerHTML='',3000);
-            } else alert('Formato de copia no válido.');
-        } catch(e) { alert('Error: '+e.message); }
-    }
+    function renderExamStudentTags() { renderStudentTags(examState, 'examStudentTags', 'examStudentCountBadge', ()=>{ normalizeExamScores(); if (currentApp==='exam' && document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable(); }); }
 
-    function renderExamStudentTags() {
-        renderStudentTags(examState, 'examStudentTags', 'examStudentCountBadge', () => {
-            sortStudents(examState,'scores'); normalizeExamScores(); renderExamStudentTags();
-            if (currentApp==='exam' && document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable();
+    // =========================================================================
+    //   APLICACIÓN 2: TIPO TEST (COMPLETA Y FUNCIONAL)
+    // =========================================================================
+    function populateTestGlobalModal() {
+        const container = document.getElementById('testGlobalCriteriaGroupedContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        const groups = groupCriteriaByCompetence(ALL_CRITERIA_CODES);
+        Object.keys(groups).sort().forEach(comp => {
+            if (!groups[comp].length) return;
+            const groupDiv = document.createElement('div'); groupDiv.className = `criteria-group ${groupStyles[comp]}`;
+            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${comp}</div><div class="row"></div>`;
+            const rowDiv = groupDiv.querySelector('.row');
+            groups[comp].forEach(code => {
+                const col = document.createElement('div'); col.className = 'col-md-4 mb-2';
+                col.innerHTML = `<div class="form-check"><input class="form-check-input global-criteria-chk" type="checkbox" value="${code}" id="test_chk_${code.replace(/\./g,'_')}"><label class="form-check-label" for="test_chk_${code.replace(/\./g,'_')}">${code}</label></div>`;
+                rowDiv.appendChild(col);
+            });
+            container.appendChild(groupDiv);
+        });
+        document.querySelectorAll('#testGlobalCriteriaGroupedContainer .global-criteria-chk').forEach(chk => {
+            chk.checked = testState.globalCriteria.includes(chk.value);
         });
     }
-
-    // =========================================================================
-    //   FUNCIONES TIPO TEST
-    // =========================================================================
+    function renderTestGlobalBadges() {
+        const container = document.getElementById('testSelectedCriteriaBadges');
+        if (!container) return;
+        container.innerHTML = '';
+        testState.globalCriteria.forEach(code => { let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2'; span.textContent = code; container.appendChild(span); });
+        if (testState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
+        const warn = document.getElementById('testNoCriteriaWarning'); if (warn) warn.style.display = testState.globalCriteria.length===0 ? 'block' : 'none';
+    }
     function computeTestGrade(correct, wrong) {
         if (testState.totalQuestions <= 0) return 0;
         const valuePerCorrect = 10 / testState.totalQuestions;
         let grade = correct * valuePerCorrect - wrong * valuePerCorrect * testState.penaltyFactor;
-        grade = Math.max(0, Math.min(10, grade));
-        return Math.round(grade * 100) / 100;
+        grade = Math.max(0, grade); return Math.round(grade * 100) / 100;
     }
     function renderTestGradeTable() {
         const thead = document.querySelector('#testGradeTable thead'); const tbody = document.getElementById('testGradeTbody');
         if (!thead||!tbody) return;
         if (testState.students.length===0) { thead.innerHTML=''; tbody.innerHTML='<tr><td colspan="4" class="text-center p-4">Añade alumnos en Configuración.</td></tr>'; return; }
         let headerHtml = '<tr><th>Alumno</th><th>Aciertos</th><th>Fallos</th><th>NS/NC</th>';
-        testState.globalCriteria.forEach(crit => headerHtml += `<th>${crit}.</th>`); headerHtml += '</tr>';
-        thead.innerHTML = headerHtml; tbody.innerHTML = '';
+        testState.globalCriteria.forEach(crit => headerHtml += `<th>${crit}</th>`); headerHtml += '</tr>';
+        thead.innerHTML = headerHtml;
+        tbody.innerHTML = '';
         testState.students.forEach((student, sIdx) => {
             if (!testState.studentScores[sIdx]) testState.studentScores[sIdx] = { studentId: student.id, correct: 0, wrong: 0, unanswered: testState.totalQuestions };
             const scores = testState.studentScores[sIdx];
@@ -962,68 +806,51 @@
         const thead = document.querySelector('#testResultsTable thead'); const tbody = document.getElementById('testResultsTbody');
         document.getElementById('testResultsExamNameSpan').innerHTML = `Test: "${testState.examName}"`;
         if (testState.globalCriteria.length===0 || testState.students.length===0) { thead.innerHTML='<tr><th>Alumno</th><th>Sin criterios o alumnos</th></tr>'; tbody.innerHTML='<tr><td colspan="2" class="text-center">Agregue criterios y alumnos.</td></tr>'; return; }
-        const showGlobal = document.getElementById('testShowGlobalGrade').checked;
-        let headerRow = '<tr><th>Alumno</th>'; testState.globalCriteria.forEach(crit => headerRow+=`<th>${crit}.</th>`); if (showGlobal) headerRow += '<th>Calificación</th>'; headerRow += '</tr>';
-        thead.innerHTML = headerRow; tbody.innerHTML = '';
+        let headerRow = '<tr><th>Alumno</th>'; testState.globalCriteria.forEach(crit => headerRow+=`<th>${crit}</th>`); headerRow+='</tr>'; thead.innerHTML=headerRow;
+        tbody.innerHTML = '';
         testState.students.forEach((student,sIdx)=>{
             const scores = testState.studentScores[sIdx]||{correct:0,wrong:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
             let rowHtml = `<td><strong>${student.fullName}</strong></td>`;
             testState.globalCriteria.forEach(()=> rowHtml += `<td class="text-center">${grade.toFixed(2)}</td>`);
-            if (showGlobal) rowHtml += `<td class="text-center fw-bold">${grade.toFixed(2)}</td>`;
             tbody.innerHTML += `<tr>${rowHtml}</tr>`;
         });
     }
-    // *** CORREGIDO: exportTestJSON (faltaba definir url) ***
-    function exportTestJSON(includeGrade) {
-        if (!testState.students.length) return alert('No hay datos');
-        const resultados = testState.students.map((student,sIdx)=>{
+    function exportTestJSON() {
+        if (testState.students.length===0) return alert('No hay datos');
+        const exportData = []; testState.students.forEach((student,sIdx)=>{
             const scores = testState.studentScores[sIdx]||{correct:0,wrong:0,unanswered:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
             const row = { Alumno: student.fullName, Aciertos: scores.correct, Fallos: scores.wrong, "NS/NC": scores.unanswered };
-            testState.globalCriteria.forEach(crit => row[crit+'.'] = grade);
-            if (includeGrade) row['Calificación'] = grade;
-            return row;
+            testState.globalCriteria.forEach(crit => row[crit] = grade); exportData.push(row);
         });
-        const exportData = { examen: testState.examName, resultados };
-        const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
-        const url = URL.createObjectURL(blob); const a = document.createElement('a');
-        a.href = url; let base = sanitizeFilename(testState.examName+'_'+testState.course); base = capitalizeBasename(base);
-        a.download = `Resultados_${base}.json`; a.click(); URL.revokeObjectURL(url);
+        const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; let base = sanitizeFilename(testState.examName)||'Resultados'; base = capitalizeBasename(base); a.download = `${base}.json`; a.click(); URL.revokeObjectURL(url);
     }
-    function exportTestExcel(includeGrade) {
-        if (!testState.students.length) return alert('Sin datos');
-        const header = ['Alumno','Aciertos','Fallos','NS/NC', ...testState.globalCriteria.map(c=>c+'.')]; if (includeGrade) header.push('Calificación');
-        const wsData = [[`Examen: ${testState.examName}`],[],header];
+    function exportTestExcel() {
+        if (testState.students.length===0) return alert('Sin datos');
+        const header = ['Alumno','Aciertos','Fallos','NS/NC', ...testState.globalCriteria.map(c=>c.endsWith('.')?c:c+'.')];
+        const wsData = [header];
         testState.students.forEach((student,sIdx)=>{
             const scores = testState.studentScores[sIdx]||{correct:0,wrong:0,unanswered:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
             const row = [student.fullName, scores.correct, scores.wrong, scores.unanswered, ...testState.globalCriteria.map(()=>grade)];
-            if (includeGrade) row.push(grade);
             wsData.push(row);
         });
         const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados');
-        let base = sanitizeFilename(testState.examName+'_'+testState.course); base = capitalizeBasename(base);
-        XLSX.writeFile(wb, `Resultados_${base}.xlsx`);
+        let base = sanitizeFilename(testState.examName)||'Resultados'; base = capitalizeBasename(base); XLSX.writeFile(wb, `${base}.xlsx`);
     }
-    function exportTestPDF(includeGrade) {
-        if (!testState.students.length) return alert('Sin datos');
+    function exportTestPDF() {
+        if (testState.students.length===0) return alert('Sin datos');
         const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' });
-        doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(testState.examName.toUpperCase(), 14, 20);
-        doc.setFontSize(10);
-        const headers = [['Alumno', ...testState.globalCriteria.map(c=>c+'.')]]; if (includeGrade) headers[0].push('Calificación');
-        const body = testState.students.map((student,sIdx)=>{
+        const headers = [['Alumno', ...testState.globalCriteria]]; const body = [];
+        testState.students.forEach((student,sIdx)=>{
             const scores = testState.studentScores[sIdx]||{correct:0,wrong:0}; const grade = computeTestGrade(scores.correct,scores.wrong);
-            const row = [student.fullName, ...testState.globalCriteria.map(()=>grade.toFixed(2))];
-            if (includeGrade) row.push(grade.toFixed(2));
-            return row;
+            const row = [student.fullName, ...testState.globalCriteria.map(()=>grade.toFixed(2))]; body.push(row);
         });
-        doc.autoTable({ head: headers, body, startY:30, theme:'grid' });
-        let base = sanitizeFilename(testState.examName+'_'+testState.course); base = capitalizeBasename(base);
-        doc.save(`Resultados_${base}.pdf`);
+        doc.autoTable({ head: headers, body, startY:20, theme:'grid' }); let base = sanitizeFilename(testState.examName)||'Resultados'; base = capitalizeBasename(base); doc.save(`${base}.pdf`);
     }
     function exportTestConfig() {
         const cfg = { examName: testState.examName, course: testState.course, totalQuestions: testState.totalQuestions, penaltyFactor: testState.penaltyFactor, globalCriteria: [...testState.globalCriteria], students: testState.students.map(s=>({fullName:s.fullName})), studentScores: testState.studentScores.map(ss=>({...ss})) };
-        const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob); let base = sanitizeFilename(testState.examName); base = capitalizeBasename(base);
-        a.download = `Configuración_${base}.json`; a.click(); URL.revokeObjectURL(blob);
+        const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; a.download = `config_${sanitizeFilename(testState.examName)}.json`; a.click(); URL.revokeObjectURL(url);
     }
     function importTestConfig(file) {
         const reader = new FileReader();
@@ -1037,41 +864,76 @@
                 testState.students = (cfg.students || []).map(s=>({id:uuid(), fullName:s.fullName}));
                 testState.studentScores = cfg.studentScores || testState.students.map(()=>({correct:0,wrong:0,unanswered:testState.totalQuestions}));
                 document.getElementById('testExamTitleInput').value = testState.examName;
-                document.getElementById('testCourseInput').value = testState.course;
+                document.getElementById('testCourseSelect').value = testState.course;
                 document.getElementById('testTotalQuestions').value = testState.totalQuestions;
                 document.querySelectorAll('input[name="penalty"]').forEach(r => { if (parseFloat(r.value) === testState.penaltyFactor) r.checked = true; });
                 document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked));
-                sortStudents(testState,'studentScores'); renderTestGlobalBadges(); renderTestStudentTags();
-                alert('✅ Configuración importada.');
+                sortStudents(testState,'studentScores'); renderTestGlobalBadges(); renderTestStudentTags(); alert('✅ Configuración importada.');
             } catch(err) { alert('Error al importar: '+err.message); }
-        }; reader.readAsText(file);
+        };
+        reader.readAsText(file);
     }
-    function renderTestStudentTags() {
-        renderStudentTags(testState, 'testStudentTags', 'testStudentCountBadge', () => {
-            sortStudents(testState,'studentScores');
-            testState.studentScores = testState.studentScores.map(ss => ({ ...ss, unanswered: testState.totalQuestions - (ss.correct||0) - (ss.wrong||0) }));
-            renderTestStudentTags();
-            if (currentApp==='test' && document.getElementById('testScreenGrade').classList.contains('active')) renderTestGradeTable();
-        });
+    function showTestScreen(screen) {
+        document.querySelectorAll('#appTestContainer .screen').forEach(s=>s.classList.remove('active'));
+        document.getElementById('testScreen'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        document.querySelectorAll('#appTestContainer .btn-group .btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById('testNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
+        if (screen==='grade') renderTestGradeTable(); else if (screen==='results') renderTestResults();
     }
+    function renderTestStudentTags() { renderStudentTags(testState, 'testStudentTags', 'testStudentCountBadge', ()=>{ if (currentApp==='test' && document.getElementById('testScreenGrade').classList.contains('active')) renderTestGradeTable(); }); }
 
     // =========================================================================
-    //   FUNCIONES GENÉRICA
+    //   APLICACIÓN 3: EVALUACIÓN GENÉRICA (COMPLETA Y FUNCIONAL)
     // =========================================================================
+    function populateGenericGlobalModal() {
+        const container = document.getElementById('genericGlobalCriteriaGroupedContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        const groups = groupCriteriaByCompetence(ALL_CRITERIA_CODES);
+        Object.keys(groups).sort().forEach(comp => {
+            if (!groups[comp].length) return;
+            const groupDiv = document.createElement('div'); groupDiv.className = `criteria-group ${groupStyles[comp]}`;
+            groupDiv.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${comp}</div><div class="row"></div>`;
+            const rowDiv = groupDiv.querySelector('.row');
+            groups[comp].forEach(code => {
+                const col = document.createElement('div'); col.className = 'col-md-4 mb-2';
+                col.innerHTML = `<div class="form-check"><input class="form-check-input global-criteria-chk" type="checkbox" value="${code}" id="generic_chk_${code.replace(/\./g,'_')}"><label class="form-check-label" for="generic_chk_${code.replace(/\./g,'_')}">${code}</label></div>`;
+                rowDiv.appendChild(col);
+            });
+            container.appendChild(groupDiv);
+        });
+        document.querySelectorAll('#genericGlobalCriteriaGroupedContainer .global-criteria-chk').forEach(chk => {
+            chk.checked = genericState.globalCriteria.includes(chk.value);
+        });
+    }
+    function renderGenericGlobalBadges() {
+        const container = document.getElementById('genericSelectedCriteriaBadges');
+        if (!container) return;
+        container.innerHTML = '';
+        genericState.globalCriteria.forEach(code => { let span = document.createElement('span'); span.className = 'badge bg-primary me-1 p-2'; span.textContent = code; container.appendChild(span); });
+        if (genericState.globalCriteria.length===0) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
+        validateGenericCriteria();
+    }
+    function validateGenericCriteria() {
+        const warning = document.getElementById('genericOrphanedCriteriaWarning');
+        const msg = document.getElementById('genericOrphanedCriteriaMessage');
+        if (genericState.globalCriteria.length===0) { warning.style.display='block'; msg.textContent='No hay criterios globales seleccionados.'; return false; }
+        warning.style.display='none'; return true;
+    }
     function normalizeGenericScores() {
         const nC = genericState.globalCriteria.length;
         genericState.scores = genericState.scores.map(row => { if (!row) return new Array(nC).fill(0); if (row.length<nC) return [...row, ...new Array(nC-row.length).fill(0)]; if (row.length>nC) return row.slice(0,nC); return row; });
         while (genericState.scores.length < genericState.students.length) genericState.scores.push(new Array(nC).fill(0));
         if (genericState.scores.length > genericState.students.length) genericState.scores = genericState.scores.slice(0, genericState.students.length);
-        genericState.scores.forEach(studentScores => { if (studentScores) studentScores.forEach((s,i) => { if (s>10) studentScores[i]=10; else if (s<0) studentScores[i]=0; }); });
     }
     function renderGenericGradeTable() {
         const thead = document.querySelector('#genericGradeTable thead'); const tbody = document.getElementById('genericGradeTbody');
         if (!thead||!tbody) return;
         if (genericState.students.length===0 || genericState.globalCriteria.length===0) { thead.innerHTML=''; tbody.innerHTML='<tr><td class="text-center p-4">Se requieren alumnos y criterios.</td></tr>'; return; }
         normalizeGenericScores();
-        let headerHtml = '<tr><th>Alumno</th>'; genericState.globalCriteria.forEach(crit=> headerHtml+=`<th>${crit}.<br><small>(0-10)</small></th>`); headerHtml+='</tr>';
-        thead.innerHTML = headerHtml; tbody.innerHTML = '';
+        let headerHtml = '<tr><th>Alumno</th>'; genericState.globalCriteria.forEach((crit,idx)=> headerHtml+=`<th>${crit}<br><small>(0-10)</small></th>`); headerHtml+='</tr>';
+        thead.innerHTML = headerHtml;
+        tbody.innerHTML = '';
         genericState.students.forEach((student,sIdx)=>{
             const tr = document.createElement('tr'); tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
             genericState.globalCriteria.forEach((crit,cIdx)=>{
@@ -1093,67 +955,49 @@
         document.getElementById('genericResultsExamNameSpan').textContent = `Actividad: ${genericState.examName}`;
         if (genericState.globalCriteria.length===0 || genericState.students.length===0) { thead.innerHTML='<tr><th>Alumno</th><th>Sin criterios o alumnos</th></tr>'; tbody.innerHTML='<tr><td colspan="2" class="text-center">Agregue criterios y alumnos.</td></tr>'; return; }
         normalizeGenericScores();
-        const showGlobal = document.getElementById('genericShowGlobalGrade').checked;
-        let headerRow = '<tr><th>Alumno</th>'; genericState.globalCriteria.forEach(crit=> headerRow+=`<th>${crit}.</th>`); if (showGlobal) headerRow += '<th>Calificación</th>'; headerRow += '</tr>';
-        thead.innerHTML = headerRow; tbody.innerHTML = '';
+        let headerRow = '<tr><th>Alumno</th>'; genericState.globalCriteria.forEach(crit=> headerRow+=`<th>${crit}.</th>`); headerRow+='</tr>'; thead.innerHTML = headerRow;
+        tbody.innerHTML = '';
         genericState.students.forEach((student,sIdx)=>{
             let rowHtml = `<td><strong>${student.fullName}</strong></td>`;
-            let sum = 0;
-            genericState.globalCriteria.forEach((crit,cIdx)=>{ let val = genericState.scores[sIdx]?.[cIdx]??0; rowHtml += `<td>${val.toFixed(2)}</td>`; sum += val; });
-            if (showGlobal) { let global = (sum / genericState.globalCriteria.length).toFixed(2); rowHtml += `<td><strong>${global}</strong></td>`; }
+            genericState.globalCriteria.forEach((crit,cIdx)=> rowHtml += `<td>${(genericState.scores[sIdx]?.[cIdx]??0).toFixed(2)}</td>`);
             tbody.innerHTML += `<tr>${rowHtml}</tr>`;
         });
     }
-    // *** CORREGIDO: exportGenericJSON (faltaba url y asignación) ***
-    function exportGenericJSON(includeGrade) {
-        if (!genericState.students.length) return alert('No hay datos');
-        const resultados = genericState.students.map((student,sIdx)=>{
+    function exportGenericJSON() {
+        if (genericState.students.length===0) return alert('No hay datos');
+        const exportData = genericState.students.map((student,sIdx)=>{
             const row = { Alumno: student.fullName };
             genericState.globalCriteria.forEach((crit,cIdx)=> row[crit+'.'] = genericState.scores[sIdx]?.[cIdx]??0);
-            if (includeGrade) { let sum = genericState.scores[sIdx].reduce((a,b)=>a+b,0); row['Calificación'] = parseFloat((sum / genericState.globalCriteria.length).toFixed(2)); }
             return row;
         });
-        const exportData = { actividad: genericState.examName, resultados };
-        const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
-        const url = URL.createObjectURL(blob); const a = document.createElement('a');
-        a.href = url; let base = sanitizeFilename(genericState.examName+'_'+genericState.course);
-        a.download = `Resultados_${base}.json`; a.click(); URL.revokeObjectURL(url);
+        const blob = new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; a.download = `resultados_${sanitizeFilename(genericState.examName)}.json`; a.click(); URL.revokeObjectURL(url);
     }
-    function exportGenericExcel(includeGrade) {
-        if (!genericState.students.length) return alert('Sin datos');
-        const header = ['Alumno', ...genericState.globalCriteria.map(c=>c+'.')]; if (includeGrade) header.push('Calificación');
-        const wsData = [[`Actividad: ${genericState.examName}`],[],header];
+    function exportGenericExcel() {
+        if (genericState.students.length===0) return alert('Sin datos');
+        const wsData = [['Alumno', ...genericState.globalCriteria.map(c=>c+'.')]];
         genericState.students.forEach((student,sIdx)=>{
             const row = [student.fullName];
             genericState.globalCriteria.forEach((crit,cIdx)=> row.push(genericState.scores[sIdx]?.[cIdx]??0));
-            if (includeGrade) { let sum = genericState.scores[sIdx].reduce((a,b)=>a+b,0); row.push(parseFloat((sum / genericState.globalCriteria.length).toFixed(2))); }
             wsData.push(row);
         });
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados');
-        let base = sanitizeFilename(genericState.examName+'_'+genericState.course);
-        XLSX.writeFile(wb, `Resultados_${base}.xlsx`);
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados'); XLSX.writeFile(wb, `resultados_${sanitizeFilename(genericState.examName)}.xlsx`);
     }
-    function exportGenericPDF(includeGrade) {
-        if (!genericState.students.length) return alert('Sin datos');
+    function exportGenericPDF() {
+        if (genericState.students.length===0) return alert('Sin datos');
         const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' });
-        doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(genericState.examName.toUpperCase(), 14, 20);
-        doc.setFontSize(10);
-        const headers = [['Alumno', ...genericState.globalCriteria.map(c=>c+'.')]]; if (includeGrade) headers[0].push('Calificación');
+        const headers = [['Alumno', ...genericState.globalCriteria.map(c=>c+'.')]];
         const body = genericState.students.map((student,sIdx)=>{
             const row = [student.fullName];
             genericState.globalCriteria.forEach((crit,cIdx)=> row.push((genericState.scores[sIdx]?.[cIdx]??0).toFixed(2)));
-            if (includeGrade) { let sum = genericState.scores[sIdx].reduce((a,b)=>a+b,0); row.push((sum / genericState.globalCriteria.length).toFixed(2)); }
             return row;
         });
-        doc.autoTable({ head: headers, body, startY:30, theme:'grid' });
-        let base = sanitizeFilename(genericState.examName+'_'+genericState.course);
-        doc.save(`Resultados_${base}.pdf`);
+        doc.autoTable({ head: headers, body, startY:20, theme:'grid' }); doc.save(`resultados_${sanitizeFilename(genericState.examName)}.pdf`);
     }
     function exportGenericConfig() {
         const cfg = { examName: genericState.examName, course: genericState.course, globalCriteria: [...genericState.globalCriteria], students: genericState.students.map(s=>({fullName:s.fullName})) };
-        const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob); let base = sanitizeFilename(genericState.examName); base = capitalizeBasename(base);
-        a.download = `Configuración_${base}.json`; a.click(); URL.revokeObjectURL(blob);
+        const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; a.download = `config_${sanitizeFilename(genericState.examName)}.json`; a.click(); URL.revokeObjectURL(url);
     }
     function importGenericConfig(file) {
         const reader = new FileReader();
@@ -1166,85 +1010,11 @@
                 genericState.students = (cfg.students || []).map(s=>({id:uuid(), fullName:s.fullName}));
                 genericState.scores = genericState.students.map(()=> new Array(genericState.globalCriteria.length).fill(0));
                 document.getElementById('genericExamNameInput').value = genericState.examName;
-                document.getElementById('genericCourseInput').value = genericState.course;
-                sortStudents(genericState,'scores'); renderGenericGlobalBadges(); renderGenericStudentTags();
-                alert('✅ Configuración importada.');
+                document.getElementById('genericCourseSelect').value = genericState.course;
+                sortStudents(genericState,'scores'); renderGenericGlobalBadges(); renderGenericStudentTags(); alert('✅ Configuración importada.');
             } catch(err) { alert('Error al importar: '+err.message); }
-        }; reader.readAsText(file);
-    }
-    function renderGenericStudentTags() {
-        renderStudentTags(genericState, 'genericStudentTags', 'genericStudentCountBadge', () => {
-            sortStudents(genericState,'scores'); normalizeGenericScores(); renderGenericStudentTags();
-            if (currentApp==='generic' && document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable();
-        });
-    }
-
-    // =========================================================================
-    //   REINICIAR ESTADOS
-    // =========================================================================
-    function resetExamState() {
-        if (!confirm('¿Reiniciar todos los datos del examen?')) return;
-        examState.examName = "Examen sin título"; examState.course = "Tecnología Ciclos";
-        examState.students = []; examState.questions = [{id:1, maxScore:10, criteriaCodes:[]}];
-        examState.globalCriteria = []; examState.scores = [];
-        document.getElementById('examNameInput').value = examState.examName;
-        document.getElementById('examCourseInput').value = examState.course;
-        document.getElementById('examInputNumQuestions').value = examState.questions.length;
-        renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags();
-        localStorage.removeItem('tec4_exam_app'); alert('✅ Datos reiniciados.');
-    }
-    function resetTestState() {
-        if (!confirm('¿Reiniciar todos los datos del test?')) return;
-        testState.examName = "Examen tipo test"; testState.course = "Tecnología Ciclos";
-        testState.totalQuestions = 20; testState.penaltyFactor = 0;
-        testState.globalCriteria = []; testState.students = []; testState.studentScores = [];
-        document.getElementById('testExamTitleInput').value = testState.examName;
-        document.getElementById('testCourseInput').value = testState.course;
-        document.getElementById('testTotalQuestions').value = testState.totalQuestions;
-        document.querySelectorAll('#testPenaltyOptions .penalty-option input').forEach(r => { if (r.value == 0) r.checked = true; });
-        document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked));
-        renderTestGlobalBadges(); renderTestStudentTags();
-        localStorage.removeItem('tec4_test_app'); alert('✅ Datos reiniciados.');
-    }
-    function resetGenericState() {
-        if (!confirm('¿Reiniciar todos los datos de la actividad genérica?')) return;
-        genericState.examName = "Actividad sin título"; genericState.course = "Tecnología Ciclos";
-        genericState.globalCriteria = []; genericState.students = []; genericState.scores = [];
-        document.getElementById('genericExamNameInput').value = genericState.examName;
-        document.getElementById('genericCourseInput').value = genericState.course;
-        renderGenericGlobalBadges(); renderGenericStudentTags();
-        localStorage.removeItem('tec4_generic_app'); alert('✅ Datos reiniciados.');
-    }
-
-    // =========================================================================
-    //   CONTROL DE APLICACIÓN ACTIVA Y NAVEGACIÓN
-    // =========================================================================
-    let currentApp = 'home';
-    function showHome() { hideAllApps(); document.getElementById('homeScreen').classList.add('active'); currentApp = 'home'; }
-    function showApp(appId) { hideAllApps(); document.getElementById(appId).classList.add('active'); 
-        if (appId === 'appExamContainer') { currentApp = 'exam'; showExamScreen('config'); }
-        else if (appId === 'appTestContainer') { currentApp = 'test'; showTestScreen('config'); }
-        else if (appId === 'appGenericContainer') { currentApp = 'generic'; showGenericScreen('config'); }
-    }
-    function hideAllApps() {
-        document.getElementById('homeScreen').classList.remove('active');
-        document.getElementById('appExamContainer').classList.remove('active');
-        document.getElementById('appTestContainer').classList.remove('active');
-        document.getElementById('appGenericContainer').classList.remove('active');
-    }
-    function showExamScreen(screen) {
-        document.querySelectorAll('#appExamContainer .screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById('examScreen'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
-        document.querySelectorAll('#appExamContainer .btn-group .btn').forEach(b=>b.classList.remove('active'));
-        document.getElementById('examNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
-        if (screen==='grade') renderExamGradeTable(); else if (screen==='results') renderExamResults();
-    }
-    function showTestScreen(screen) {
-        document.querySelectorAll('#appTestContainer .screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById('testScreen'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
-        document.querySelectorAll('#appTestContainer .btn-group .btn').forEach(b=>b.classList.remove('active'));
-        document.getElementById('testNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
-        if (screen==='grade') renderTestGradeTable(); else if (screen==='results') renderTestResults();
+        };
+        reader.readAsText(file);
     }
     function showGenericScreen(screen) {
         document.querySelectorAll('#appGenericContainer .screen').forEach(s=>s.classList.remove('active'));
@@ -1253,34 +1023,18 @@
         document.getElementById('genericNav'+screen.charAt(0).toUpperCase()+screen.slice(1)).classList.add('active');
         if (screen==='grade') renderGenericGradeTable(); else if (screen==='results') renderGenericResults();
     }
+    function renderGenericStudentTags() { renderStudentTags(genericState, 'genericStudentTags', 'genericStudentCountBadge', ()=>{ normalizeGenericScores(); if (currentApp==='generic' && document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable(); }); }
 
     // =========================================================================
-    //   EVENTO GLOBAL PARA MOSTRAR DESCRIPCIÓN AL HACER CLIC EN CRITERIO
-    // =========================================================================
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('criteria-badge')) {
-            const code = e.target.getAttribute('data-code');
-            if (code) alert(getCriteriaDescription(code));
-            e.preventDefault(); e.stopPropagation();
-        }
-    });
-
-    // =========================================================================
-    //   INICIALIZACIÓN Y EVENTOS
+    //   EVENTOS PRINCIPALES (CARGA INICIAL Y TODOS LOS BOTONES)
     // =========================================================================
     window.onload = function() {
-        // Tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+        // --- Inicialización de modales y badges ---
+        populateExamGlobalModal(); renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags();
+        populateTestGlobalModal(); renderTestGlobalBadges(); renderTestStudentTags();
+        populateGenericGlobalModal(); renderGenericGlobalBadges(); renderGenericStudentTags();
 
-        // Poblar modales con criterios fijos y estados actuales
-        populateCriteriaModal('examGlobalCriteriaGroupedContainer', 'exam', examState.globalCriteria);
-        populateCriteriaModal('testGlobalCriteriaGroupedContainer', 'test', testState.globalCriteria);
-        populateCriteriaModal('genericGlobalCriteriaGroupedContainer', 'generic', genericState.globalCriteria);
-        renderExamGlobalBadges(); renderTestGlobalBadges(); renderGenericGlobalBadges();
-        renderExamQuestionsTable(); renderExamStudentTags(); renderTestStudentTags(); renderGenericStudentTags();
-
-        // Navegación
+        // --- Navegación entre aplicaciones ---
         document.getElementById('btnHome').addEventListener('click', showHome);
         document.getElementById('btnAppExam').addEventListener('click', ()=> showApp('appExamContainer'));
         document.getElementById('btnAppTest').addEventListener('click', ()=> showApp('appTestContainer'));
@@ -1289,21 +1043,14 @@
         document.getElementById('cardTest').addEventListener('click', ()=> showApp('appTestContainer'));
         document.getElementById('cardGeneric').addEventListener('click', ()=> showApp('appGenericContainer'));
 
-        // ========== EXAMEN ==========
+        // ========== EXAMEN: TODOS LOS BOTONES ==========
         document.getElementById('examSaveGlobalCriteria').addEventListener('click', function(){
             const checked = []; document.querySelectorAll('#examGlobalCriteriaGroupedContainer .global-criteria-chk:checked').forEach(chk=>checked.push(chk.value));
             examState.globalCriteria = checked; renderExamGlobalBadges();
         });
         document.getElementById('examNavConfig').addEventListener('click', ()=> showExamScreen('config'));
-        document.getElementById('examNavGrade').addEventListener('click', function(){ 
-            if (examState.students.length===0) { alert('No hay alumnos.'); return; }
-            if (validateExamCriteria()) showExamScreen('grade'); else alert('Complete la asignación de criterios.');
-        });
-        document.getElementById('examNavResults').addEventListener('click', function(){
-            if (examState.students.length===0) { alert('No hay alumnos.'); return; }
-            if (!validateExamCriteria()) { alert('Criterios no asignados correctamente.'); return; }
-            showExamScreen('results');
-        });
+        document.getElementById('examNavGrade').addEventListener('click', function(){ if (validateExamCriteria()) showExamScreen('grade'); else alert('Complete la asignación de criterios.'); });
+        document.getElementById('examNavResults').addEventListener('click', ()=> showExamScreen('results'));
         document.getElementById('examBtnSetQuestions').addEventListener('click', function(){
             let num = parseInt(document.getElementById('examInputNumQuestions').value)||1;
             examState.questions = Array.from({length: num}, (_,i)=>({id:i+1, maxScore:10, criteriaCodes:[]}));
@@ -1328,56 +1075,42 @@
         });
         document.getElementById('examExportConfigBtn').addEventListener('click', exportExamConfig);
         document.getElementById('examImportConfigBtn').addEventListener('click', ()=> document.getElementById('examImportConfigFile').click());
-        document.getElementById('examImportConfigFile').addEventListener('change', function(e) { if (this.files.length) importExamConfig(this.files[0]); this.value = ''; });
+        document.getElementById('examImportConfigFile').addEventListener('change', function(e) {
+            if (this.files.length) importExamConfig(this.files[0]);
+            this.value = '';
+        });
         document.getElementById('examSaveToLocalBtn').addEventListener('click', function(){ localStorage.setItem('tec4_exam_app',JSON.stringify(examState)); alert('✅ Configuración guardada.'); });
         document.getElementById('examLoadFromLocalBtn').addEventListener('click', function(){
             let saved = localStorage.getItem('tec4_exam_app');
-            if(saved) { try { Object.assign(examState, JSON.parse(saved)); examState.students = examState.students.map(s=>({...s, id:s.id||uuid()})); normalizeExamScores(); renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags(); document.getElementById('examNameInput').value = examState.examName; document.getElementById('examCourseInput').value = examState.course; document.getElementById('examInputNumQuestions').value = examState.questions.length; } catch(e) { alert('Error al cargar'); } } else alert('No hay datos guardados.');
+            if(saved) {
+                try {
+                    examState = Object.assign(examState, JSON.parse(saved));
+                    examState.students = examState.students.map(s=>({...s, id:s.id||uuid()}));
+                    normalizeExamScores(); renderExamGlobalBadges(); renderExamQuestionsTable(); renderExamStudentTags();
+                    document.getElementById('examNameInput').value = examState.examName;
+                    document.getElementById('examCourseSelect').value = examState.course;
+                    document.getElementById('examInputNumQuestions').value = examState.questions.length;
+                    alert('✅ Configuración cargada.');
+                } catch(e) { alert('Error al cargar'); }
+            } else alert('No hay datos guardados.');
         });
-        document.getElementById('examBtnSaveScores').addEventListener('click', function(){
-            const backup = { students: examState.students.map(s=>s.fullName), questions: examState.questions.map(q=>({id:q.id, maxScore:q.maxScore})), scores: examState.scores };
-            localStorage.setItem('exam_scores_backup', JSON.stringify(backup));
-            document.getElementById('examGradeMessage').innerHTML='<i class="bi bi-check-circle"></i> Calificaciones guardadas localmente.';
-            setTimeout(()=>document.getElementById('examGradeMessage').innerHTML='',3000);
-        });
-        document.getElementById('examExportScoresBtn').addEventListener('click', exportExamScores);
-        document.getElementById('examImportScoresBtn').addEventListener('click', ()=> document.getElementById('examImportScoresFile').click());
-        document.getElementById('examImportScoresFile').addEventListener('change', function(e) { if (this.files.length) importExamScores(this.files[0]); this.value = ''; });
-        document.getElementById('examRecoverScoresBtn').addEventListener('click', recoverExamScores);
-        document.getElementById('examResetAllBtn').addEventListener('click', resetExamState);
+        document.getElementById('examBtnSaveScores').addEventListener('click', function(){ document.getElementById('examGradeMessage').innerHTML='<i class="bi bi-check-circle"></i> Calificaciones guardadas.'; setTimeout(()=>document.getElementById('examGradeMessage').innerHTML='',3000); });
+        document.getElementById('examExportJSON').addEventListener('click', exportExamJSON);
+        document.getElementById('examExportExcel').addEventListener('click', exportExamExcel);
+        document.getElementById('examExportPDF').addEventListener('click', exportExamPDF);
         document.getElementById('examNameInput').addEventListener('input', e=> examState.examName = e.target.value);
-        document.getElementById('examCourseInput').addEventListener('input', e=> examState.course = e.target.value);
-        document.getElementById('examShowGlobalGrade').addEventListener('change', renderExamResults);
-        // Export modals exam
-        let examExportType = '';
-        document.getElementById('examExportJSON').addEventListener('click', function(){ examExportType='json'; document.getElementById('examExportIncludeGrade').checked = document.getElementById('examShowGlobalGrade').checked; });
-        document.getElementById('examExportExcel').addEventListener('click', function(){ examExportType='excel'; document.getElementById('examExportIncludeGrade').checked = document.getElementById('examShowGlobalGrade').checked; });
-        document.getElementById('examExportPDF').addEventListener('click', function(){ examExportType='pdf'; document.getElementById('examExportIncludeGrade').checked = document.getElementById('examShowGlobalGrade').checked; });
-        document.getElementById('examExportConfirm').addEventListener('click', function(){
-            const incl = document.getElementById('examExportIncludeGrade').checked;
-            if (examExportType==='json') exportExamJSON(incl);
-            else if (examExportType==='excel') exportExamExcel(incl);
-            else if (examExportType==='pdf') exportExamPDF(incl);
-            bootstrap.Modal.getInstance(document.getElementById('examExportModal')).hide();
-        });
+        document.getElementById('examCourseSelect').addEventListener('change', e=> examState.course = e.target.value);
 
-        // ========== TEST ==========
+        // ========== TEST: TODOS LOS BOTONES ==========
         document.getElementById('testSaveGlobalCriteria').addEventListener('click', function(){
             const checked = []; document.querySelectorAll('#testGlobalCriteriaGroupedContainer .global-criteria-chk:checked').forEach(chk=>checked.push(chk.value));
             testState.globalCriteria = checked; renderTestGlobalBadges();
         });
         document.getElementById('testNavConfig').addEventListener('click', ()=> showTestScreen('config'));
-        document.getElementById('testNavGrade').addEventListener('click', function(){ 
-            if (testState.students.length===0) { alert('No hay alumnos.'); return; }
-            if (testState.globalCriteria.length===0) alert('Selecciona al menos un criterio.'); else showTestScreen('grade');
-        });
-        document.getElementById('testNavResults').addEventListener('click', function(){
-            if (testState.students.length===0) { alert('No hay alumnos.'); return; }
-            if (testState.globalCriteria.length===0) { alert('Selecciona al menos un criterio.'); return; }
-            showTestScreen('results');
-        });
+        document.getElementById('testNavGrade').addEventListener('click', function(){ if (testState.globalCriteria.length===0) alert('Selecciona al menos un criterio.'); else showTestScreen('grade'); });
+        document.getElementById('testNavResults').addEventListener('click', ()=> showTestScreen('results'));
         document.getElementById('testExamTitleInput').addEventListener('input', e=> testState.examName = e.target.value);
-        document.getElementById('testCourseInput').addEventListener('input', e=> testState.course = e.target.value);
+        document.getElementById('testCourseSelect').addEventListener('change', e=> testState.course = e.target.value);
         document.getElementById('testTotalQuestions').addEventListener('input', function(){
             let val = parseInt(this.value)||1; if (val<1) val=1; this.value=val; testState.totalQuestions=val;
             testState.studentScores = testState.students.map(()=>({correct:0,wrong:0,unanswered:val}));
@@ -1391,6 +1124,7 @@
                 this.classList.add('selected');
             });
         });
+        // Marcar la opción seleccionada inicialmente
         document.querySelectorAll('#testPenaltyOptions .penalty-option input:checked').forEach(inp => inp.closest('.penalty-option').classList.add('selected'));
         document.getElementById('testBtnAddStudent').addEventListener('click', function(){
             const input = document.getElementById('testStudentNameInput'); const name = input.value.trim();
@@ -1407,44 +1141,44 @@
         });
         document.getElementById('testExportConfigBtn').addEventListener('click', exportTestConfig);
         document.getElementById('testImportConfigBtn').addEventListener('click', ()=> document.getElementById('testImportConfigFile').click());
-        document.getElementById('testImportConfigFile').addEventListener('change', function(e) { if (this.files.length) importTestConfig(this.files[0]); this.value = ''; });
+        document.getElementById('testImportConfigFile').addEventListener('change', function(e) {
+            if (this.files.length) importTestConfig(this.files[0]);
+            this.value = '';
+        });
         document.getElementById('testSaveToLocalBtn').addEventListener('click', function(){ localStorage.setItem('tec4_test_app',JSON.stringify(testState)); alert('✅ Configuración guardada.'); });
         document.getElementById('testLoadFromLocalBtn').addEventListener('click', function(){
             let saved = localStorage.getItem('tec4_test_app');
-            if(saved) { try { Object.assign(testState, JSON.parse(saved)); testState.students = testState.students.map(s=>({...s, id:s.id||uuid()})); if(!testState.studentScores) testState.studentScores = testState.students.map(()=>({correct:0,wrong:0,unanswered:testState.totalQuestions})); sortStudents(testState,'studentScores'); renderTestGlobalBadges(); renderTestStudentTags(); document.getElementById('testExamTitleInput').value = testState.examName; document.getElementById('testCourseInput').value = testState.course; document.getElementById('testTotalQuestions').value = testState.totalQuestions; document.querySelectorAll('input[name="penalty"]').forEach(r => { if (parseFloat(r.value) === testState.penaltyFactor) r.checked = true; }); document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked)); } catch(e) { alert('Error al cargar'); } } else alert('No hay datos guardados.');
+            if(saved) {
+                try {
+                    testState = Object.assign(testState, JSON.parse(saved));
+                    testState.students = testState.students.map(s=>({...s, id:s.id||uuid()}));
+                    if(!testState.studentScores) testState.studentScores = testState.students.map(()=>({correct:0,wrong:0,unanswered:testState.totalQuestions}));
+                    sortStudents(testState,'studentScores');
+                    renderTestGlobalBadges(); renderTestStudentTags();
+                    document.getElementById('testExamTitleInput').value = testState.examName;
+                    document.getElementById('testCourseSelect').value = testState.course;
+                    document.getElementById('testTotalQuestions').value = testState.totalQuestions;
+                    document.querySelectorAll('input[name="penalty"]').forEach(r => { if (parseFloat(r.value) === testState.penaltyFactor) r.checked = true; });
+                    document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked));
+                    alert('✅ Configuración cargada.');
+                } catch(e) { alert('Error al cargar'); }
+            } else alert('No hay datos guardados.');
         });
         document.getElementById('testBtnSaveScores').addEventListener('click', function(){ document.getElementById('testGradeMessage').innerHTML='<i class="fas fa-check-circle"></i> Calificaciones guardadas.'; setTimeout(()=>document.getElementById('testGradeMessage').innerHTML='',3000); });
-        document.getElementById('testResetAllBtn').addEventListener('click', resetTestState);
-        let testExportType = '';
-        document.getElementById('testExportJSON').addEventListener('click', function(){ testExportType='json'; document.getElementById('testExportIncludeGrade').checked = document.getElementById('testShowGlobalGrade').checked; });
-        document.getElementById('testExportExcel').addEventListener('click', function(){ testExportType='excel'; document.getElementById('testExportIncludeGrade').checked = document.getElementById('testShowGlobalGrade').checked; });
-        document.getElementById('testExportPDF').addEventListener('click', function(){ testExportType='pdf'; document.getElementById('testExportIncludeGrade').checked = document.getElementById('testShowGlobalGrade').checked; });
-        document.getElementById('testExportConfirm').addEventListener('click', function(){
-            const incl = document.getElementById('testExportIncludeGrade').checked;
-            if (testExportType==='json') exportTestJSON(incl);
-            else if (testExportType==='excel') exportTestExcel(incl);
-            else if (testExportType==='pdf') exportTestPDF(incl);
-            bootstrap.Modal.getInstance(document.getElementById('testExportModal')).hide();
-        });
-        document.getElementById('testShowGlobalGrade').addEventListener('change', renderTestResults);
+        document.getElementById('testExportJSON').addEventListener('click', exportTestJSON);
+        document.getElementById('testExportExcel').addEventListener('click', exportTestExcel);
+        document.getElementById('testExportPDF').addEventListener('click', exportTestPDF);
 
-        // ========== GENÉRICA ==========
+        // ========== GENÉRICA: TODOS LOS BOTONES ==========
         document.getElementById('genericSaveGlobalCriteria').addEventListener('click', function(){
             const checked = []; document.querySelectorAll('#genericGlobalCriteriaGroupedContainer .global-criteria-chk:checked').forEach(chk=>checked.push(chk.value));
             genericState.globalCriteria = checked; renderGenericGlobalBadges(); normalizeGenericScores(); if (document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable();
         });
         document.getElementById('genericNavConfig').addEventListener('click', ()=> showGenericScreen('config'));
-        document.getElementById('genericNavGrade').addEventListener('click', function(){ 
-            if (genericState.students.length===0) { alert('No hay alumnos.'); return; }
-            if (validateGenericCriteria()) showGenericScreen('grade'); else alert('Selecciona al menos un criterio.');
-        });
-        document.getElementById('genericNavResults').addEventListener('click', function(){
-            if (genericState.students.length===0) { alert('No hay alumnos.'); return; }
-            if (!validateGenericCriteria()) { alert('Selecciona al menos un criterio.'); return; }
-            showGenericScreen('results');
-        });
+        document.getElementById('genericNavGrade').addEventListener('click', function(){ if (validateGenericCriteria()) showGenericScreen('grade'); else alert('Selecciona al menos un criterio.'); });
+        document.getElementById('genericNavResults').addEventListener('click', ()=> showGenericScreen('results'));
         document.getElementById('genericExamNameInput').addEventListener('input', e=> genericState.examName = e.target.value);
-        document.getElementById('genericCourseInput').addEventListener('input', e=> genericState.course = e.target.value);
+        document.getElementById('genericCourseSelect').addEventListener('change', e=> genericState.course = e.target.value);
         document.getElementById('genericBtnAddStudent').addEventListener('click', function(){
             const input = document.getElementById('genericStudentNameInput'); const name = input.value.trim();
             if (name) {
@@ -1459,43 +1193,44 @@
         });
         document.getElementById('genericExportConfigBtn').addEventListener('click', exportGenericConfig);
         document.getElementById('genericImportConfigBtn').addEventListener('click', ()=> document.getElementById('genericImportConfigFile').click());
-        document.getElementById('genericImportConfigFile').addEventListener('change', function(e) { if (this.files.length) importGenericConfig(this.files[0]); this.value = ''; });
+        document.getElementById('genericImportConfigFile').addEventListener('change', function(e) {
+            if (this.files.length) importGenericConfig(this.files[0]);
+            this.value = '';
+        });
         document.getElementById('genericSaveToLocalBtn').addEventListener('click', function(){ localStorage.setItem('tec4_generic_app',JSON.stringify(genericState)); alert('✅ Configuración guardada.'); });
         document.getElementById('genericLoadFromLocalBtn').addEventListener('click', function(){
             let saved = localStorage.getItem('tec4_generic_app');
-            if(saved) { try { Object.assign(genericState, JSON.parse(saved)); genericState.students = genericState.students.map(s=>({...s, id:s.id||uuid()})); normalizeGenericScores(); renderGenericGlobalBadges(); renderGenericStudentTags(); document.getElementById('genericExamNameInput').value = genericState.examName; document.getElementById('genericCourseInput').value = genericState.course; } catch(e) { alert('Error al cargar'); } } else alert('No hay datos guardados.');
+            if(saved) {
+                try {
+                    genericState = Object.assign(genericState, JSON.parse(saved));
+                    genericState.students = genericState.students.map(s=>({...s, id:s.id||uuid()}));
+                    normalizeGenericScores(); renderGenericGlobalBadges(); renderGenericStudentTags();
+                    document.getElementById('genericExamNameInput').value = genericState.examName;
+                    document.getElementById('genericCourseSelect').value = genericState.course;
+                    alert('✅ Configuración cargada.');
+                } catch(e) { alert('Error al cargar'); }
+            } else alert('No hay datos guardados.');
         });
         document.getElementById('genericBtnSaveScores').addEventListener('click', function(){ document.getElementById('genericGradeMessage').innerHTML='<i class="bi bi-check-circle"></i> Calificaciones guardadas.'; setTimeout(()=>document.getElementById('genericGradeMessage').innerHTML='',3000); });
-        document.getElementById('genericResetAllBtn').addEventListener('click', resetGenericState);
-        let genericExportType = '';
-        document.getElementById('genericExportJSON').addEventListener('click', function(){ genericExportType='json'; document.getElementById('genericExportIncludeGrade').checked = document.getElementById('genericShowGlobalGrade').checked; });
-        document.getElementById('genericExportExcel').addEventListener('click', function(){ genericExportType='excel'; document.getElementById('genericExportIncludeGrade').checked = document.getElementById('genericShowGlobalGrade').checked; });
-        document.getElementById('genericExportPDF').addEventListener('click', function(){ genericExportType='pdf'; document.getElementById('genericExportIncludeGrade').checked = document.getElementById('genericShowGlobalGrade').checked; });
-        document.getElementById('genericExportConfirm').addEventListener('click', function(){
-            const incl = document.getElementById('genericExportIncludeGrade').checked;
-            if (genericExportType==='json') exportGenericJSON(incl);
-            else if (genericExportType==='excel') exportGenericExcel(incl);
-            else if (genericExportType==='pdf') exportGenericPDF(incl);
-            bootstrap.Modal.getInstance(document.getElementById('genericExportModal')).hide();
-        });
-        document.getElementById('genericShowGlobalGrade').addEventListener('change', renderGenericResults);
+        document.getElementById('genericExportJSON').addEventListener('click', exportGenericJSON);
+        document.getElementById('genericExportExcel').addEventListener('click', exportGenericExcel);
+        document.getElementById('genericExportPDF').addEventListener('click', exportGenericPDF);
 
+        // Iniciar en Home
         showHome();
-
-        // Intro overlay fade-out
-        const intro = document.getElementById('intro-overlay');
-        if (intro) {
-            setTimeout(() => intro.classList.add('fade-out'), 5000);
-            document.addEventListener('click', function fadeIntro() { intro.classList.add('fade-out'); }, { once: true });
-        }
     };
-
-    // Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw.js').catch(err => console.error('SW error', err));
-        });
-    }
 </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js').then(function(reg) {
+        console.log('Service Worker registrado con éxito:', reg.scope);
+      }).catch(function(err) {
+        console.log('Error al registrar el Service Worker:', err);
+      });
+    });
+  }
+</script>
+
 </body>
 </html>

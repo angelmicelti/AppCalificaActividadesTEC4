@@ -2,7 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>EVALUACIÓN TEC4 · INTEGRADA</title>
     <link rel="manifest" href="manifest.json">
     <!-- Para iOS -->
@@ -18,73 +21,481 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
-        /* ESTILOS UNIFICADOS (mejorados) + estilos específicos de instrumentos */
-        body { background-color: #e9f0f5; font-family: 'Segoe UI', Roboto, sans-serif; padding: 10px; margin: 0; }
-        .container-custom { max-width: 1400px; margin: 0 auto; background: white; border-radius: 28px; box-shadow: 0 25px 45px -12px rgba(2,48,71,0.2); padding: 24px 28px; }
+        /* ============================================================
+           BASE STYLES
+        ============================================================ */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background-color: #e9f0f5;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 10px;
+            margin: 0;
+            /* Safe area for notched phones */
+            padding-left: max(10px, env(safe-area-inset-left));
+            padding-right: max(10px, env(safe-area-inset-right));
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+        }
+
+        .container-custom {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 25px 45px -12px rgba(2,48,71,0.2);
+            padding: 24px 28px;
+        }
+
+        /* ============================================================
+           SCREEN SYSTEM
+        ============================================================ */
         .screen { display: none; }
         .screen.active { display: block; }
-        .section-card { background-color: #fafcff; border-radius: 20px; padding: 20px 22px; margin-bottom: 24px; border: 1px solid #e2eaf1; box-shadow: 0 4px 12px rgba(0,49,78,0.03); transition: 0.2s; }
+
+        /* ============================================================
+           SECTION CARDS
+        ============================================================ */
+        .section-card {
+            background-color: #fafcff;
+            border-radius: 20px;
+            padding: 20px 22px;
+            margin-bottom: 24px;
+            border: 1px solid #e2eaf1;
+            box-shadow: 0 4px 12px rgba(0,49,78,0.03);
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
         .section-card:hover { box-shadow: 0 8px 18px rgba(13,110,253,0.08); border-color: #cbdbe9; }
-        .section-title { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #0b4b6b; margin-bottom: 20px; border-bottom: 2px dashed #b8d1dc; padding-bottom: 10px; }
-        .section-title i { font-size: 1.6rem; color: #0d6efd; }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #0b4b6b;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #b8d1dc;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .section-title i { font-size: 1.4rem; color: #0d6efd; flex-shrink: 0; }
         .section-title .help-icon { font-size: 1.2rem; color: #6c757d; cursor: help; margin-left: auto; }
-        .criteria-group { border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; background-color: #f8fbfe; border-left: 8px solid; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-        .group-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .student-tag { background: linear-gradient(145deg, #f0f4fa, #e3eaf0); padding: 6px 18px; border-radius: 40px; font-size: 0.9rem; margin: 4px; display: inline-block; border: 1px solid #c0d3df; box-shadow: 0 2px 3px rgba(0,0,0,0.02); }
+
+        /* ============================================================
+           COMMON COMPONENTS
+        ============================================================ */
+        .criteria-group {
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            background-color: #f8fbfe;
+            border-left: 8px solid;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .group-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+        .student-tag {
+            background: linear-gradient(145deg, #f0f4fa, #e3eaf0);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            margin: 4px;
+            display: inline-block;
+            border: 1px solid #c0d3df;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.02);
+            word-break: break-word;
+        }
         .student-tag i { margin-left: 5px; cursor: pointer; }
-        .badge-criteria { background-color: #0d4e6e; color: white; font-size: 0.8rem; margin-right: 6px; padding: 6px 12px; border-radius: 20px; font-weight: 500; cursor: pointer; }
-        .import-label { background-color: #ecf3f7; padding: 8px 20px; border-radius: 30px; cursor: pointer; border: 1px solid #adc6d3; font-weight: 500; }
+
+        .badge-criteria {
+            background-color: #0d4e6e;
+            color: white;
+            font-size: 0.78rem;
+            margin-right: 5px;
+            margin-bottom: 4px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .import-label {
+            background-color: #ecf3f7;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            border: 1px solid #adc6d3;
+            font-weight: 500;
+            display: inline-block;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+
         .hidden { display: none; }
-        .validation-warning { background-color: #fff3cd; border-left: 6px solid #ffc107; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; font-weight: 500; }
+
+        .validation-warning {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
         .table-custom th { background-color: #e9f0f5; color: #064663; }
         .modal-header { background: linear-gradient(145deg, #0d6efd, #0b5ed7); color: white; }
-        .penalty-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-top: 5px; }
-        .penalty-option { display: flex; align-items: center; gap: 6px; padding: 8px; background-color: white; border-radius: 6px; border: 2px solid #e0edff; cursor: pointer; transition: 0.2s; }
+
+        .penalty-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .penalty-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+            background-color: white;
+            border-radius: 6px;
+            border: 2px solid #e0edff;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+            touch-action: manipulation;
+        }
         .penalty-option:hover { border-color: #3498db; background-color: #f0f7ff; }
         .penalty-option.selected { border-color: #2980b9; background-color: #e3f2fd; }
-        .grade-select { width: 100%; padding: 6px 10px; border: 2px solid #d1e3ff; border-radius: 8px; background-color: white; font-size: 0.9rem; }
-        .unanswered-field { background-color: #f0f4fa; border: 2px solid #e2eaf1; border-radius: 8px; padding: 8px 10px; text-align: center; font-weight: 600; color: #0b4b6b; }
-        .home-card { transition: transform 0.2s; cursor: pointer; border: 2px solid #dee2e6; border-radius: 20px; }
+
+        .grade-select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 2px solid #d1e3ff;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 1rem; /* ≥16px prevents iOS zoom */
+        }
+
+        .unanswered-field {
+            background-color: #f0f4fa;
+            border: 2px solid #e2eaf1;
+            border-radius: 8px;
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: 600;
+            color: #0b4b6b;
+        }
+
+        .home-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 2px solid #dee2e6;
+            border-radius: 20px;
+            touch-action: manipulation;
+        }
         .home-card:hover { transform: scale(1.02); border-color: #0d6efd; box-shadow: 0 10px 25px rgba(13,110,253,0.2); }
-        .app-switcher .btn { border-radius: 30px; margin-left: 6px; }
-        @media (max-width: 768px) { .container-custom { padding: 16px; } .section-card { padding: 16px; } }
-        /* Intro overlay */
+        @media (hover: none) { .home-card:hover { transform: none; } }
+
+        /* ============================================================
+           APP SWITCHER (SCROLLABLE NAVBAR)
+        ============================================================ */
+        .app-switcher {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            gap: 4px;
+            padding-bottom: 4px;
+            /* No snap – let user scroll freely */
+        }
+        .app-switcher::-webkit-scrollbar { display: none; }
+        .app-switcher .btn {
+            border-radius: 30px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            touch-action: manipulation;
+        }
+
+        /* ============================================================
+           INTRO OVERLAY
+        ============================================================ */
         #intro-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 20% 30%, #0b4b6b, #062c3b);
-            color: white; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; text-align: center; padding: 20px; transition: opacity 1s ease; opacity: 1; pointer-events: all;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 1s ease;
+            opacity: 1;
+            pointer-events: all;
         }
         #intro-overlay.fade-out { opacity: 0; pointer-events: none; }
-        .intro-title { font-size: clamp(2rem, 8vw, 4rem); font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.4); background: linear-gradient(135deg, #e0f0ff, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; }
-        .intro-subtitle { font-size: clamp(1rem, 3vw, 1.8rem); font-weight: 300; color: #f0f7ff; position: absolute; bottom: 40px; right: 40px; font-style: italic; }
+        .intro-title {
+            font-size: clamp(1.8rem, 8vw, 4rem);
+            font-weight: 700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            background: linear-gradient(135deg, #e0f0ff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .intro-subtitle {
+            font-size: clamp(0.85rem, 2.5vw, 1.4rem);
+            font-weight: 300;
+            color: #f0f7ff;
+            position: absolute;
+            bottom: max(20px, env(safe-area-inset-bottom, 20px));
+            right: max(20px, env(safe-area-inset-right, 20px));
+            font-style: italic;
+        }
         .intro-subtitle::before { content: "✦"; color: #a5d6a7; margin-right: 8px; }
 
-        /* Estilos específicos para la app de instrumentos (integrados) */
-        .matrix-cell { width: 32px; height: 32px; border: 2px solid #dee2e6; display: inline-block; margin: 2px; cursor: pointer; background-color: white; border-radius: 6px; transition: 0.1s; }
-        .matrix-cell.selected { background-color: #198754; border-color: #198754; }
-        .criteria-header { 
-            writing-mode: vertical-lr; 
-            transform: rotate(180deg); 
-            height: 100px; 
-            vertical-align: middle; 
-            text-align: center; 
-            font-size: 0.75rem; 
-            font-weight: bold; 
-            white-space: nowrap; 
+        /* ============================================================
+           INSTRUMENTS APP SPECIFIC
+        ============================================================ */
+        .matrix-cell {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #dee2e6;
+            display: inline-block;
+            margin: 2px;
+            cursor: pointer;
+            background-color: white;
+            border-radius: 6px;
+            transition: background-color 0.1s, border-color 0.1s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
-        .weight-input { width: 90px; }
+        .matrix-cell.selected { background-color: #198754; border-color: #198754; }
+
+        .criteria-header {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            height: 100px;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .weight-input { width: 80px; min-width: 60px; }
         .total-weight { font-weight: bold; color: #0b4b6b; }
-        .warning-note { color: #856404; background-color: #fff3cd; padding: 5px 12px; border-radius: 20px; display: inline-block; }
-        .grade-input { width: 70px; text-align: center; }
+
+        .warning-note {
+            color: #856404;
+            background-color: #fff3cd;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .grade-input {
+            width: 65px;
+            text-align: center;
+            font-size: 1rem; /* ≥16px prevents iOS zoom */
+        }
+
         .fixed-header { position: sticky; top: 0; background: white; z-index: 10; }
+
         #inst-evalTable td, #inst-evalTable th { vertical-align: middle; text-align: center; }
         #inst-evalTable td:first-child, #inst-evalTable th:first-child { text-align: left !important; }
         #inst-evalTable input.grade-input { margin: 0 auto; display: block; text-align: center; }
-        .switch-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+
+        .switch-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
         .modal-small { max-width: 400px; }
         .btn-file-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+
+        /* Instrument tabs – scrollable */
+        #inst-mainTabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+        #inst-mainTabs::-webkit-scrollbar { display: none; }
+        #inst-mainTabs .nav-link { white-space: nowrap; }
+
+        /* ============================================================
+           TOUCH / POINTER IMPROVEMENTS
+        ============================================================ */
+        button, .btn, a, label[for], .import-label, .home-card, .matrix-cell {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ============================================================
+           FORM INPUTS – prevent iOS auto-zoom (must be ≥16px)
+        ============================================================ */
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        input[type="search"],
+        select,
+        textarea {
+            font-size: max(16px, 0.9rem);
+        }
+
+        /* ============================================================
+           RESPONSIVE – LARGE TABLETS (≤992px)
+        ============================================================ */
+        @media (max-width: 992px) {
+            .container-custom { padding: 20px 18px; }
+        }
+
+        /* ============================================================
+           RESPONSIVE – TABLETS (≤768px)
+        ============================================================ */
+        @media (max-width: 768px) {
+            body { padding: 6px; }
+            .container-custom { padding: 16px 14px; border-radius: 20px; }
+            .section-card { padding: 16px 14px; border-radius: 16px; }
+            .section-title i { font-size: 1.2rem; }
+
+            /* Header layout stacks nicely */
+            .d-flex.flex-wrap.justify-content-between.align-items-center.mb-4 {
+                gap: 10px;
+            }
+
+            /* Sub-navigation btn-group becomes scrollable strip */
+            .btn-group[role="group"] {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                width: 100%;
+                gap: 4px;
+            }
+            .btn-group[role="group"]::-webkit-scrollbar { display: none; }
+            .btn-group[role="group"] .btn {
+                flex-shrink: 0;
+                white-space: nowrap;
+                border-radius: 8px !important;
+            }
+
+            /* Student input: flex-grow instead of fixed width */
+            #examStudentNameInput,
+            #testStudentNameInput,
+            #genericStudentNameInput,
+            #inst-studentNameInput {
+                width: auto !important;
+                flex: 1 1 0;
+                min-width: 0;
+            }
+
+            /* Table scrollable */
+            .table-responsive { -webkit-overflow-scrolling: touch; }
+
+            /* Modal full-width */
+            .modal-dialog { margin: 8px; }
+            .modal-dialog.modal-small { max-width: calc(100% - 16px); }
+
+            /* App 4 inner header */
+            #appInstrumentContainer h1 { font-size: 1.3rem; }
+        }
+
+        /* ============================================================
+           RESPONSIVE – PHONES (≤576px)
+        ============================================================ */
+        @media (max-width: 576px) {
+            body { padding: 4px; }
+            .container-custom { padding: 12px 10px; border-radius: 14px; }
+            .section-card { padding: 14px 12px; border-radius: 14px; margin-bottom: 16px; }
+
+            /* Main header */
+            .d-flex.flex-wrap.justify-content-between.align-items-center.mb-4 h1 {
+                font-size: 1.2rem;
+            }
+            .app-switcher .btn { font-size: 0.72rem; padding: 5px 9px; }
+
+            /* Sub-app headers */
+            #appExamContainer h3,
+            #appTestContainer h3,
+            #appGenericContainer h3 { font-size: 1rem; }
+
+            /* Nav sub-buttons */
+            .btn-group[role="group"] .btn { font-size: 0.72rem; padding: 5px 9px; }
+
+            /* Config action buttons: stack left-aligned */
+            .col-md-5.d-flex.flex-wrap.justify-content-end {
+                justify-content: flex-start !important;
+            }
+
+            /* Student input row: full-width flex */
+            .d-flex > input.form-control {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+
+            /* Penalty grid: 3 columns on phone */
+            .penalty-options { grid-template-columns: repeat(3, 1fr); }
+
+            /* Group title smaller */
+            .group-title { font-size: 1rem; }
+
+            /* Home cards: ensure tap area */
+            .home-card { margin-bottom: 4px; }
+            .home-card .btn { width: 100%; }
+
+            /* Intro subtitle repositioned */
+            .intro-subtitle {
+                position: static;
+                margin-top: 20px;
+                font-size: 0.85rem;
+            }
+
+            /* Export buttons: column layout */
+            .d-flex.flex-wrap.gap-3.justify-content-between.align-items-center {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px !important;
+            }
+
+            /* Matrix cells slightly larger for fingers */
+            .matrix-cell { width: 40px; height: 40px; margin: 3px; }
+
+            /* Instrument tab labels shorter */
+            #inst-mainTabs .nav-link { font-size: 0.78rem; padding: 7px 10px; }
+
+            /* Weight input smaller */
+            .weight-input { width: 68px; }
+        }
+
+        /* ============================================================
+           TOUCH DEVICE – extra tap-target size
+        ============================================================ */
+        @media (hover: none) and (pointer: coarse) {
+            .btn { min-height: 42px; }
+            .form-control { min-height: 42px; }
+            .grade-input { min-height: 42px; width: 68px; }
+            .grade-select { min-height: 42px; }
+            .matrix-cell { width: 42px; height: 42px; margin: 3px; }
+            .penalty-option { padding: 10px 8px; }
+            .student-tag { padding: 8px 16px; }
+        }
+
+        /* ============================================================
+           PRINT
+        ============================================================ */
+        @media print {
+            .app-switcher,
+            #intro-overlay,
+            .btn:not(.badge),
+            .section-title .help-icon { display: none !important; }
+            .container-custom { box-shadow: none; padding: 0; border-radius: 0; }
+            .table-responsive { overflow: visible; }
+            .section-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+        }
     </style>
 </head>
 <body>
@@ -96,9 +507,9 @@
 
 <div class="container-custom">
     <!-- CABECERA FIJA CON CAMBIADOR (ahora con 4 apps) -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3">
-        <h1 class="fw-bold" style="color: #0b4b6b;"><i class="bi bi-diagram-3 me-2" style="color: #0d6efd;"></i>EVALUACIÓN TEC4</h1>
-        <div class="app-switcher btn-group" role="group">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3" style="gap:10px;">
+        <h1 class="fw-bold mb-0" style="color: #0b4b6b; font-size: clamp(1.1rem, 4vw, 1.8rem);"><i class="bi bi-diagram-3 me-2" style="color: #0d6efd;"></i>EVALUACIÓN TEC4</h1>
+        <div class="app-switcher" role="group">
             <button type="button" class="btn btn-outline-secondary" id="btnHome"><i class="fas fa-home"></i> Inicio</button>
             <button type="button" class="btn btn-outline-primary" id="btnAppExam"><i class="bi bi-pencil-square"></i> Por preguntas</button>
             <button type="button" class="btn btn-outline-success" id="btnAppTest"><i class="fas fa-calculator"></i> Tipo test</button>
@@ -159,9 +570,9 @@
 
     <!-- ========== APLICACIÓN 1: EXAMEN POR PREGUNTAS ========== -->
     <div id="appExamContainer" class="screen">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold"><i class="bi bi-pencil-square" style="color:#0d6efd;"></i> Examen por preguntas · TEC4</h3>
-            <div class="btn-group" role="group">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
+            <h3 class="fw-bold mb-0" style="font-size: clamp(0.95rem, 3vw, 1.4rem);"><i class="bi bi-pencil-square" style="color:#0d6efd;"></i> Examen por preguntas · TEC4</h3>
+            <div class="btn-group flex-shrink-0" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="examNavConfig">⚙️ Configuración</button>
                 <button type="button" class="btn btn-outline-primary" id="examNavGrade">📝 Calificación</button>
                 <button type="button" class="btn btn-outline-primary" id="examNavResults">📊 Resultados</button>
@@ -174,13 +585,13 @@
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4"><label class="form-label fw-semibold">📌 Nombre</label><input type="text" id="examNameInput" class="form-control" placeholder="Examen sin título"></div>
                     <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="examCourseInput" class="form-control" placeholder="Ejemplo: 4º ESO"></div>
-                    <div class="col-md-5 d-flex flex-wrap justify-content-end gap-2">
-                        <button id="examExportConfigBtn" class="btn btn-outline-primary"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
-                        <button id="examImportConfigBtn" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
+                    <div class="col-md-5 d-flex flex-wrap gap-2">
+                        <button id="examExportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
+                        <button id="examImportConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
                         <input type="file" id="examImportConfigFile" accept=".json" class="hidden">
-                        <button id="examSaveToLocalBtn" class="btn btn-outline-success"><i class="bi bi-save"></i> Guardar local</button>
-                        <button id="examLoadFromLocalBtn" class="btn btn-outline-info"><i class="bi bi-folder-symlink"></i> Cargar local</button>
-                        <button id="examResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button>
+                        <button id="examSaveToLocalBtn" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
+                        <button id="examLoadFromLocalBtn" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
+                        <button id="examResetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                     </div>
                 </div>
             </div>
@@ -200,8 +611,8 @@
             </div>
             <div class="section-card">
                 <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
-                <div class="d-flex flex-wrap gap-3 align-items-center">
-                    <div class="d-flex"><input type="text" id="examStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="examBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <div class="d-flex flex-grow-1" style="min-width:200px; max-width:400px;"><input type="text" id="examStudentNameInput" class="form-control" placeholder="Apellidos, Nombre"><button id="examBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
                     <div><label for="examImportFile" class="import-label"><i class="bi bi-file-earmark-arrow-up"></i> Importar Excel/JSON</label><input type="file" id="examImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
                     <button id="examBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                 </div>
@@ -240,9 +651,9 @@
 
     <!-- ========== APLICACIÓN 2: TIPO TEST ========== -->
     <div id="appTestContainer" class="screen">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold"><i class="fas fa-calculator" style="color:#198754;"></i> Examen tipo test · TEC4</h3>
-            <div class="btn-group">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
+            <h3 class="fw-bold mb-0" style="font-size: clamp(0.95rem, 3vw, 1.4rem);"><i class="fas fa-calculator" style="color:#198754;"></i> Examen tipo test · TEC4</h3>
+            <div class="btn-group flex-shrink-0" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="testNavConfig">⚙️ Configuración</button>
                 <button type="button" class="btn btn-outline-primary" id="testNavGrade">📝 Calificación</button>
                 <button type="button" class="btn btn-outline-primary" id="testNavResults">📊 Resultados</button>
@@ -285,7 +696,7 @@
             <div class="section-card">
                 <div class="section-title"><i class="fas fa-users"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
-                    <div class="d-flex"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
+                    <div class="d-flex flex-grow-1" style="min-width:200px; max-width:400px;"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
                     <div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
                     <button id="testBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar</button>
                 </div>
@@ -325,9 +736,9 @@
 
     <!-- ========== APLICACIÓN 3: GENÉRICA ========== -->
     <div id="appGenericContainer" class="screen">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold"><i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Tarea por criterios · TEC4</h3>
-            <div class="btn-group">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
+            <h3 class="fw-bold mb-0" style="font-size: clamp(0.95rem, 3vw, 1.4rem);"><i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Tarea por criterios · TEC4</h3>
+            <div class="btn-group flex-shrink-0" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="genericNavConfig">⚙️ Configuración</button>
                 <button type="button" class="btn btn-outline-primary" id="genericNavGrade">📝 Calificación</button>
                 <button type="button" class="btn btn-outline-primary" id="genericNavResults">📊 Resultados</button>
@@ -340,13 +751,13 @@
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4"><label class="form-label fw-semibold">📌 Nombre</label><input type="text" id="genericExamNameInput" class="form-control" placeholder="Actividad sin título"></div>
                     <div class="col-md-3"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="genericCourseInput" class="form-control" placeholder="Ejemplo: 4º ESO"></div>
-                    <div class="col-md-5 d-flex flex-wrap justify-content-end gap-2">
-                        <button id="genericExportConfigBtn" class="btn btn-outline-primary"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
-                        <button id="genericImportConfigBtn" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
+                    <div class="col-md-5 d-flex flex-wrap gap-2">
+                        <button id="genericExportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
+                        <button id="genericImportConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
                         <input type="file" id="genericImportConfigFile" accept=".json" class="hidden">
-                        <button id="genericSaveToLocalBtn" class="btn btn-outline-success"><i class="bi bi-save"></i> Guardar local</button>
-                        <button id="genericLoadFromLocalBtn" class="btn btn-outline-info"><i class="bi bi-folder-symlink"></i> Cargar local</button>
-                        <button id="genericResetAllBtn" class="btn btn-outline-danger"><i class="bi bi-eraser"></i> Reiniciar todo</button>
+                        <button id="genericSaveToLocalBtn" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
+                        <button id="genericLoadFromLocalBtn" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
+                        <button id="genericResetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                     </div>
                 </div>
             </div>
@@ -361,7 +772,7 @@
             <div class="section-card">
                 <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade alumnos (clic en lápiz para editar)."></i></div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
-                    <div class="d-flex"><input type="text" id="genericStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="genericBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
+                    <div class="d-flex flex-grow-1" style="min-width:200px; max-width:400px;"><input type="text" id="genericStudentNameInput" class="form-control" placeholder="Apellidos, Nombre"><button id="genericBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
                     <div><label for="genericImportFile" class="import-label"><i class="bi bi-file-earmark-arrow-up"></i> Importar</label><input type="file" id="genericImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
                     <button id="genericBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar</button>
                 </div>
@@ -396,8 +807,8 @@
     <div id="appInstrumentContainer" class="screen">
         <div class="app-container">
             <!-- CABECERA -->
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3">
-                <h1 class="fw-bold" style="color: #0b4b6b;"><i class="bi bi-grid-3x3-gap-fill me-2" style="color: #0d6efd;"></i>Evaluación por Instrumentos · TEC4</h1>
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3" style="gap:10px;">
+                <h1 class="fw-bold mb-0" style="color: #0b4b6b; font-size: clamp(1rem, 3.5vw, 1.6rem);"><i class="bi bi-grid-3x3-gap-fill me-2" style="color: #0d6efd;"></i>Evaluación por Instrumentos · TEC4</h1>
                 <div>
                     <span class="badge bg-secondary p-2"><i class="bi bi-info-circle"></i> Criterios TEC.4.X.Y.</span>
                 </div>
@@ -443,8 +854,8 @@
                             <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Añade al menos un alumno (puedes importar desde Excel o JSON)"></i>
                         </div>
                         <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
-                            <div class="d-flex">
-                                <input type="text" id="inst-studentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;">
+                            <div class="d-flex flex-grow-1" style="min-width:200px; max-width:400px;">
+                                <input type="text" id="inst-studentNameInput" class="form-control" placeholder="Apellidos, Nombre">
                                 <button id="inst-btnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> Añadir</button>
                             </div>
                             <div>
@@ -517,11 +928,11 @@
                             </table>
                         </div>
                         <div id="inst-noCriteriaWarning" class="validation-warning" style="display:none;"><i class="bi bi-exclamation-triangle-fill"></i> Debes seleccionar al menos un criterio para continuar.</div>
-                        <div class="btn-group mb-3" role="group">
-                            <button id="inst-exportMatrixJson" class="btn btn-outline-success"><i class="bi bi-download"></i> Exportar matriz JSON</button>
-                            <button id="inst-importMatrixJsonBtn" class="btn btn-outline-warning"><i class="bi bi-upload"></i> Importar matriz</button>
-                            <button id="inst-saveMatrixLocal" class="btn btn-outline-info"><i class="bi bi-save"></i> Guardar local</button>
-                            <button id="inst-loadMatrixLocal" class="btn btn-outline-secondary"><i class="bi bi-folder-symlink"></i> Recuperar guardado</button>
+                        <div class="btn-file-group mb-3">
+                            <button id="inst-exportMatrixJson" class="btn btn-outline-success btn-sm"><i class="bi bi-download"></i> Exportar matriz JSON</button>
+                            <button id="inst-importMatrixJsonBtn" class="btn btn-outline-warning btn-sm"><i class="bi bi-upload"></i> Importar matriz</button>
+                            <button id="inst-saveMatrixLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-save"></i> Guardar local</button>
+                            <button id="inst-loadMatrixLocal" class="btn btn-outline-secondary btn-sm"><i class="bi bi-folder-symlink"></i> Recuperar guardado</button>
                         </div>
                         <input type="file" id="inst-importMatrixFile" accept=".json" class="hidden">
                         <div class="d-flex justify-content-end">
@@ -585,7 +996,7 @@
         </div>
         <!-- MODAL PARA EXPORTAR (instrumentos) -->
         <div class="modal fade" id="inst-exportModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-small">
+            <div class="modal-dialog modal-small modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Exportar resultados</h5>
@@ -607,16 +1018,16 @@
     </div>
 
     <!-- MODALES DE CRITERIOS GLOBALES (para las tres primeras apps) -->
-    <div class="modal fade" id="examGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Examen por preguntas</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
-    <div class="modal fade" id="testGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Tipo test</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="testGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
-    <div class="modal fade" id="genericGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Evaluación genérica</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="genericGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="examGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Examen por preguntas</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="testGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Tipo test</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="testGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="genericGlobalCriteriaModal" tabindex="-1"><div class="modal-dialog modal-xl modal-fullscreen-lg-down"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Criterios TEC.4.X.Y. - Evaluación genérica</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body" id="genericGlobalCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericSaveGlobalCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
     <!-- Modal asignar criterios a pregunta (examen) -->
-    <div class="modal fade" id="examQuestionCriteriaModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examQuestionCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="examQuestionCriteriaModal" tabindex="-1"><div class="modal-dialog modal-lg modal-fullscreen-md-down"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="examQuestionCriteriaGroupedContainer"></div><div class="modal-footer"><button type="button" class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div></div></div></div>
 
     <!-- MODALES PARA EXPORTACIÓN (para las tres primeras) -->
-    <div class="modal fade" id="examExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="examExportIncludeGrade" checked><label class="form-check-label" for="examExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examExportConfirm">Exportar</button></div></div></div></div>
-    <div class="modal fade" id="testExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="testExportIncludeGrade" checked><label class="form-check-label" for="testExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testExportConfirm">Exportar</button></div></div></div></div>
-    <div class="modal fade" id="genericExportModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="genericExportIncludeGrade" checked><label class="form-check-label" for="genericExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericExportConfirm">Exportar</button></div></div></div></div>
+    <div class="modal fade" id="examExportModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="examExportIncludeGrade" checked><label class="form-check-label" for="examExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="examExportConfirm">Exportar</button></div></div></div></div>
+    <div class="modal fade" id="testExportModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="testExportIncludeGrade" checked><label class="form-check-label" for="testExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="testExportConfirm">Exportar</button></div></div></div></div>
+    <div class="modal fade" id="genericExportModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="genericExportIncludeGrade" checked><label class="form-check-label" for="genericExportIncludeGrade">Incluir columna Calificación</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="genericExportConfirm">Exportar</button></div></div></div></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

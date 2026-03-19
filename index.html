@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>EVALUACIÓN TEC4 · INTEGRADA · V16</title>
+    <title>EVALUACIÓN TEC4 · INTEGRADA · V11.0</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="theme-color" content="#0b4b6b">
@@ -56,6 +56,15 @@
         .penalty-option.selected { border-color: #2980b9; background-color: #e3f2fd; }
         .grade-select { width: 100%; padding: 6px 10px; border: 2px solid #d1e3ff; border-radius: 8px;
             background-color: white; font-size: 1rem; }
+        /* Inputs de calificación como texto (acepta coma o punto) */
+        input.grade-text-input {
+            text-align: center;
+            font-weight: 600;
+        }
+        input.grade-text-input.input-invalid {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5;
+        }
         .unanswered-field { background-color: #f0f4fa; border: 2px solid #e2eaf1; border-radius: 8px;
             padding: 8px 10px; text-align: center; font-weight: 600; color: #0b4b6b; }
         /* HOME CARDS */
@@ -847,6 +856,47 @@ function importStudentsFromFile(file, state, scoresField, afterImport) {
 }
 
 // =============================================================================
+// FUNCIÓN AUXILIAR: parsea calificaciones aceptando coma o punto decimal
+// =============================================================================
+function parseGradeInput(str) {
+    if (typeof str !== 'string') str = String(str);
+    str = str.replace(/,/g, '.').trim();
+    const parts = str.split('.');
+    if (parts.length > 2) str = parts[0] + '.' + parts.slice(1).join('');
+    const val = parseFloat(str);
+    return isNaN(val) ? 0 : val;
+}
+
+function formatGradeDisplay(val) {
+    return parseFloat(val.toFixed(2)).toString();
+}
+
+function attachGradeInputLiveValidation(inp) {
+    inp.addEventListener('input', function () {
+        let v = this.value.replace(/[^0-9.,]/g, '');
+        v = v.replace(/,/g, '.');
+        const dotIdx = v.indexOf('.');
+        if (dotIdx !== -1) {
+            v = v.slice(0, dotIdx + 1) + v.slice(dotIdx + 1).replace(/\./g, '');
+            const decimals = v.slice(dotIdx + 1);
+            if (decimals.length > 2) v = v.slice(0, dotIdx + 3);
+        }
+        const cursor = this.selectionStart;
+        this.value = v;
+        try { this.setSelectionRange(cursor, cursor); } catch(e) {}
+        const num = parseFloat(v);
+        if (v !== '' && v !== '.' && (isNaN(num) || num < 0)) {
+            this.classList.add('input-invalid');
+        } else {
+            this.classList.remove('input-invalid');
+        }
+    });
+    inp.addEventListener('blur', function () {
+        this.classList.remove('input-invalid');
+    });
+}
+
+// =============================================================================
 // ESTADOS DE LAS APLICACIONES
 // =============================================================================
 const examState = {
@@ -941,17 +991,21 @@ function renderSimpleGradeTable(state, tableId, tbodyId) {
         tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
         state.globalCriteria.forEach((_, cIdx) => {
             const td = document.createElement('td'); td.style.minWidth='100px';
-            td.innerHTML = `<input type="number" class="form-control form-control-sm generic-score-input" data-student="${sIdx}" data-criterion="${cIdx}" value="${state.scores[sIdx]?.[cIdx] ?? 0}" min="0" max="10" step="0.1">`;
+            const val = state.scores[sIdx]?.[cIdx] ?? 0;
+            td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input generic-score-input" data-student="${sIdx}" data-criterion="${cIdx}" value="${formatGradeDisplay(val)}" placeholder="0">`;
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
     });
-    tbody.querySelectorAll('.generic-score-input').forEach(inp => inp.addEventListener('change', function() {
-        const sIdx = parseInt(this.dataset.student), cIdx = parseInt(this.dataset.criterion);
-        let val = parseFloat(this.value); if (isNaN(val)) val = 0; val = Math.min(Math.max(val,0),10); this.value = val;
-        if (!state.scores[sIdx]) state.scores[sIdx] = [];
-        state.scores[sIdx][cIdx] = val;
-    }));
+    tbody.querySelectorAll('.generic-score-input').forEach(inp => {
+        attachGradeInputLiveValidation(inp);
+        inp.addEventListener('change', function() {
+            const sIdx = parseInt(this.dataset.student), cIdx = parseInt(this.dataset.criterion);
+            let val = parseGradeInput(this.value); val = Math.min(Math.max(val,0),10); this.value = formatGradeDisplay(val);
+            if (!state.scores[sIdx]) state.scores[sIdx] = [];
+            state.scores[sIdx][cIdx] = val;
+        });
+    });
 }
 
 // =============================================================================
@@ -1289,7 +1343,7 @@ function renderExamQuestionsTable() {
         const badgesHtml = q.criteriaCodes.map(c => `<span class="badge badge-criteria me-1" title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}">${c}.</span>`).join('');
         tr.innerHTML = `
             <td><strong>P${q.id}</strong></td>
-            <td style="width:140px;"><input type="number" class="form-control form-control-sm max-score-input" data-qidx="${index}" value="${q.maxScore}" min="0.1" max="10" step="0.1"></td>
+            <td style="width:140px;"><input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input max-score-input" data-qidx="${index}" value="${formatGradeDisplay(q.maxScore)}" placeholder="10"></td>
             <td>${badgesHtml}</td>
             <td style="width:220px;"><div class="d-flex flex-wrap gap-1">
                 <button class="btn btn-sm btn-outline-primary assign-criteria-btn" data-qid="${q.id}" data-bs-toggle="modal" data-bs-target="#examQuestionCriteriaModal"><i class="bi bi-tags"></i> Asignar</button>
@@ -1298,9 +1352,16 @@ function renderExamQuestionsTable() {
             </div></td>`;
         tbody.appendChild(tr);
     });
-    tbody.querySelectorAll('.max-score-input').forEach(inp => inp.addEventListener('change', function() {
-        const i = parseInt(this.dataset.qidx); if (examState.questions[i]) examState.questions[i].maxScore = parseFloat(this.value)||10;
-    }));
+    tbody.querySelectorAll('.max-score-input').forEach(inp => {
+        attachGradeInputLiveValidation(inp);
+        inp.addEventListener('change', function() {
+            const i = parseInt(this.dataset.qidx);
+            let val = parseGradeInput(this.value); if (val <= 0) val = 10;
+            val = Math.min(Math.max(val, 0.1), 10);
+            if (examState.questions[i]) examState.questions[i].maxScore = val;
+            this.value = formatGradeDisplay(val);
+        });
+    });
     tbody.querySelectorAll('.assign-criteria-btn').forEach(btn => btn.addEventListener('click', function() {
         const q = examState.questions.find(q => q.id === parseInt(this.dataset.qid));
         document.getElementById('examModalQuestionId').textContent = q.id;
@@ -1363,18 +1424,21 @@ function renderExamGradeTable() {
         tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
         examState.questions.forEach((q, qIdx) => {
             const td = document.createElement('td'); td.style.minWidth='80px';
-            td.innerHTML = `<input type="number" class="form-control form-control-sm exam-score-input" data-student="${sIdx}" data-question="${qIdx}" value="${examState.scores[sIdx]?.[qIdx]??0}" min="0" max="${q.maxScore}" step="0.1">`;
+            td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input exam-score-input" data-student="${sIdx}" data-question="${qIdx}" value="${formatGradeDisplay(examState.scores[sIdx]?.[qIdx]??0)}" placeholder="0">`;
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
     });
-    tbody.querySelectorAll('.exam-score-input').forEach(inp => inp.addEventListener('change', function() {
-        const sIdx = parseInt(this.dataset.student), qIdx = parseInt(this.dataset.question);
-        let val = parseFloat(this.value); if (isNaN(val)) val=0; const max=examState.questions[qIdx].maxScore;
-        val = Math.min(Math.max(val,0),max); this.value=val;
-        if (!examState.scores[sIdx]) examState.scores[sIdx]=[];
-        examState.scores[sIdx][qIdx]=val;
-    }));
+    tbody.querySelectorAll('.exam-score-input').forEach(inp => {
+        attachGradeInputLiveValidation(inp);
+        inp.addEventListener('change', function() {
+            const sIdx = parseInt(this.dataset.student), qIdx = parseInt(this.dataset.question);
+            let val = parseGradeInput(this.value); const max=examState.questions[qIdx].maxScore;
+            val = Math.min(Math.max(val,0),max); this.value = formatGradeDisplay(val);
+            if (!examState.scores[sIdx]) examState.scores[sIdx]=[];
+            examState.scores[sIdx][qIdx]=val;
+        });
+    });
 }
 
 function renderExamStudentTags() {
@@ -1646,13 +1710,15 @@ function inst_renderEvaluation() {
         const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${student.fullName}</strong></td>`;
         instrumentState.instruments.forEach((_,i)=>{
             const td=document.createElement('td');
-            const inp=document.createElement('input'); inp.type='number'; inp.step='0.1'; inp.min=0; inp.max=10;
-            inp.value=instrumentState.evalScores[sIdx]?.[i]||0;
-            inp.classList.add('form-control','form-control-sm','inst-grade-input');
+            const inp=document.createElement('input'); inp.type='text'; inp.inputMode='decimal';
+            inp.value=formatGradeDisplay(instrumentState.evalScores[sIdx]?.[i]||0);
+            inp.placeholder='0';
+            inp.classList.add('form-control','form-control-sm','grade-text-input','inst-grade-input');
             inp.dataset.student=sIdx; inp.dataset.instr=i;
-            inp.addEventListener('input',function(){
+            attachGradeInputLiveValidation(inp);
+            inp.addEventListener('change',function(){
                 const s=parseInt(this.dataset.student), iI=parseInt(this.dataset.instr);
-                let val=Math.min(10,Math.max(0,parseFloat(this.value)||0)); this.value=val;
+                let val=Math.min(10,Math.max(0,parseGradeInput(this.value))); this.value=formatGradeDisplay(val);
                 if(!instrumentState.evalScores[s]) instrumentState.evalScores[s]=[];
                 instrumentState.evalScores[s][iI]=val; inst_updateCriteriaRow(s,showGrade);
             });

@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>EVALUACIÓN TEC4 · INTEGRADA</title>
+    <title>EVALUACIÓN TEC4 · INTEGRADA · V16</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="theme-color" content="#0b4b6b">
@@ -1641,7 +1641,7 @@ function inst_renderEvaluation() {
     });
     inst_syncPesosBadge();
     const showGrade=document.getElementById('inst_showGradeColumn').checked;
-    document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((_,i)=>`<th>I${i+1}</th>`).join('')+usedCriteria.map(c=>`<th>${c}.</th>`).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
+    document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((inst,i)=>`<th title="${inst.name.replace(/"/g,'&quot;')}" style="cursor:help; white-space:nowrap;">I${i+1}</th>`).join('')+usedCriteria.map(c=>`<th>${c}.</th>`).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
     const tbody=document.getElementById('inst_evalTbody'); tbody.innerHTML='';
     instrumentState.students.forEach((student,sIdx)=>{
         const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${student.fullName}</strong></td>`;

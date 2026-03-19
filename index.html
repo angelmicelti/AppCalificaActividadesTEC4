@@ -634,19 +634,19 @@ const ALL_CRITERIA_CODES = [
     "TEC.4.6.1","TEC.4.6.2","TEC.4.6.3"
 ];
 const ALL_CRITERIA_DESCRIPTIONS = {
-    "TEC.4.1.1": "Identificar, localizar y seleccionar información técnica relevante de fuentes diversas.",
-    "TEC.4.1.2": "Analizar y evaluar críticamente la información técnica para resolver problemas tecnológicos.",
-    "TEC.4.1.3": "Comunicar procesos y resultados técnicos usando lenguaje adecuado.",
-    "TEC.4.2.1": "Plantear y estructurar proyectos técnicos aplicando metodología de diseño.",
-    "TEC.4.2.2": "Construir y verificar prototipos o productos técnicos con materiales y herramientas.",
-    "TEC.4.3.1": "Diseñar, programar y depurar algoritmos y programas para resolver problemas.",
-    "TEC.4.3.2": "Analizar sistemas de control automático y sus aplicaciones tecnológicas.",
-    "TEC.4.4.1": "Identificar y analizar componentes y circuitos electrónicos básicos.",
-    "TEC.4.4.2": "Diseñar y montar circuitos electrónicos con aplicaciones prácticas.",
-    "TEC.4.5.1": "Analizar fuentes de energía, su transformación y uso eficiente y sostenible.",
-    "TEC.4.6.1": "Colaborar en proyectos tecnológicos usando herramientas de comunicación digital.",
-    "TEC.4.6.2": "Desarrollar proyectos colaborativos con responsabilidad y actitud proactiva.",
-    "TEC.4.6.3": "Utilizar entornos digitales de forma segura, responsable y ética."
+    "TEC.4.1.1": "Idear y planificar soluciones tecnológicas emprendedoras que generen un valor para la comunidad, a partir de la observación y el análisis del entorno más cercano, estudiando sus necesidades, requisitos y posibilidades de mejora.",
+    "TEC.4.1.2": "Aplicar con iniciativa estrategias colaborativas de gestión de proyectos con una perspectiva interdisciplinar y siguiendo un proceso iterativo de validación, desde la fase de ideación hasta la difusión de la solución.",
+    "TEC.4.1.3": "Abordar la gestión del proyecto de forma creativa, aplicando estrategias y técnicas colaborativas adecuadas, así como métodos de investigación en la ideación de soluciones lo más eficientes, accesibles e innovadoras posibles.",
+    "TEC.4.2.1": "Analizar el diseño de un producto que dé respuesta a una necesidad planteada, evaluando su demanda, evolución y previsión de fin de ciclo de vida con un criterio ético, responsable e inclusivo.",
+    "TEC.4.2.2": "Fabricar productos y soluciones tecnológicas, aplicando herramientas de diseño asistido, técnicas de elaboración manual, mecánica y digital y utilizando los materiales y recursos mecánicos, eléctricos, electrónicos y digitales adecuados.",
+    "TEC.4.3.1": "Intercambiar información y fomentar el trabajo en equipo de manera asertiva, empleando las herramientas digitales adecuadas junto con el vocabulario técnico, símbolos y esquemas de sistemas tecnológicos apropiados.",
+    "TEC.4.3.2": "Presentar y difundir las propuestas o soluciones tecnológicas de manera efectiva, empleando la entonación, expresión, gestión del tiempo y adaptación adecuada del discurso, así como un lenguaje inclusivo y no sexista.",
+    "TEC.4.4.1": "Diseñar, construir, controlar y simular sistemas automáticos programables y robots que sean capaces de realizar tareas de forma autónoma, aplicando conocimientos de mecánica, electrónica, neumática y componentes de los sistemas de control, así como otros conocimientos interdisciplinares.",
+    "TEC.4.4.2": "Integrar en las máquinas y sistemas tecnológicos aplicaciones informáticas y tecnologías digitales emergentes de control y simulación como el internet de las cosas, el big data y la inteligencia artificial con sentido crítico y ético.",
+    "TEC.4.5.1": "Resolver tareas propuestas de manera eficiente mediante el uso y configuración de diferentes aplicaciones y herramientas digitales, aplicando conocimientos interdisciplinares con autonomía.",
+    "TEC.4.6.1": "Hacer un uso responsable de la tecnología, mediante el análisis y aplicación de criterios de sostenibilidad y accesibilidad en la selección de materiales y en el diseño de estos, así como en los procesos de fabricación de productos tecnológicos, minimizando el impacto negativo en la sociedad y en el planeta.",
+    "TEC.4.6.2": "Analizar los beneficios que, en el cuidado del entorno, aportan la arquitectura bioclimática y el ecotransporte, valorando la contribución de las tecnologías al desarrollo sostenible.",
+    "TEC.4.6.3": "Identificar y valorar la repercusión y los beneficios del desarrollo de proyectos tecnológicos de carácter social, por medio de comunidades abiertas, acciones de voluntariado o proyectos de servicio a la comunidad."
 };
 let subjectInfo = { name:'TEC4', course:'4º ESO', criteriaCodes:ALL_CRITERIA_CODES, criteriaDescriptions:ALL_CRITERIA_DESCRIPTIONS };
 
@@ -935,7 +935,7 @@ function renderSimpleGradeTable(state, tableId, tbodyId) {
     }
     normalizeScores(state, state.globalCriteria.length);
     state.scores.forEach(row => row && row.forEach((s,i,a) => { if(s>10) a[i]=10; else if(s<0) a[i]=0; }));
-    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => `<th>${c}.<br><small>(0-10)</small></th>`).join('') + '</tr>';
+    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => `<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.<br><small>(0-10)</small></th>`).join('') + '</tr>';
     tbody.innerHTML = '';
     state.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
@@ -1020,7 +1020,7 @@ function renderResultsTable(app) {
     if (app === 'generic') normalizeGenericScores();
     const showGlobal = document.getElementById(checkId).checked;
     const criteria = state.globalCriteria;
-    thead.innerHTML = '<tr><th>ALUMNADO</th>' + criteria.map(c=>`<th>${c}.</th>`).join('') + (showGlobal ? '<th>Calificación</th>' : '') + '</tr>';
+    thead.innerHTML = '<tr><th>ALUMNADO</th>' + criteria.map(c=>`<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('') + (showGlobal ? '<th>Calificación</th>' : '') + '</tr>';
     tbody.innerHTML = '';
     const gradeColor = v => `hsl(${v * 12}, 80%, 70%)`;
     buildResultsData(app, showGlobal).forEach(row => {
@@ -1398,7 +1398,7 @@ function renderTestGradeTable() {
     const thead = document.querySelector('#testGradeTable thead'), tbody = document.getElementById('testGradeTbody');
     if (!thead||!tbody) return;
     if (!testState.students.length) { thead.innerHTML=''; tbody.innerHTML='<tr><td colspan="4" class="text-center p-4">Añade alumnos en Configuración.</td></tr>'; return; }
-    thead.innerHTML = '<tr><th>ALUMNADO</th><th>Aciertos</th><th>Fallos</th><th>NS/NC</th>' + testState.globalCriteria.map(c=>`<th>${c}.</th>`).join('') + '</tr>';
+    thead.innerHTML = '<tr><th>ALUMNADO</th><th>Aciertos</th><th>Fallos</th><th>NS/NC</th>' + testState.globalCriteria.map(c=>`<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('') + '</tr>';
     tbody.innerHTML = '';
     testState.students.forEach((student, sIdx) => {
         if (!testState.studentScores[sIdx]) testState.studentScores[sIdx] = {studentId:student.id, correct:0, wrong:0, unanswered:testState.totalQuestions};
@@ -1567,7 +1567,7 @@ function inst_renderMatrix() {
         ? instrumentCriteria.reduce((acc,_,idx)=>{ if(instrumentState.matrix.some(r=>r[idx])) acc.push(idx); return acc; },[])
         : instrumentCriteria.map((_,idx)=>idx);
     const criteriaToShow = usedIndices.map(i=>instrumentCriteria[i]);
-    thead.innerHTML = '<tr><th>Instrumento</th>'+criteriaToShow.map(c=>`<th class="inst-criteria-header text-center">${c}.</th>`).join('')+'</tr>';
+    thead.innerHTML = '<tr><th>Instrumento</th>'+criteriaToShow.map(c=>`<th class="inst-criteria-header text-center" title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('')+'</tr>';
     tbody.innerHTML='';
     instrumentState.instruments.forEach((inst,i)=>{
         const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${inst.name}</strong></td>`;
@@ -1641,7 +1641,7 @@ function inst_renderEvaluation() {
     });
     inst_syncPesosBadge();
     const showGrade=document.getElementById('inst_showGradeColumn').checked;
-    document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((inst,i)=>`<th title="${inst.name.replace(/"/g,'&quot;')}" style="cursor:help; white-space:nowrap;">I${i+1}</th>`).join('')+usedCriteria.map(c=>`<th>${c}.</th>`).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
+    document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((inst,i)=>`<th title="${inst.name.replace(/"/g,'&quot;')}" style="cursor:help; white-space:nowrap;">I${i+1}</th>`).join('')+usedCriteria.map(c=>`<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
     const tbody=document.getElementById('inst_evalTbody'); tbody.innerHTML='';
     instrumentState.students.forEach((student,sIdx)=>{
         const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${student.fullName}</strong></td>`;

@@ -311,7 +311,6 @@
                     <div class="col-md-6"><label class="form-label fw-semibold">📌 Nombre del examen</label><input type="text" id="testExamTitleInput" class="form-control" placeholder="Introduce un nombre"></div>
                     <div class="col-md-6"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="testCourseInput" class="form-control" placeholder="Ejemplo 4º ESO"></div>
                 </div>
-                <div class="d-flex justify-content-end mt-2"><button id="testResetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button></div>
             </div>
 			<div class="section-card">
 				<div class="section-title"><i class="fas fa-users"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos que realizarán el test."></i></div>
@@ -1986,7 +1985,6 @@ window.onload = function() {
     document.getElementById('testRecoverScoresBtn').addEventListener('click', ()=>recoverScores('test_scores_backup',
         data=>{ if(!data.studentScores) throw new Error('Formato no válido.'); testState.studentScores=data.studentScores.map(ss=>({correct:ss.correct||0,wrong:ss.wrong||0,unanswered:testState.totalQuestions-(ss.correct||0)-(ss.wrong||0)})); },
         renderTestGradeTable, 'testGradeMessage'));
-    document.getElementById('testResetAllBtn').addEventListener('click', ()=>resetAppState('test'));
     document.getElementById('testResetAllBtn2').addEventListener('click', ()=>resetAppState('test'));
     document.getElementById('testShowGlobalGrade').addEventListener('change', ()=>renderResultsTable('test'));
 

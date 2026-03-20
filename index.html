@@ -41,6 +41,10 @@
         .student-tag i { margin-left: 5px; cursor: pointer; }
         .badge-criteria { background-color: #0d4e6e; color: white; font-size: 0.8rem; margin-right: 6px;
             padding: 6px 12px; border-radius: 20px; font-weight: 500; }
+        .criteria-badge-editable { cursor: pointer; transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s; }
+        .criteria-badge-editable:hover { opacity: 0.85; transform: scale(1.08); box-shadow: 0 3px 10px rgba(253,126,20,0.4); }
+        .criteria-badge-custom { background: linear-gradient(135deg, #fd7e14, #e85d04) !important; }
+        .criteria-badge-editable::after { content: " ✎"; font-size: 0.75em; opacity: 0.8; }
         .import-label { background-color: #ecf3f7; padding: 8px 20px; border-radius: 30px; cursor: pointer;
             border: 1px solid #adc6d3; font-weight: 500; display: inline-block; white-space: nowrap;
             touch-action: manipulation; }
@@ -615,6 +619,38 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR DESCRIPCIÓN DE CRITERIO (solo Actividad Genérica) -->
+    <div class="modal fade" id="genericCriterionDescModal" tabindex="-1" aria-labelledby="genericCriterionDescModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(145deg, #fd7e14, #e85d04);">
+                    <h5 class="modal-title text-white" id="genericCriterionDescModalLabel"><i class="bi bi-pencil-square me-2"></i>¿Qué se evalúa con este criterio?</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">Criterio</label>
+                        <input type="text" id="genericCriterionDescCode" class="form-control fw-bold fs-5" readonly style="background:#f8f9fa; color:#0b4b6b; border-color:#dee2e6;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="genericCriterionDescText">Descripción / Lo que se evalúa</label>
+                        <textarea id="genericCriterionDescText" class="form-control" rows="5" placeholder="Describe qué se evalúa con este criterio en esta actividad concreta..."></textarea>
+                        <div class="form-text"><i class="bi bi-info-circle"></i> Puedes editar el enunciado oficial o escribir una descripción personalizada para esta actividad.</div>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="genericCriterionDescResetBtn">
+                        <i class="bi bi-arrow-counterclockwise"></i> Restaurar descripción oficial
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="genericCriterionDescSaveBtn" data-bs-dismiss="modal">
+                        <i class="bi bi-save"></i> Guardar descripción
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL COMPARTIDO: EXPORTAR RESULTADOS -->
     <div class="modal fade" id="sharedExportModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -914,6 +950,7 @@ const testState = {
 const genericState = {
     examName:"", course:"",
     students:[], globalCriteria:[], scores:[],
+    criteriaDescriptions: {},
     duplicateMessageId:'genericDuplicateMessage'
 };
 const appStates = { exam:examState, test:testState, generic:genericState };
@@ -927,6 +964,23 @@ const instrumentState = {
 // =============================================================================
 // BADGES DE CRITERIOS
 // =============================================================================
+
+/** Devuelve la descripción personalizada de un criterio en la actividad genérica,
+ *  o la descripción oficial si no hay personalización. */
+function getGenericCriterionDescription(code) {
+    return (genericState.criteriaDescriptions && genericState.criteriaDescriptions[code])
+        ? genericState.criteriaDescriptions[code]
+        : getCriteriaDescription(code);
+}
+
+/** Abre el modal para editar la descripción del criterio indicado (solo actividad genérica). */
+function openGenericCriterionDescModal(code) {
+    document.getElementById('genericCriterionDescCode').value = code + '.';
+    document.getElementById('genericCriterionDescText').value = getGenericCriterionDescription(code);
+    document.getElementById('genericCriterionDescModal').dataset.currentCode = code;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('genericCriterionDescModal')).show();
+}
+
 function renderGlobalBadges(app) {
     const state = appStates[app];
     const badgeContainerId = { exam:'examSelectedCriteriaBadges', test:'testSelectedCriteriaBadges', generic:'genericSelectedCriteriaBadges' }[app];
@@ -936,7 +990,16 @@ function renderGlobalBadges(app) {
     state.globalCriteria.forEach(code => {
         const span = document.createElement('span');
         span.className = 'badge bg-primary me-1 p-2 criteria-badge';
-        span.textContent = code + '.'; span.title = getCriteriaDescription(code);
+        if (app === 'generic') {
+            span.classList.add('criteria-badge-editable');
+            const hasCustom = genericState.criteriaDescriptions && genericState.criteriaDescriptions[code];
+            if (hasCustom) span.classList.add('criteria-badge-custom');
+            span.title = getGenericCriterionDescription(code) + '\n\n(Clic para editar descripción)';
+            span.addEventListener('click', () => openGenericCriterionDescModal(code));
+        } else {
+            span.title = getCriteriaDescription(code);
+        }
+        span.textContent = code + '.';
         container.appendChild(span);
     });
     if (!state.globalCriteria.length) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
@@ -975,7 +1038,8 @@ function normalizeGenericScores() {
 // =============================================================================
 // TABLA DE CALIFICACIÓN SIMPLE (genérica y compatibles)
 // =============================================================================
-function renderSimpleGradeTable(state, tableId, tbodyId) {
+function renderSimpleGradeTable(state, tableId, tbodyId, descFn) {
+    const getDesc = descFn || getCriteriaDescription;
     const thead = document.querySelector(`#${tableId} thead`);
     const tbody = document.getElementById(tbodyId);
     if (!thead || !tbody) return;
@@ -984,7 +1048,7 @@ function renderSimpleGradeTable(state, tableId, tbodyId) {
     }
     normalizeScores(state, state.globalCriteria.length);
     state.scores.forEach(row => row && row.forEach((s,i,a) => { if(s>10) a[i]=10; else if(s<0) a[i]=0; }));
-    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => `<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.<br><small>(0-10)</small></th>`).join('') + '</tr>';
+    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => `<th title="${getDesc(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.<br><small>(0-10)</small></th>`).join('') + '</tr>';
     tbody.innerHTML = '';
     state.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
@@ -1144,7 +1208,7 @@ function exportAppConfig(app) {
         cfg = { examName:s.examName, course:s.course, totalQuestions:s.totalQuestions, penaltyFactor:s.penaltyFactor, globalCriteria:[...s.globalCriteria], students:s.students.map(st=>({fullName:st.fullName})), studentScores:s.studentScores.map(ss=>({correct:ss.correct,wrong:ss.wrong,unanswered:ss.unanswered})) };
     } else {
         prefix = 'Configuración_Genérica';
-        cfg = { examName:s.examName, course:s.course, globalCriteria:[...s.globalCriteria], students:s.students.map(st=>({fullName:st.fullName})) };
+        cfg = { examName:s.examName, course:s.course, globalCriteria:[...s.globalCriteria], criteriaDescriptions:{...(s.criteriaDescriptions||{})}, students:s.students.map(st=>({fullName:st.fullName})) };
     }
     downloadJSON(cfg, `${makeBaseName(prefix, s.examName, s.course)}.json`);
 }
@@ -1172,7 +1236,7 @@ function importAppConfig(file, app) {
             sortStudents(testState,'studentScores'); renderGlobalBadges('test'); renderTestStudentTags();
         } else {
             if (!cfg.examName || !Array.isArray(cfg.globalCriteria)) throw new Error('Formato inválido');
-            Object.assign(genericState, { examName:cfg.examName, course:cfg.course||genericState.course, globalCriteria:cfg.globalCriteria, students:(cfg.students||[]).map(s=>({id:uuid(),fullName:s.fullName})) });
+            Object.assign(genericState, { examName:cfg.examName, course:cfg.course||genericState.course, globalCriteria:cfg.globalCriteria, criteriaDescriptions:cfg.criteriaDescriptions||{}, students:(cfg.students||[]).map(s=>({id:uuid(),fullName:s.fullName})) });
             genericState.scores = genericState.students.map(()=>new Array(genericState.globalCriteria.length).fill(0));
             document.getElementById('genericExamNameInput').value = genericState.examName;
             document.getElementById('genericCourseInput').value = genericState.course;
@@ -1273,6 +1337,7 @@ function loadAppFromLocal(app) {
         } else {
             Object.assign(genericState, saved);
             genericState.students = genericState.students.map(s=>({...s, id:s.id||uuid()}));
+            if (!genericState.criteriaDescriptions) genericState.criteriaDescriptions = {};
             normalizeGenericScores(); renderGlobalBadges('generic'); renderGenericStudentTags();
             document.getElementById('genericExamNameInput').value = genericState.examName;
             document.getElementById('genericCourseInput').value = genericState.course;
@@ -1304,7 +1369,7 @@ function resetAppState(app) {
         },
         generic: {
             label:'la actividad genérica',
-            defaults:{ examName:'Actividad sin título', course:'', globalCriteria:[], students:[], scores:[] },
+            defaults:{ examName:'Actividad sin título', course:'', globalCriteria:[], students:[], scores:[], criteriaDescriptions:{} },
             inputs:[['genericExamNameInput','Actividad sin título'],['genericCourseInput','']],
             lsKey:'tec4_generic_app',
             extra:() => renderGenericStudentTags()
@@ -1533,7 +1598,7 @@ function validateGenericCriteria() {
     if (!genericState.globalCriteria.length) { warn.style.display='block'; msg.textContent='No hay criterios globales seleccionados.'; return false; }
     warn.style.display='none'; return true;
 }
-function renderGenericGradeTable() { renderSimpleGradeTable(genericState, 'genericGradeTable', 'genericGradeTbody'); }
+function renderGenericGradeTable() { renderSimpleGradeTable(genericState, 'genericGradeTable', 'genericGradeTbody', getGenericCriterionDescription); }
 function renderGenericStudentTags() {
     renderStudentTags(genericState,'genericStudentTags','genericStudentCountBadge',() => {
         sortStudents(genericState,'scores'); normalizeGenericScores(); renderGenericStudentTags();
@@ -2093,6 +2158,25 @@ window.onload = function() {
         renderGenericGradeTable, 'genericGradeMessage'));
     document.getElementById('genericResetAllBtn').addEventListener('click', ()=>resetAppState('generic'));
     document.getElementById('genericShowGlobalGrade').addEventListener('change', ()=>renderResultsTable('generic'));
+
+    // Modal edición descripción de criterio (Actividad Genérica)
+    document.getElementById('genericCriterionDescResetBtn').addEventListener('click', function() {
+        const code = document.getElementById('genericCriterionDescModal').dataset.currentCode;
+        if (code) document.getElementById('genericCriterionDescText').value = getCriteriaDescription(code);
+    });
+    document.getElementById('genericCriterionDescSaveBtn').addEventListener('click', function() {
+        const modal = document.getElementById('genericCriterionDescModal');
+        const code = modal.dataset.currentCode;
+        const text = document.getElementById('genericCriterionDescText').value.trim();
+        if (!code) return;
+        if (!genericState.criteriaDescriptions) genericState.criteriaDescriptions = {};
+        if (text && text !== getCriteriaDescription(code)) {
+            genericState.criteriaDescriptions[code] = text;
+        } else {
+            delete genericState.criteriaDescriptions[code];
+        }
+        renderGlobalBadges('generic');
+    });
 
     // ========== INSTRUMENTOS ==========
     document.getElementById('inst_config-tab').addEventListener('click', ()=>showInstrumentosScreen('inst_config'));

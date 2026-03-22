@@ -126,13 +126,39 @@
             border-radius: 20px; display: inline-block; }
         .inst-grade-input { width: 70px; text-align: center; font-size: 1rem; }
         .inst-fixed-header { position: sticky; top: 0; background: white; z-index: 10; }
-        #inst_evalTable td, #inst_evalTable th { vertical-align: middle; text-align: center; }
         #inst_evalTable td:first-child, #inst_evalTable th:first-child { text-align: left !important; }
         .inst-switch-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .inst-modal-small { max-width: 400px; }
         .inst-btn-file-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
         #inst_matrixTable th:first-child, #inst_matrixTable td:first-child { max-width: 180px; min-width: 120px; white-space: normal; word-break: break-word; }
         #inst_matrixTable td { width: 30px; max-width: 30px; }
+        .inst-desc-textarea { width: 100%; min-width: 200px; font-size: 0.85rem; border: 1px solid #dee2e6; border-radius: 6px; padding: 6px 8px; resize: vertical; background: #fafcff; }
+        .inst-desc-textarea:focus { border-color: #6f42c1; outline: none; box-shadow: 0 0 0 2px rgba(111,66,193,0.15); }
+        .inst-header-clickable { cursor: pointer; transition: background 0.15s; }
+        .inst-header-clickable:hover { background-color: #ede7f6 !important; }
+        .inst-header-clickable .inst-desc-indicator { font-size: 0.65rem; opacity: 0.7; display: block; }
+        /* Centrado global de datos en tablas */
+        table.table td { text-align: center; vertical-align: middle; }
+        table.table th { text-align: center; vertical-align: middle; }
+        table.table td:first-child { text-align: left !important; }
+        table.table th:first-child { text-align: left !important; }
+        /* Criterios editables en cabeceras de tabla */
+        th.criteria-th-editable { cursor: pointer; transition: background 0.15s, color 0.15s; }
+        th.criteria-th-editable:hover { background-color: #e8f1ff !important; color: #0b4b6b !important; }
+        th.criteria-th-custom { background-color: #fff4e5 !important; color: #9d4500 !important; font-style: italic; }
+        th.criteria-th-editable::after { content: " ✎"; font-size: 0.65em; opacity: 0.55; }
+        /* En cabeceras verticales (Relación) el ✎ queda fuera — se suprime */
+        th.inst-criteria-header.criteria-th-editable::after { content: none; }
+        /* Preguntas examen */
+        .exam-q-name-input { font-weight: 700; color: #0b4b6b; border: 1px solid #dee2e6; border-radius: 6px;
+            padding: 4px 8px; width: 100%; min-width: 60px; background: #f8fbff; }
+        .exam-q-name-input:focus { border-color: #0d6efd; outline: none; box-shadow: 0 0 0 2px rgba(13,110,253,0.15); }
+        .exam-q-desc-textarea { width: 100%; font-size: 0.82rem; border: 1px solid #dee2e6; border-radius: 6px;
+            padding: 5px 8px; resize: vertical; background: #fafcff; min-width: 160px; }
+        .exam-q-desc-textarea:focus { border-color: #0d6efd; outline: none; box-shadow: 0 0 0 2px rgba(13,110,253,0.15); }
+        th.exam-q-th-clickable { cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+        th.exam-q-th-clickable:hover { background-color: #e8f1ff !important; color: #0b4b6b !important; }
+        th.exam-q-th-clickable .q-desc-dot { font-size: 0.65rem; display: block; opacity: 0.7; }
         /* Acordeón pesos */
         #accordionPesos .accordion-button { border-radius: 16px !important; }
         #accordionPesos .accordion-button:not(.collapsed) { border-radius: 16px 16px 0 0 !important; background:#e8f1ff; color:#0b4b6b; box-shadow:none; }
@@ -212,7 +238,7 @@
             <div class="col-md-6"><div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardTest"><i class="fas fa-calculator" style="font-size: 3rem; color: #198754;"></i><h3 class="mt-3 fw-bold">Examen tipo test</h3><p class="text-muted flex-grow-1">Aciertos, fallos, NS/NC. Con o sin penalización. Misma nota para todos los criterios.</p><button class="btn btn-success mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button></div></div>
         </div>
         <div class="row g-4 justify-content-center mt-2">
-            <div class="col-md-6"><div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardGeneric"><i class="bi bi-check2-circle" style="font-size: 3rem; color: #fd7e14;"></i><h3 class="mt-3 fw-bold">Actividad genérica competencial</h3><p class="text-muted flex-grow-1">Califica directamente cada criterio con nota 0-10.</p><button class="btn btn-warning mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button></div></div>
+            <div class="col-md-6"><div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardGeneric"><i class="bi bi-check2-circle" style="font-size: 3rem; color: #fd7e14;"></i><h3 class="mt-3 fw-bold">Actividad por criterios</h3><p class="text-muted flex-grow-1">Califica directamente cada criterio con nota 0-10.</p><button class="btn btn-warning mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button></div></div>
             <div class="col-md-6"><div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardInstrumentos"><i class="bi bi-grid-3x3-gap-fill" style="font-size: 3rem; color: #6f42c1;"></i><h3 class="mt-3 fw-bold">Actividad genérica por instrumentos</h3><p class="text-muted flex-grow-1">Define instrumentos, relación con criterios TEC.4.X.Y. y califica.</p><button class="btn btn-purple mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button></div></div>
         </div>
         <div class="alert alert-info mt-5 text-center"><i class="bi bi-info-circle"></i> Criterios <strong>TEC.4.X.Y.</strong> incluidos (Tecnología 4º ESO · LOMLOE).</div>
@@ -222,7 +248,7 @@
     <div id="appExamContainer" class="screen">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
             <h3 class="fw-bold mb-0" style="font-size:clamp(0.95rem,3vw,1.4rem);">
-                <i class="bi bi-pencil-square" style="color:#0d6efd;"></i> Examen por preguntas · TEC4
+                <i class="bi bi-pencil-square" style="color:#0d6efd;"></i> Examen por preguntas
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="examNavConfig">⚙️ Configuración</button>
@@ -259,7 +285,7 @@
                     </div>
                 </div>
                 <div id="examOrphanedCriteriaWarning" class="validation-warning" style="display:none;"><span id="examOrphanedCriteriaMessage"></span></div>
-                <div class="table-responsive mt-3"><table class="table table-bordered align-middle table-custom" id="examQuestionsTable"><thead><tr><th>Pregunta</th><th>Cal. máxima</th><th>Criterios</th><th>Acciones</th></tr></thead><tbody id="examQuestionsTbody"></tbody></table></div>
+                <div class="table-responsive mt-3"><table class="table table-bordered align-middle table-custom" id="examQuestionsTable"><thead><tr><th>Pregunta</th><th>Descripción</th><th>Calificación máxima</th><th>Criterios</th><th>Acciones</th></tr></thead><tbody id="examQuestionsTbody"></tbody></table></div>
                 <div class="d-flex justify-content-end mt-2"><button id="examAppendQuestionBtn" class="btn btn-success btn-sm"><i class="bi bi-plus-circle"></i> Añadir pregunta</button></div>
             </div>
             <div class="section-card">
@@ -273,6 +299,7 @@
                     <button id="examResetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                 </div>
             </div>
+            <div id="examConfigWarning" class="validation-warning" style="display:none;"></div>
         </div>
         <div id="examScreenGrade" class="screen">
             <div class="section-card">
@@ -309,7 +336,7 @@
     <div id="appTestContainer" class="screen">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
             <h3 class="fw-bold mb-0" style="font-size:clamp(0.95rem,3vw,1.4rem);">
-                <i class="fas fa-calculator" style="color:#198754;"></i> Examen tipo test · TEC4
+                <i class="fas fa-calculator" style="color:#198754;"></i> Examen tipo test
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="testNavConfig">⚙️ Configuración</button>
@@ -341,7 +368,7 @@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#globalCriteriaModal" data-app="test"><i class="fas fa-tags"></i> Seleccionar criterios</button>
                     <span id="testSelectedCriteriaBadges" class="d-flex flex-wrap gap-1"></span>
                 </div>
-                <div id="testNoCriteriaWarning" class="text-danger small mt-2 fw-bold" style="display:none;"><i class="fas fa-exclamation-triangle"></i> Debes seleccionar al menos un criterio.</div>
+                <div id="testNoCriteriaWarning" class="validation-warning" style="display:none;"></div>
             </div>
             <div class="section-card">
                 <div class="section-title"><i class="fas fa-question-circle"></i> Diseña el test: número de preguntas y penalizaciones <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Número total de preguntas y penalización."></i></div>
@@ -350,11 +377,11 @@
                     <div class="col-md-9"><label class="form-label fw-semibold">Penalizaciones:</label>
                         <div class="penalty-options" id="testPenaltyOptions">
                             <div class="penalty-option" data-value="0"><input type="radio" name="penalty" id="testPenalty0" value="0" checked><label for="testPenalty0">Sin penalización</label></div>
-                            <div class="penalty-option" data-value="0.2"><input type="radio" name="penalty" id="testPenalty5" value="0.2"><label for="testPenalty5">Fallo -1/5</label></div>
-                            <div class="penalty-option" data-value="0.25"><input type="radio" name="penalty" id="testPenalty4" value="0.25"><label for="testPenalty4">Fallo -1/4</label></div>
-                            <div class="penalty-option" data-value="0.333"><input type="radio" name="penalty" id="testPenalty3" value="0.333"><label for="testPenalty3">Fallo -1/3</label></div>
-                            <div class="penalty-option" data-value="0.5"><input type="radio" name="penalty" id="testPenalty2" value="0.5"><label for="testPenalty2">Fallo -1/2</label></div>
-                            <div class="penalty-option" data-value="1"><input type="radio" name="penalty" id="testPenalty1" value="1"><label for="testPenalty1">Igual</label></div>
+                            <div class="penalty-option" data-value="0.2"><input type="radio" name="penalty" id="testPenalty5" value="0.2"><label for="testPenalty5">Fallo resta 1/5 del acierto</label></div>
+                            <div class="penalty-option" data-value="0.25"><input type="radio" name="penalty" id="testPenalty4" value="0.25"><label for="testPenalty4">Fallo resta 1/4 del acierto</label></div>
+                            <div class="penalty-option" data-value="0.333"><input type="radio" name="penalty" id="testPenalty3" value="0.333"><label for="testPenalty3">Fallo resta 1/3 del acierto</label></div>
+                            <div class="penalty-option" data-value="0.5"><input type="radio" name="penalty" id="testPenalty2" value="0.5"><label for="testPenalty2">Fallo resta 1/2 del acierto</label></div>
+                            <div class="penalty-option" data-value="1"><input type="radio" name="penalty" id="testPenalty1" value="1"><label for="testPenalty1">Fallo resta igual que un acierto</label></div>
                         </div>
                     </div>
                 </div>
@@ -371,6 +398,7 @@
                     <button id="testResetAllBtn2" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                 </div>
             </div>
+            <div id="testConfigWarning" class="validation-warning" style="display:none;"></div>
         </div>
         <div id="testScreenGrade" class="screen">
             <div class="section-card">
@@ -407,7 +435,7 @@
     <div id="appGenericContainer" class="screen">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
             <h3 class="fw-bold mb-0" style="font-size:clamp(0.95rem,3vw,1.4rem);">
-                <i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Actividad genérica · TEC4
+                <i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Actividad evaluada mediante criterios
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="genericNavConfig">⚙️ Configuración</button>
@@ -452,6 +480,7 @@
                     <button id="genericResetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                 </div>
             </div>
+            <div id="genericConfigWarning" class="validation-warning" style="display:none;"></div>
         </div>
         <div id="genericScreenGrade" class="screen">
             <div class="section-card">
@@ -488,7 +517,7 @@
     <div id="appInstrumentosContainer" class="screen">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
             <h3 class="fw-bold mb-0" style="font-size:clamp(0.95rem,3vw,1.4rem);">
-                <i class="bi bi-grid-3x3-gap-fill" style="color:#6f42c1;"></i> Evaluación por instrumentos · TEC4
+                <i class="bi bi-grid-3x3-gap-fill" style="color:#6f42c1;"></i> Actividad evaluada por instrumentos
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="inst_config-tab"><i class="bi bi-gear-fill"></i> Configuración</button>
@@ -522,7 +551,7 @@
                         <div class="col-md-3"><label class="form-label fw-semibold">Número de instrumentos</label><input type="number" id="inst_numInstrumentos" class="form-control" min="1" value="3"></div>
                         <div class="col-md-9 text-end"><span class="fw-bold me-3">Total pesos: <span id="inst_totalPesos">100.0</span>%</span><span id="inst_pesosWarning" class="inst-warning-note" style="display:none;"><i class="bi bi-exclamation-triangle"></i> No suman 100%</span></div>
                     </div>
-                    <table class="table table-sm table-bordered" id="inst_instrumentsTable"><thead><tr><th>#</th><th>Nombres de los instrumentos</th><th>Peso (%)</th></tr></thead><tbody id="inst_instrumentsBody"></tbody></table>
+                    <table class="table table-sm table-bordered" id="inst_instrumentsTable"><thead><tr><th>#</th><th>Instrumentos</th><th>Descripción</th><th>Peso (%)</th></tr></thead><tbody id="inst_instrumentsBody"></tbody></table>
                     <p class="text-muted small">El último instrumento se calcula automáticamente para que la suma sea siempre 100%.</p>
                 </div>
                 <div class="section-card">
@@ -536,15 +565,16 @@
                         <button id="inst_resetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
                     </div>
                 </div>
+                <div id="inst_configWarning" class="validation-warning" style="display:none;"></div>
                 <div class="d-flex justify-content-end"><button id="inst_irRelacionBtn" class="btn btn-primary btn-lg" disabled><i class="bi bi-arrow-right"></i> Ir a Relación</button></div>
             </div>
             <!-- RELACIÓN -->
             <div class="tab-pane fade" id="inst_relacion" role="tabpanel">
                 <div class="section-card">
                     <div class="section-title"><i class="bi bi-diagram-3"></i> Matriz de relación Instrumentos / Criterios <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Haz clic en cada celda para vincular instrumentos con criterios TEC.4.X.Y."></i></div>
-                    <div class="inst-switch-container mb-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="inst_hideUnusedCriteria" checked><label class="form-check-label" for="inst_hideUnusedCriteria">Ocultar criterios no evaluados</label></div></div>
+                    <div class="inst-switch-container mb-3"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="inst_hideUnusedCriteria"><label class="form-check-label" for="inst_hideUnusedCriteria">Ocultar criterios no evaluados</label></div></div>
                     <div class="table-responsive"><table class="table table-bordered" id="inst_matrixTable"><thead id="inst_matrixHeader"></thead><tbody id="inst_matrixBody"></tbody></table></div>
-                    <div id="inst_noCriteriaWarning" class="validation-warning" style="display:none;">Debes seleccionar al menos un criterio.</div>
+                    <div id="inst_noCriteriaWarning" class="validation-warning" style="display:none;"></div>
                     <div class="btn-group mb-3">
                         <button id="inst_exportMatrixJson" class="btn btn-outline-success btn-sm"><i class="bi bi-download"></i> Exportar matriz</button>
                         <button id="inst_importMatrixJsonBtn" class="btn btn-outline-warning btn-sm"><i class="bi bi-upload"></i> Importar matriz</button>
@@ -597,7 +627,7 @@
         </div>
     </div>
 
-    <!-- MODAL COMPARTIDO: CRITERIOS GLOBALES -->
+    <!-- MODAL COMPARTIDO: CRITERIOS -->
     <div class="modal fade" id="globalCriteriaModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
@@ -619,12 +649,12 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR DESCRIPCIÓN DE CRITERIO (solo Actividad Genérica) -->
+    <!-- MODAL COMPARTIDO: EDITAR DESCRIPCIÓN DE CRITERIO (todas las apps) -->
     <div class="modal fade" id="genericCriterionDescModal" tabindex="-1" aria-labelledby="genericCriterionDescModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(145deg, #fd7e14, #e85d04);">
-                    <h5 class="modal-title text-white" id="genericCriterionDescModalLabel"><i class="bi bi-pencil-square me-2"></i>¿Qué se evalúa con este criterio?</h5>
+                <div class="modal-header" id="criterionDescModalHeader" style="background: linear-gradient(145deg, #0b4b6b, #0d6efd);">
+                    <h5 class="modal-title text-white" id="genericCriterionDescModalLabel"><i class="bi bi-pencil-square me-2"></i>Descripción del criterio</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
@@ -643,9 +673,75 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-warning" id="genericCriterionDescSaveBtn" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-primary" id="genericCriterionDescSaveBtn" data-bs-dismiss="modal">
                         <i class="bi bi-save"></i> Guardar descripción
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DESCRIPCIÓN INSTRUMENTO (pantalla Evaluación) -->
+    <div class="modal fade" id="inst_instrDescModal" tabindex="-1" aria-labelledby="inst_instrDescModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(145deg, #6f42c1, #5a34a0);">
+                    <h5 class="modal-title text-white" id="inst_instrDescModalLabel"><i class="bi bi-pencil-square me-2"></i>Descripción del instrumento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-secondary small text-uppercase">Nombre del instrumento</label>
+                        <input type="text" id="inst_instrDescName" class="form-control fw-bold fs-5" placeholder="Nombre del instrumento" style="color:#6f42c1; border-color:#dee2e6;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="inst_instrDescText">Descripción del instrumento</label>
+                        <textarea id="inst_instrDescText" class="form-control" rows="6" placeholder="Describe en qué consiste este instrumento de evaluación, qué se valora, cómo se aplica..."></textarea>
+                        <div class="form-text"><i class="bi bi-info-circle"></i> Esta descripción se exporta con los resultados de Relaciones y aparece aquí como referencia.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-purple" id="inst_instrDescSaveBtn" data-bs-dismiss="modal">
+                        <i class="bi bi-save"></i> Guardar descripción
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST AVISO GLOBAL -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index:11000;">
+        <div id="inst_toastWarning" class="toast align-items-center text-bg-warning border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold" id="inst_toastWarningMsg" style="font-size:1rem;"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DESCRIPCIÓN DE PREGUNTA (pantalla Calificación) -->
+    <div class="modal fade" id="examQuestionDescModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(145deg, #0d6efd, #0b5ed7);">
+                    <h5 class="modal-title text-white"><i class="bi bi-pencil-square me-2"></i>Nombre y descripción de la pregunta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nombre / etiqueta de la pregunta</label>
+                        <input type="text" id="examQDescName" class="form-control fw-bold" placeholder="Ej: P1, Pregunta 1, Problema A…">
+                        <div class="form-text">Si se deja vacío se usará la etiqueta automática P<em>n</em>.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Descripción</label>
+                        <textarea id="examQDescText" class="form-control" rows="5" placeholder="Describe el enunciado, el tema o qué se evalúa con esta pregunta…"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="examQDescSaveBtn" data-bs-dismiss="modal"><i class="bi bi-save"></i> Guardar</button>
                 </div>
             </div>
         </div>
@@ -937,14 +1033,14 @@ function attachGradeInputLiveValidation(inp) {
 // =============================================================================
 const examState = {
     examName:"", course:"",
-    students:[], questions:[{id:1, maxScore:10, criteriaCodes:[]}],
-    globalCriteria:[], scores:[],
+    students:[], questions:[{id:1, maxScore:10, criteriaCodes:[], name:'', description:''}],
+    globalCriteria:[], scores:[], criteriaDescriptions:{},
     duplicateMessageId:'examDuplicateMessage'
 };
 const testState = {
     examName:"", course:"",
     totalQuestions:20, penaltyFactor:0,
-    globalCriteria:[], students:[], studentScores:[],
+    globalCriteria:[], students:[], studentScores:[], criteriaDescriptions:{},
     duplicateMessageId:'testDuplicateMessage'
 };
 const genericState = {
@@ -958,29 +1054,56 @@ const appStates = { exam:examState, test:testState, generic:genericState };
 let instrumentCriteria = ALL_CRITERIA_CODES;
 const instrumentState = {
     actividad:"", clase:"", students:[], instruments:[], matrix:[], evalScores:[], evalWeights:[],
+    criteriaDescriptions:{},
     duplicateMessageId:'inst_duplicateMessage'
 };
 
 // =============================================================================
-// BADGES DE CRITERIOS
+// DESCRIPCIONES DE CRITERIOS (compartido por todas las apps)
 // =============================================================================
 
-/** Devuelve la descripción personalizada de un criterio en la actividad genérica,
+/** Devuelve la descripción personalizada de un criterio para una app dada,
  *  o la descripción oficial si no hay personalización. */
-function getGenericCriterionDescription(code) {
-    return (genericState.criteriaDescriptions && genericState.criteriaDescriptions[code])
-        ? genericState.criteriaDescriptions[code]
+function getAppCriterionDesc(code, app) {
+    const state = app === 'inst' ? instrumentState : (appStates[app] || {});
+    return (state.criteriaDescriptions && state.criteriaDescriptions[code])
+        ? state.criteriaDescriptions[code]
         : getCriteriaDescription(code);
 }
 
-/** Abre el modal para editar la descripción del criterio indicado (solo actividad genérica). */
-function openGenericCriterionDescModal(code) {
-    document.getElementById('genericCriterionDescCode').value = code + '.';
-    document.getElementById('genericCriterionDescText').value = getGenericCriterionDescription(code);
-    document.getElementById('genericCriterionDescModal').dataset.currentCode = code;
-    bootstrap.Modal.getOrCreateInstance(document.getElementById('genericCriterionDescModal')).show();
+/** Compatibilidad: devuelve descripción personalizada de criterio para la app genérica. */
+function getGenericCriterionDescription(code) {
+    return getAppCriterionDesc(code, 'generic');
 }
 
+const _appDescColors = {
+    exam:    'linear-gradient(145deg, #0d6efd, #0b5ed7)',
+    test:    'linear-gradient(145deg, #198754, #146c43)',
+    generic: 'linear-gradient(145deg, #fd7e14, #e85d04)',
+    inst:    'linear-gradient(145deg, #6f42c1, #5a34a0)'
+};
+const _appDescNames = { exam:'Examen', test:'Test', generic:'Actividad genérica', inst:'Instrumentos' };
+
+/** Abre el modal compartido para editar la descripción del criterio en cualquier app. */
+function openCriterionDescModal(code, app) {
+    document.getElementById('genericCriterionDescCode').value = code + '.';
+    document.getElementById('genericCriterionDescText').value = getAppCriterionDesc(code, app);
+    const modal = document.getElementById('genericCriterionDescModal');
+    modal.dataset.currentCode = code;
+    modal.dataset.currentApp  = app;
+    const header = document.getElementById('criterionDescModalHeader');
+    if (header) header.style.background = _appDescColors[app] || _appDescColors.exam;
+    const label = document.getElementById('genericCriterionDescModalLabel');
+    if (label) label.innerHTML = `<i class="bi bi-pencil-square me-2"></i>Criterio · <small class="fw-normal">${_appDescNames[app]||app}</small>`;
+    bootstrap.Modal.getOrCreateInstance(modal).show();
+}
+
+/** Alias para compatibilidad con código heredado. */
+function openGenericCriterionDescModal(code) { openCriterionDescModal(code, 'generic'); }
+
+// =============================================================================
+// BADGES DE CRITERIOS
+// =============================================================================
 function renderGlobalBadges(app) {
     const state = appStates[app];
     const badgeContainerId = { exam:'examSelectedCriteriaBadges', test:'testSelectedCriteriaBadges', generic:'genericSelectedCriteriaBadges' }[app];
@@ -989,22 +1112,24 @@ function renderGlobalBadges(app) {
     container.innerHTML = '';
     state.globalCriteria.forEach(code => {
         const span = document.createElement('span');
-        span.className = 'badge bg-primary me-1 p-2 criteria-badge';
-        if (app === 'generic') {
-            span.classList.add('criteria-badge-editable');
-            const hasCustom = genericState.criteriaDescriptions && genericState.criteriaDescriptions[code];
-            if (hasCustom) span.classList.add('criteria-badge-custom');
-            span.title = getGenericCriterionDescription(code) + '\n\n(Clic para editar descripción)';
-            span.addEventListener('click', () => openGenericCriterionDescModal(code));
-        } else {
-            span.title = getCriteriaDescription(code);
-        }
+        span.className = 'badge bg-primary me-1 p-2 criteria-badge criteria-badge-editable';
+        const hasCustom = state.criteriaDescriptions && state.criteriaDescriptions[code];
+        if (hasCustom) span.classList.add('criteria-badge-custom');
+        span.title = getAppCriterionDesc(code, app) + '\n\n(Clic para editar descripción)';
+        span.addEventListener('click', () => openCriterionDescModal(code, app));
         span.textContent = code + '.';
         container.appendChild(span);
     });
     if (!state.globalCriteria.length) container.innerHTML = '<span class="badge bg-secondary">Ningún criterio seleccionado</span>';
     if (app === 'exam') validateExamCriteria();
-    if (app === 'test') { const w = document.getElementById('testNoCriteriaWarning'); if(w) w.style.display = state.globalCriteria.length ? 'none' : 'block'; }
+    if (app === 'test') {
+        const w = document.getElementById('testNoCriteriaWarning');
+        if (w) {
+            if (state.globalCriteria.length) { w.style.display = 'none'; }
+            else { w.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Debes seleccionar al menos un criterio TEC.4.X.Y.'; w.style.display = 'block'; }
+        }
+        updateTestConfigWarning();
+    }
     if (app === 'generic') validateGenericCriteria();
 }
 function renderAllBadges() { ['exam','test','generic'].forEach(renderGlobalBadges); }
@@ -1038,7 +1163,7 @@ function normalizeGenericScores() {
 // =============================================================================
 // TABLA DE CALIFICACIÓN SIMPLE (genérica y compatibles)
 // =============================================================================
-function renderSimpleGradeTable(state, tableId, tbodyId, descFn) {
+function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
     const getDesc = descFn || getCriteriaDescription;
     const thead = document.querySelector(`#${tableId} thead`);
     const tbody = document.getElementById(tbodyId);
@@ -1048,7 +1173,12 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn) {
     }
     normalizeScores(state, state.globalCriteria.length);
     state.scores.forEach(row => row && row.forEach((s,i,a) => { if(s>10) a[i]=10; else if(s<0) a[i]=0; }));
-    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => `<th title="${getDesc(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.<br><small>(0-10)</small></th>`).join('') + '</tr>';
+    const hasCustom = c => state.criteriaDescriptions && state.criteriaDescriptions[c];
+    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => {
+        const custom = hasCustom(c) ? ' criteria-th-custom' : '';
+        const appAttr = app ? ` data-app="${app}"` : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}"${appAttr} title="${getDesc(c).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.<br><small>(0-10)</small></th>`;
+    }).join('') + '</tr>';
     tbody.innerHTML = '';
     state.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
@@ -1137,7 +1267,10 @@ function renderResultsTable(app) {
     if (app === 'generic') normalizeGenericScores();
     const showGlobal = document.getElementById(checkId).checked;
     const criteria = state.globalCriteria;
-    thead.innerHTML = '<tr><th>ALUMNADO</th>' + criteria.map(c=>`<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('') + (showGlobal ? '<th>Calificación</th>' : '') + '</tr>';
+    thead.innerHTML = '<tr><th>ALUMNADO</th>' + criteria.map(c=>{
+        const custom = state.criteriaDescriptions && state.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="${app}" title="${getAppCriterionDesc(c,app).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
+    }).join('') + (showGlobal ? '<th>Calificación</th>' : '') + '</tr>';
     tbody.innerHTML = '';
     const gradeColor = v => `hsl(${v * 12}, 80%, 70%)`;
     buildResultsData(app, showGlobal).forEach(row => {
@@ -1202,10 +1335,10 @@ function exportAppConfig(app) {
     let cfg, prefix;
     if (app === 'exam') {
         prefix = 'Configuración_Examen';
-        cfg = { examName:s.examName, course:s.course, questions:s.questions.map(q=>({id:q.id,maxScore:q.maxScore,criteriaCodes:[...q.criteriaCodes]})), globalCriteria:[...s.globalCriteria], students:s.students.map(st=>({fullName:st.fullName})) };
+        cfg = { examName:s.examName, course:s.course, questions:s.questions.map(q=>({id:q.id,maxScore:q.maxScore,criteriaCodes:[...q.criteriaCodes],name:q.name||'',description:q.description||''})), globalCriteria:[...s.globalCriteria], criteriaDescriptions:{...(s.criteriaDescriptions||{})}, students:s.students.map(st=>({fullName:st.fullName})) };
     } else if (app === 'test') {
         prefix = 'Configuración_Test';
-        cfg = { examName:s.examName, course:s.course, totalQuestions:s.totalQuestions, penaltyFactor:s.penaltyFactor, globalCriteria:[...s.globalCriteria], students:s.students.map(st=>({fullName:st.fullName})), studentScores:s.studentScores.map(ss=>({correct:ss.correct,wrong:ss.wrong,unanswered:ss.unanswered})) };
+        cfg = { examName:s.examName, course:s.course, totalQuestions:s.totalQuestions, penaltyFactor:s.penaltyFactor, globalCriteria:[...s.globalCriteria], criteriaDescriptions:{...(s.criteriaDescriptions||{})}, students:s.students.map(st=>({fullName:st.fullName})), studentScores:s.studentScores.map(ss=>({correct:ss.correct,wrong:ss.wrong,unanswered:ss.unanswered})) };
     } else {
         prefix = 'Configuración_Genérica';
         cfg = { examName:s.examName, course:s.course, globalCriteria:[...s.globalCriteria], criteriaDescriptions:{...(s.criteriaDescriptions||{})}, students:s.students.map(st=>({fullName:st.fullName})) };
@@ -1218,15 +1351,16 @@ function importAppConfig(file, app) {
     readJSONFile(file, cfg => {
         if (app === 'exam') {
             if (!cfg.examName || !Array.isArray(cfg.questions)) throw new Error('Formato inválido');
-            Object.assign(examState, { examName:cfg.examName, course:cfg.course||examState.course, questions:cfg.questions.map(q=>({id:q.id,maxScore:q.maxScore,criteriaCodes:q.criteriaCodes||[]})), globalCriteria:cfg.globalCriteria||[], students:(cfg.students||[]).map(s=>({id:uuid(),fullName:s.fullName})) });
+            Object.assign(examState, { examName:cfg.examName, course:cfg.course||examState.course, questions:cfg.questions.map(q=>({id:q.id,maxScore:q.maxScore,criteriaCodes:q.criteriaCodes||[],name:q.name||'',description:q.description||''})), globalCriteria:cfg.globalCriteria||[], criteriaDescriptions:cfg.criteriaDescriptions||{}, students:(cfg.students||[]).map(s=>({id:uuid(),fullName:s.fullName})) });
             examState.scores = examState.students.map(()=>new Array(examState.questions.length).fill(0));
             document.getElementById('examNameInput').value = examState.examName;
             document.getElementById('examCourseInput').value = examState.course;
             document.getElementById('examInputNumQuestions').value = examState.questions.length;
             sortStudents(examState,'scores'); renderGlobalBadges('exam'); renderExamQuestionsTable(); renderExamStudentTags();
+            validateExamCriteria(); updateExamConfigWarning();
         } else if (app === 'test') {
             if (!cfg.totalQuestions || !Array.isArray(cfg.globalCriteria)) throw new Error('Formato inválido');
-            Object.assign(testState, { examName:cfg.examName||'Examen tipo test', course:cfg.course||'4º ESO', totalQuestions:cfg.totalQuestions, penaltyFactor:cfg.penaltyFactor||0, globalCriteria:cfg.globalCriteria, students:(cfg.students||[]).map(s=>({id:uuid(),fullName:s.fullName})), studentScores:cfg.studentScores||[] });
+            Object.assign(testState, { examName:cfg.examName||'Examen tipo test', course:cfg.course||'4º ESO', totalQuestions:cfg.totalQuestions, penaltyFactor:cfg.penaltyFactor||0, globalCriteria:cfg.globalCriteria, criteriaDescriptions:cfg.criteriaDescriptions||{}, students:(cfg.students||[]).map(s=>({id:uuid(),fullName:s.fullName})), studentScores:cfg.studentScores||[] });
             if (!testState.studentScores.length) testState.studentScores = testState.students.map(()=>({correct:0,wrong:0,unanswered:testState.totalQuestions}));
             document.getElementById('testExamTitleInput').value = testState.examName;
             document.getElementById('testCourseInput').value = testState.course;
@@ -1234,6 +1368,7 @@ function importAppConfig(file, app) {
             document.querySelectorAll('input[name="penalty"]').forEach(r => { if(parseFloat(r.value)===testState.penaltyFactor) r.checked=true; });
             document.querySelectorAll('.penalty-option').forEach(o => o.classList.toggle('selected', o.querySelector('input')?.checked));
             sortStudents(testState,'studentScores'); renderGlobalBadges('test'); renderTestStudentTags();
+            updateTestConfigWarning();
         } else {
             if (!cfg.examName || !Array.isArray(cfg.globalCriteria)) throw new Error('Formato inválido');
             Object.assign(genericState, { examName:cfg.examName, course:cfg.course||genericState.course, globalCriteria:cfg.globalCriteria, criteriaDescriptions:cfg.criteriaDescriptions||{}, students:(cfg.students||[]).map(s=>({id:uuid(),fullName:s.fullName})) });
@@ -1241,6 +1376,7 @@ function importAppConfig(file, app) {
             document.getElementById('genericExamNameInput').value = genericState.examName;
             document.getElementById('genericCourseInput').value = genericState.course;
             sortStudents(genericState,'scores'); renderGlobalBadges('generic'); renderGenericStudentTags();
+            updateGenericConfigWarning();
         }
         alert('✅ Configuración importada.');
     });
@@ -1253,7 +1389,7 @@ function exportAppScores(app) {
     let data, prefix;
     if (app === 'exam') {
         prefix = 'Calificaciones_Examen';
-        data = { examName:s.examName, course:s.course, students:s.students.map(st=>st.fullName), questions:s.questions.map(q=>({id:q.id,maxScore:q.maxScore})), scores:s.scores };
+        data = { examName:s.examName, course:s.course, students:s.students.map(st=>st.fullName), questions:s.questions.map(q=>({id:q.id,maxScore:q.maxScore,name:q.name||'',description:q.description||''})), scores:s.scores };
     } else if (app === 'test') {
         prefix = 'Calificaciones_Test';
         data = { examName:s.examName, course:s.course, students:s.students.map(st=>st.fullName), totalQuestions:s.totalQuestions, studentScores:s.studentScores.map(ss=>({correct:ss.correct,wrong:ss.wrong,unanswered:ss.unanswered})) };
@@ -1320,13 +1456,16 @@ function loadAppFromLocal(app) {
         if (app === 'exam') {
             Object.assign(examState, saved);
             examState.students = examState.students.map(s=>({...s, id:s.id||uuid()}));
+            if (!examState.criteriaDescriptions) examState.criteriaDescriptions = {};
             normalizeExamScores(); renderGlobalBadges('exam'); renderExamQuestionsTable(); renderExamStudentTags();
             document.getElementById('examNameInput').value = examState.examName;
             document.getElementById('examCourseInput').value = examState.course;
             document.getElementById('examInputNumQuestions').value = examState.questions.length;
+            validateExamCriteria(); updateExamConfigWarning();
         } else if (app === 'test') {
             Object.assign(testState, saved);
             testState.students = testState.students.map(s=>({...s, id:s.id||uuid()}));
+            if (!testState.criteriaDescriptions) testState.criteriaDescriptions = {};
             if (!testState.studentScores) testState.studentScores = testState.students.map(()=>({correct:0,wrong:0,unanswered:testState.totalQuestions}));
             sortStudents(testState,'studentScores'); renderGlobalBadges('test'); renderTestStudentTags();
             document.getElementById('testExamTitleInput').value = testState.examName;
@@ -1334,6 +1473,7 @@ function loadAppFromLocal(app) {
             document.getElementById('testTotalQuestions').value = testState.totalQuestions;
             document.querySelectorAll('input[name="penalty"]').forEach(r=>{ if(parseFloat(r.value)===testState.penaltyFactor) r.checked=true; });
             document.querySelectorAll('.penalty-option').forEach(o=>o.classList.toggle('selected',o.querySelector('input')?.checked));
+            updateTestConfigWarning();
         } else {
             Object.assign(genericState, saved);
             genericState.students = genericState.students.map(s=>({...s, id:s.id||uuid()}));
@@ -1341,6 +1481,7 @@ function loadAppFromLocal(app) {
             normalizeGenericScores(); renderGlobalBadges('generic'); renderGenericStudentTags();
             document.getElementById('genericExamNameInput').value = genericState.examName;
             document.getElementById('genericCourseInput').value = genericState.course;
+            updateGenericConfigWarning();
         }
         alert('✅ Configuración cargada.');
     });
@@ -1351,14 +1492,14 @@ function resetAppState(app) {
     const cfgs = {
         exam: {
             label:'el examen',
-            defaults:{ examName:'Examen sin título', course:'', students:[], questions:[{id:1,maxScore:10,criteriaCodes:[]}], globalCriteria:[], scores:[] },
+            defaults:{ examName:'Examen sin título', course:'', students:[], questions:[{id:1,maxScore:10,criteriaCodes:[],name:'',description:''}], globalCriteria:[], scores:[], criteriaDescriptions:{} },
             inputs:[['examNameInput','Examen sin título'],['examCourseInput',''],['examInputNumQuestions',1]],
             lsKey:'tec4_exam_app',
             extra:() => { renderExamQuestionsTable(); renderExamStudentTags(); }
         },
         test: {
             label:'el test',
-            defaults:{ examName:'Examen tipo test', course:'', totalQuestions:20, penaltyFactor:0, globalCriteria:[], students:[], studentScores:[] },
+            defaults:{ examName:'Examen tipo test', course:'', totalQuestions:20, penaltyFactor:0, globalCriteria:[], students:[], studentScores:[], criteriaDescriptions:{} },
             inputs:[['testExamTitleInput','Examen tipo test'],['testCourseInput',''],['testTotalQuestions',20]],
             lsKey:'tec4_test_app',
             extra:() => {
@@ -1381,20 +1522,62 @@ function resetAppState(app) {
     renderGlobalBadges(app);
     cfgs.extra();
     localStorage.removeItem(cfgs.lsKey);
+    if (app==='exam') { validateExamCriteria(); updateExamConfigWarning(); }
+    if (app==='test') updateTestConfigWarning();
+    if (app==='generic') updateGenericConfigWarning();
     alert('✅ Datos reiniciados.');
 }
 
 // =============================================================================
 // EXAMEN POR PREGUNTAS
 // =============================================================================
+/** Etiqueta visible de una pregunta: usa el nombre personalizado o "Pn" por defecto. */
+function getQuestionLabel(q) {
+    return (q.name && q.name.trim()) ? q.name.trim() : `P${q.id}`;
+}
+
+/** Abre el modal para editar nombre y descripción de la pregunta (pantalla Calificación). */
+function openQuestionDescModal(qIdx) {
+    const q = examState.questions[qIdx];
+    if (!q) return;
+    document.getElementById('examQDescName').value = q.name || '';
+    document.getElementById('examQDescText').value = q.description || '';
+    document.getElementById('examQuestionDescModal').dataset.qIdx = qIdx;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('examQuestionDescModal')).show();
+}
+
 function validateExamCriteria() {
     const warning = document.getElementById('examOrphanedCriteriaWarning');
     const msg = document.getElementById('examOrphanedCriteriaMessage');
-    if (!examState.globalCriteria.length) { warning.style.display='block'; msg.textContent='No hay criterios globales seleccionados.'; return false; }
+    if (!examState.globalCriteria.length) { warning.style.display='block'; msg.textContent='No hay criterios seleccionados.'; return false; }
     const assigned = new Set(examState.questions.flatMap(q => q.criteriaCodes));
     const missing = examState.globalCriteria.filter(c => !assigned.has(c));
     if (missing.length) { warning.style.display='block'; msg.textContent=`Criterios no asignados: ${missing.map(c=>c+'.').join(', ')}`; return false; }
     warning.style.display='none'; return true;
+}
+
+function updateExamConfigWarning() {
+    const warn = document.getElementById('examConfigWarning'); if (!warn) return;
+    const missing = [];
+    if (!examState.examName.trim()) missing.push('<strong>el nombre del examen</strong>');
+    if (!examState.course.trim()) missing.push('<strong>el curso</strong>');
+    if (!examState.students.length) missing.push('<strong>al menos un alumno/a en la lista</strong>');
+    if (!examState.globalCriteria.length) {
+        missing.push('<strong>criterios TEC.4.X.Y.</strong>');
+    } else {
+        const assigned = new Set(examState.questions.flatMap(q => q.criteriaCodes));
+        const unassigned = examState.globalCriteria.filter(c => !assigned.has(c));
+        if (unassigned.length) missing.push(`<strong>asignar los criterios a las preguntas</strong> (${unassigned.map(c=>c+'.').join(', ')})`);
+    }
+    if (missing.length) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Para pasar a Calificación, completa:'
+            + '<ul style="margin:4px 0 0;padding-left:1.4em;list-style:none;">'
+            + missing.map(m => '<li>— ' + m + '</li>').join('')
+            + '</ul>';
+        warn.style.display = 'block';
+    } else {
+        warn.style.display = 'none';
+    }
 }
 
 function reorderExamQuestionIds() { examState.questions.forEach((q,i) => q.id = i+1); }
@@ -1405,17 +1588,42 @@ function renderExamQuestionsTable() {
     tbody.innerHTML = '';
     examState.questions.forEach((q, index) => {
         const tr = document.createElement('tr');
-        const badgesHtml = q.criteriaCodes.map(c => `<span class="badge badge-criteria me-1" title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}">${c}.</span>`).join('');
+        const badgesHtml = q.criteriaCodes.map(c => {
+            const hasCustom = examState.criteriaDescriptions && examState.criteriaDescriptions[c];
+            const customCls = hasCustom ? ' criteria-badge-custom' : '';
+            const titleTxt  = getAppCriterionDesc(c, 'exam').replace(/"/g, '&quot;') + ' · (clic para editar descripción)';
+            return `<span class="badge badge-criteria me-1 criteria-badge-editable${customCls}" data-code="${c}" data-app="exam" title="${titleTxt}">${c}.</span>`;
+        }).join('');
+        const nameVal  = (q.name || '').replace(/"/g,'&quot;');
+        const descVal  = (q.description || '').replace(/</g,'&lt;');
+        const autoLabel = `P${q.id}`;
         tr.innerHTML = `
-            <td><strong>P${q.id}</strong></td>
-            <td style="width:140px;"><input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input max-score-input" data-qidx="${index}" value="${formatGradeDisplay(q.maxScore)}" placeholder="10"></td>
+            <td style="min-width:90px;">
+              <input type="text" class="exam-q-name-input" data-qidx="${index}" data-field="name"
+                value="${nameVal}" placeholder="${autoLabel}"
+                title="Etiqueta de la pregunta (vacío = ${autoLabel})">
+            </td>
+            <td style="min-width:180px;">
+              <textarea class="exam-q-desc-textarea" rows="2" data-qidx="${index}" data-field="description"
+                placeholder="Descripción opcional…">${descVal}</textarea>
+            </td>
+            <td style="width:130px;"><input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input max-score-input" data-qidx="${index}" value="${formatGradeDisplay(q.maxScore)}" placeholder="10"></td>
             <td>${badgesHtml}</td>
-            <td style="width:220px;"><div class="d-flex flex-wrap gap-1">
+            <td style="width:210px;"><div class="d-flex flex-wrap gap-1">
                 <button class="btn btn-sm btn-outline-primary assign-criteria-btn" data-qid="${q.id}" data-bs-toggle="modal" data-bs-target="#examQuestionCriteriaModal"><i class="bi bi-tags"></i> Asignar</button>
-                <button class="btn btn-sm btn-outline-success insert-after-btn" data-index="${index}"><i class="bi bi-plus-circle"></i> + después</button>
+                <button class="btn btn-sm btn-outline-success insert-after-btn" data-index="${index}"><i class="bi bi-plus-circle"></i></button>
                 <button class="btn btn-sm btn-outline-danger delete-question-btn" data-index="${index}"><i class="bi bi-trash3"></i></button>
             </div></td>`;
         tbody.appendChild(tr);
+    });
+    // name / description live input
+    tbody.querySelectorAll('.exam-q-name-input, .exam-q-desc-textarea').forEach(el => {
+        el.addEventListener('input', function() {
+            const i = parseInt(this.dataset.qidx);
+            if (examState.questions[i]) examState.questions[i][this.dataset.field] = this.value;
+            // si cambia el nombre, refrescar tabla de calificación si está visible
+            if (this.dataset.field === 'name' && document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable();
+        });
     });
     tbody.querySelectorAll('.max-score-input').forEach(inp => {
         attachGradeInputLiveValidation(inp);
@@ -1435,7 +1643,7 @@ function renderExamQuestionsTable() {
     tbody.querySelectorAll('.insert-after-btn').forEach(btn => btn.addEventListener('click', function() {
         const i = parseInt(this.dataset.index);
         const newId = examState.questions.length ? Math.max(...examState.questions.map(q=>q.id))+1 : 1;
-        examState.questions.splice(i+1, 0, {id:newId, maxScore:10, criteriaCodes:[]});
+        examState.questions.splice(i+1, 0, {id:newId, maxScore:10, criteriaCodes:[], name:'', description:''});
         examState.scores.forEach(row => row.splice(i+1, 0, 0));
         reorderExamQuestionIds(); normalizeExamScores(); renderExamQuestionsTable();
         document.getElementById('examInputNumQuestions').value = examState.questions.length; validateExamCriteria();
@@ -1454,7 +1662,7 @@ function populateExamQuestionCriteria(question) {
     if (!container) return;
     container.innerHTML = '';
     if (!examState.globalCriteria.length) {
-        container.innerHTML = '<div class="alert alert-warning">No hay criterios globales. Selecciona primero en Configuración.</div>'; return;
+        container.innerHTML = '<div class="alert alert-warning">No hay criterios. Selecciona primero en Configuración.</div>'; return;
     }
     const groups = groupCriteriaByCompetence(examState.globalCriteria);
     Object.keys(groups).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach((key, idx) => {
@@ -1471,7 +1679,7 @@ function populateExamQuestionCriteria(question) {
     });
     document.getElementById('examSaveQuestionCriteria').onclick = function() {
         question.criteriaCodes = [...container.querySelectorAll('.question-criteria-chk:checked')].map(c=>c.value);
-        renderExamQuestionsTable(); validateExamCriteria();
+        renderExamQuestionsTable(); validateExamCriteria(); updateExamConfigWarning();
     };
 }
 
@@ -1482,7 +1690,18 @@ function renderExamGradeTable() {
         thead.innerHTML=''; tbody.innerHTML='<tr><td class="text-center p-4">Se requieren alumnos y preguntas.</td></tr>'; return;
     }
     normalizeExamScores();
-    thead.innerHTML = '<tr><th>ALUMNADO</th>' + examState.questions.map(q=>`<th>P${q.id}<br><small>max ${q.maxScore}</small></th>`).join('') + '</tr>';
+    thead.innerHTML = '<tr><th>ALUMNADO</th>' + examState.questions.map((q,qIdx) => {
+        const label = getQuestionLabel(q);
+        const hasDesc = q.description && q.description.trim();
+        const titleTxt = hasDesc ? `${label} · max ${q.maxScore}\n${q.description}\n\n(Clic para editar)` : `${label} · max ${q.maxScore}\n(Clic para editar)`;
+        return `<th class="exam-q-th-clickable" data-qidx="${qIdx}" title="${titleTxt.replace(/"/g,'&quot;')}">
+            ${label}<span class="q-desc-dot">${hasDesc ? '📝 max '+q.maxScore : 'max '+q.maxScore}</span>
+        </th>`;
+    }).join('') + '</tr>';
+    // click en encabezado → modal descripción
+    thead.querySelectorAll('th.exam-q-th-clickable').forEach(th =>
+        th.addEventListener('click', () => openQuestionDescModal(parseInt(th.dataset.qidx)))
+    );
     tbody.innerHTML = '';
     examState.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
@@ -1526,7 +1745,10 @@ function renderTestGradeTable() {
     const thead = document.querySelector('#testGradeTable thead'), tbody = document.getElementById('testGradeTbody');
     if (!thead||!tbody) return;
     if (!testState.students.length) { thead.innerHTML=''; tbody.innerHTML='<tr><td colspan="4" class="text-center p-4">Añade alumnos en Configuración.</td></tr>'; return; }
-    thead.innerHTML = '<tr><th>ALUMNADO</th><th>Aciertos</th><th>Fallos</th><th>NS/NC</th>' + testState.globalCriteria.map(c=>`<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('') + '</tr>';
+    thead.innerHTML = '<tr><th>ALUMNADO</th><th>Aciertos</th><th>Fallos</th><th>NS/NC</th>' + testState.globalCriteria.map(c=>{
+        const custom = testState.criteriaDescriptions && testState.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="test" title="${getAppCriterionDesc(c,'test').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
+    }).join('') + '</tr>';
     tbody.innerHTML = '';
     testState.students.forEach((student, sIdx) => {
         if (!testState.studentScores[sIdx]) testState.studentScores[sIdx] = {studentId:student.id, correct:0, wrong:0, unanswered:testState.totalQuestions};
@@ -1595,10 +1817,46 @@ function renderTestStudentTags() {
 function validateGenericCriteria() {
     const warn = document.getElementById('genericOrphanedCriteriaWarning');
     const msg = document.getElementById('genericOrphanedCriteriaMessage');
-    if (!genericState.globalCriteria.length) { warn.style.display='block'; msg.textContent='No hay criterios globales seleccionados.'; return false; }
+    if (!genericState.globalCriteria.length) { warn.style.display='block'; msg.textContent='No hay criterios seleccionados.'; return false; }
     warn.style.display='none'; return true;
 }
-function renderGenericGradeTable() { renderSimpleGradeTable(genericState, 'genericGradeTable', 'genericGradeTbody', getGenericCriterionDescription); }
+
+function updateTestConfigWarning() {
+    const warn = document.getElementById('testConfigWarning'); if (!warn) return;
+    const missing = [];
+    if (!testState.examName.trim()) missing.push('<strong>el nombre del examen</strong>');
+    if (!testState.course.trim()) missing.push('<strong>el curso</strong>');
+    if (!testState.students.length) missing.push('<strong>al menos un alumno/a en la lista</strong>');
+    if (!testState.globalCriteria.length) missing.push('<strong>criterios TEC.4.X.Y.</strong>');
+    if (missing.length) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Para pasar a Calificación, completa:'
+            + '<ul style="margin:4px 0 0;padding-left:1.4em;list-style:none;">'
+            + missing.map(m => '<li>— ' + m + '</li>').join('')
+            + '</ul>';
+        warn.style.display = 'block';
+    } else {
+        warn.style.display = 'none';
+    }
+}
+
+function updateGenericConfigWarning() {
+    const warn = document.getElementById('genericConfigWarning'); if (!warn) return;
+    const missing = [];
+    if (!genericState.examName.trim()) missing.push('<strong>el nombre de la actividad</strong>');
+    if (!genericState.course.trim()) missing.push('<strong>el curso</strong>');
+    if (!genericState.students.length) missing.push('<strong>al menos un alumno/a en la lista</strong>');
+    if (!genericState.globalCriteria.length) missing.push('<strong>criterios TEC.4.X.Y.</strong>');
+    if (missing.length) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Para pasar a Calificación, completa:'
+            + '<ul style="margin:4px 0 0;padding-left:1.4em;list-style:none;">'
+            + missing.map(m => '<li>— ' + m + '</li>').join('')
+            + '</ul>';
+        warn.style.display = 'block';
+    } else {
+        warn.style.display = 'none';
+    }
+}
+function renderGenericGradeTable() { renderSimpleGradeTable(genericState, 'genericGradeTable', 'genericGradeTbody', getGenericCriterionDescription, 'generic'); }
 function renderGenericStudentTags() {
     renderStudentTags(genericState,'genericStudentTags','genericStudentCountBadge',() => {
         sortStudents(genericState,'scores'); normalizeGenericScores(); renderGenericStudentTags();
@@ -1650,14 +1908,31 @@ function inst_canGoToRelacion() {
 }
 function inst_updateConfigButtonState() {
     const irBtn = document.getElementById('inst_irRelacionBtn'), warn = document.getElementById('inst_pesosWarning');
+    const cfgWarn = document.getElementById('inst_configWarning');
     if (!irBtn) return;
     if (warn) warn.style.display = 'none';
-    irBtn.disabled = !inst_canGoToRelacion();
+    const canGo = inst_canGoToRelacion();
+    irBtn.disabled = !canGo;
+    if (cfgWarn) {
+        if (!canGo) {
+            const missing = [];
+            if (!instrumentState.actividad.trim()) missing.push('<strong>el nombre de la actividad</strong>');
+            if (!instrumentState.clase.trim()) missing.push('<strong>el curso</strong>');
+            if (!instrumentState.students.length) missing.push('<strong>al menos un alumno/a en la lista</strong>');
+            cfgWarn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Para continuar, completa:'
+                + '<ul style="margin:4px 0 0;padding-left:1.4em;list-style:none;">'
+                + missing.map(m => '<li>— ' + m + '</li>').join('')
+                + '</ul>';
+            cfgWarn.style.display = 'block';
+        } else {
+            cfgWarn.style.display = 'none';
+        }
+    }
 }
 
 function inst_setNumInstruments(n) {
     n = Math.max(1,n);
-    while(instrumentState.instruments.length<n) instrumentState.instruments.push({name:`Instrumento ${instrumentState.instruments.length+1}`,weight:0});
+    while(instrumentState.instruments.length<n) instrumentState.instruments.push({name:`Instrumento ${instrumentState.instruments.length+1}`,weight:0,description:''});
     while(instrumentState.instruments.length>n) instrumentState.instruments.pop();
     inst_distributeWeightsEqual();
     const newMatrix=[];
@@ -1677,10 +1952,11 @@ function inst_renderInstrumentsTable() {
         const isLast = (idx === n - 1);
         const tr = document.createElement('tr');
         const nameCell = `<input type="text" class="form-control form-control-sm" data-idx="${idx}" data-field="name" value="${inst.name.replace(/"/g,'&quot;')}">`;
+        const descCell = `<textarea class="inst-desc-textarea" rows="2" data-idx="${idx}" data-field="description" placeholder="Descripción opcional del instrumento…">${(inst.description||'').replace(/</g,'&lt;')}</textarea>`;
         const weightCell = isLast
             ? `<div class="d-flex align-items-center gap-1"><input type="number" step="0.01" class="form-control form-control-sm inst-weight-input inst-weight-readonly" data-idx="${idx}" data-field="weight" value="${inst.weight.toFixed(2)}" readonly tabindex="-1"><span class="inst-weight-auto-badge">auto</span></div>`
             : `<input type="number" step="0.01" min="1" max="${maxEditable}" class="form-control form-control-sm inst-weight-input" data-idx="${idx}" data-field="weight" value="${inst.weight.toFixed(2)}">`;
-        tr.innerHTML = `<td>${idx+1}</td><td>${nameCell}</td><td>${weightCell}</td>`;
+        tr.innerHTML = `<td>${idx+1}</td><td>${nameCell}</td><td>${descCell}</td><td>${weightCell}</td>`;
         tbody.appendChild(tr);
     });
     inst_syncPesosBadge();
@@ -1695,10 +1971,24 @@ function inst_renderMatrix() {
         ? instrumentCriteria.reduce((acc,_,idx)=>{ if(instrumentState.matrix.some(r=>r[idx])) acc.push(idx); return acc; },[])
         : instrumentCriteria.map((_,idx)=>idx);
     const criteriaToShow = usedIndices.map(i=>instrumentCriteria[i]);
-    thead.innerHTML = '<tr><th>INSTRUMENTOS</th>'+criteriaToShow.map(c=>`<th class="inst-criteria-header text-center" title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('')+'</tr>';
+    thead.innerHTML = '<tr><th>INSTRUMENTOS</th>'+criteriaToShow.map(c=>{
+        const custom = instrumentState.criteriaDescriptions && instrumentState.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
+        return `<th class="inst-criteria-header criteria-th-editable${custom} text-center" data-code="${c}" data-app="inst" title="${getAppCriterionDesc(c,'inst').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
+    }).join('')+'</tr>';
     tbody.innerHTML='';
     instrumentState.instruments.forEach((inst,i)=>{
-        const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${inst.name}</strong></td>`;
+        const tr=document.createElement('tr');
+        const descPreview = inst.description && inst.description.trim()
+            ? `<div style="font-size:0.73rem;color:#6c757d;margin-top:3px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${inst.description.replace(/"/g,'&quot;')}">${inst.description}</div>`
+            : `<div style="font-size:0.68rem;color:#b0b8c1;margin-top:2px;font-style:italic;">Sin descripción</div>`;
+        const firstTd = document.createElement('td');
+        firstTd.style.cssText = 'cursor:pointer;min-width:140px;';
+        firstTd.title = 'Clic para editar nombre y descripción';
+        firstTd.classList.add('inst-instr-matrix-cell');
+        firstTd.dataset.instrIdx = i;
+        firstTd.innerHTML = `<strong style="color:#0b4b6b;">${inst.name}</strong>${descPreview}<div style="font-size:0.62rem;color:#6f42c1;margin-top:2px;opacity:0.7;">✎ editar</div>`;
+        firstTd.addEventListener('click', () => openInstrDescModal(i));
+        tr.appendChild(firstTd);
         for(let j=0;j<criteriaToShow.length;j++){
             const origIdx=usedIndices[j];
             const td=document.createElement('td'); td.classList.add('text-center');
@@ -1722,9 +2012,28 @@ function inst_getUsedCriteria() {
     return instrumentCriteria.filter((_,cIdx)=>instrumentState.matrix.some(row=>row[cIdx]));
 }
 function inst_updateIrEvalButton() {
-    const used=inst_getUsedCriteria().length;
-    const btn=document.getElementById('inst_irEvalBtn'), warn=document.getElementById('inst_noCriteriaWarning');
-    btn.disabled=used===0; warn.style.display=used===0?'block':'none';
+    const btn  = document.getElementById('inst_irEvalBtn');
+    const warn = document.getElementById('inst_noCriteriaWarning');
+    if (!btn || !warn) return;
+
+    // Instrumentos sin ningún criterio asignado
+    const uncovered = instrumentState.instruments
+        .map((inst, i) => ({ name: inst.name || `Instrumento ${i + 1}`, idx: i }))
+        .filter(({ idx }) => !instrumentState.matrix[idx] || !instrumentState.matrix[idx].some(v => v));
+
+    if (uncovered.length > 0) {
+        const plural = uncovered.length === 1 ? 'el instrumento' : 'los instrumentos';
+        warn.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i>`
+            + `Cada instrumento debe tener al menos un criterio asignado. Falta asignar criterios a ${plural}:`
+            + '<ul style="margin:4px 0 0;padding-left:1.4em;list-style:none;">'
+            + uncovered.map(({ name }) => `<li>— <strong>${name}</strong></li>`).join('')
+            + '</ul>';
+        warn.style.display = 'block';
+        btn.disabled = true;
+    } else {
+        warn.style.display = 'none';
+        btn.disabled = false;
+    }
 }
 
 function inst_computeCriteriaForStudent(sIdx) {
@@ -1769,12 +2078,22 @@ function inst_renderEvaluation() {
     });
     inst_syncPesosBadge();
     const showGrade=document.getElementById('inst_showGradeColumn').checked;
-    document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((inst,i)=>`<th title="${inst.name.replace(/"/g,'&quot;')}" style="cursor:help; white-space:nowrap;">I${i+1}</th>`).join('')+usedCriteria.map(c=>`<th title="${getCriteriaDescription(c).replace(/"/g,'&quot;')}" style="cursor:help;">${c}.</th>`).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
+    document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((inst,i)=>{
+        const hasDesc = inst.description && inst.description.trim();
+        const descTitle = (hasDesc ? inst.description + '\n\n' : '') + 'Clic para editar nombre y descripción';
+        return `<th class="inst-header-clickable" data-instr-idx="${i}" title="${descTitle.replace(/"/g,'&quot;')}" style="white-space:nowrap;min-width:110px;vertical-align:middle;">`+
+            `<span style="display:block;font-size:0.85rem;font-weight:700;color:#0b4b6b;">${inst.name}</span>`+
+            `<span class="inst-desc-indicator">${hasDesc ? '📝' : '✎'}</span></th>`;
+    }).join('')+usedCriteria.map(c=>{
+        const custom = instrumentState.criteriaDescriptions && instrumentState.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="inst" title="${getAppCriterionDesc(c,'inst').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}</th>`;
+    }).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
     const tbody=document.getElementById('inst_evalTbody'); tbody.innerHTML='';
     instrumentState.students.forEach((student,sIdx)=>{
         const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${student.fullName}</strong></td>`;
         instrumentState.instruments.forEach((_,i)=>{
             const td=document.createElement('td');
+            td.style.cssText='text-align:center;vertical-align:middle;padding:4px;';
             const inp=document.createElement('input'); inp.type='text'; inp.inputMode='decimal';
             inp.value=formatGradeDisplay(instrumentState.evalScores[sIdx]?.[i]||0);
             inp.placeholder='0';
@@ -1803,6 +2122,14 @@ function inst_renderEvaluation() {
         const lastCfg=document.querySelector(`#inst_instrumentsBody input[data-idx="${nI-1}"][data-field="weight"]`); if(lastCfg) lastCfg.value=instrumentState.instruments[nI-1].weight.toFixed(2);
         inst_syncPesosBadge(); inst_updateAllCriteria();
     }));
+    // Click en encabezado de instrumento → modal descripción
+    document.getElementById('inst_evalThead').addEventListener('click', function(e) {
+        const th = e.target.closest('th.inst-header-clickable');
+        if (!th) return;
+        const idx = parseInt(th.dataset.instrIdx);
+        if (isNaN(idx)) return;
+        openInstrDescModal(idx);
+    });
     inst_updateAllCriteria();
 }
 
@@ -1810,13 +2137,16 @@ function inst_getExportRows(includeGrade) {
     const usedCriteria=inst_getUsedCriteria();
     const header=['Alumno',...instrumentState.instruments.map((inst,i)=>`I${i+1}: ${inst.name}`),...usedCriteria.map(c=>c+'.')];
     if(includeGrade) header.push('Calificación');
+    // Fila de descripciones (debajo del encabezado, solo columnas de instrumentos)
+    const descRow=['Descripción',...instrumentState.instruments.map(inst=>inst.description||''),...usedCriteria.map(()=>'')];
+    if(includeGrade) descRow.push('');
     const rows=instrumentState.students.map((student,sIdx)=>{
         const row=[student.fullName,...instrumentState.instruments.map((_,i)=>instrumentState.evalScores[sIdx]?.[i]||0)];
         const critScores=inst_computeCriteriaForStudent(sIdx); row.push(...critScores);
         if(includeGrade){ const avg=critScores.length?critScores.reduce((a,b)=>a+b,0)/critScores.length:0; row.push(avg); }
         return row;
     });
-    return {header, rows};
+    return {header, descRow, rows};
 }
 
 function inst_exportResults(fmt, includeGrade) {
@@ -1824,26 +2154,48 @@ function inst_exportResults(fmt, includeGrade) {
     const baseName = makeBaseName('Instrumentos', instrumentState.actividad, instrumentState.clase);
     if(fmt==='json'){
         const usedCriteria=inst_getUsedCriteria();
-        const exportData={actividad:instrumentState.actividad,clase:instrumentState.clase,resultados:instrumentState.students.map((student,sIdx)=>{
-            const row={Alumno:student.fullName};
-            instrumentState.instruments.forEach((inst,i)=>row[inst.name]=instrumentState.evalScores[sIdx]?.[i]||0);
-            const critScores=inst_computeCriteriaForStudent(sIdx);
-            usedCriteria.forEach((c,u)=>row[c+'.']=critScores[u]);
-            if(includeGrade){const avg=critScores.length?critScores.reduce((a,b)=>a+b,0)/critScores.length:0; row['Calificación']=avg;}
-            return row;
-        })};
+        const exportData={
+            actividad:instrumentState.actividad,
+            clase:instrumentState.clase,
+            criteriaDescriptions:{...(instrumentState.criteriaDescriptions||{})},
+            instrumentos:instrumentState.instruments.map(i=>({nombre:i.name,peso:i.weight,descripcion:i.description||''})),
+            resultados:instrumentState.students.map((student,sIdx)=>{
+                const row={Alumno:student.fullName};
+                instrumentState.instruments.forEach((inst,i)=>row[inst.name]=instrumentState.evalScores[sIdx]?.[i]||0);
+                const critScores=inst_computeCriteriaForStudent(sIdx);
+                usedCriteria.forEach((c,u)=>row[c+'.']=critScores[u]);
+                if(includeGrade){const avg=critScores.length?critScores.reduce((a,b)=>a+b,0)/critScores.length:0; row['Calificación']=avg;}
+                return row;
+            })
+        };
         downloadJSON(exportData, `Resultados_${baseName}.json`);
     } else if(fmt==='excel'){
-        const {header,rows}=inst_getExportRows(includeGrade);
-        const wsData=[[`Actividad: ${instrumentState.actividad}`],[`Clase: ${instrumentState.clase}`],[],header,...rows];
-        const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(wsData),'Resultados');
+        const {header,descRow,rows}=inst_getExportRows(includeGrade);
+        const wsData=[[`Actividad: ${instrumentState.actividad}`],[`Clase: ${instrumentState.clase}`],[],header,descRow,...rows];
+        const wb=XLSX.utils.book_new();
+        const ws=XLSX.utils.aoa_to_sheet(wsData);
+        // Estilo cursiva para fila descripción (fila índice 4, base 0)
+        const descRowIdx=4;
+        header.forEach((_,c)=>{
+            const cellAddr=XLSX.utils.encode_cell({r:descRowIdx,c});
+            if(ws[cellAddr]) ws[cellAddr].s={font:{italic:true},fill:{fgColor:{rgb:'FFF3CD'}}};
+        });
+        XLSX.utils.book_append_sheet(wb,ws,'Resultados');
         XLSX.writeFile(wb,`Resultados_${baseName}.xlsx`);
     } else if(fmt==='pdf'){
         const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'});
         doc.setFontSize(14); doc.setFont(undefined,'bold'); doc.text(`Actividad: ${instrumentState.actividad}`,14,20);
         doc.text(`Clase: ${instrumentState.clase}`,14,28); doc.setFont(undefined,'normal'); doc.setFontSize(10);
-        const {header,rows}=inst_getExportRows(includeGrade);
-        doc.autoTable({head:[header],body:rows,startY:35,theme:'grid',styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[41,128,185],textColor:255}});
+        const {header,descRow,rows}=inst_getExportRows(includeGrade);
+        doc.autoTable({
+            head:[header],
+            body:[descRow,...rows],
+            startY:35,
+            theme:'grid',
+            styles:{fontSize:8,cellPadding:2},
+            headStyles:{fillColor:[41,128,185],textColor:255},
+            didParseCell: function(data){ if(data.section==='body'&&data.row.index===0){ data.cell.styles.fontStyle='italic'; data.cell.styles.fillColor=[255,243,205]; } }
+        });
         doc.save(`Resultados_${baseName}.pdf`);
     }
 }
@@ -1851,12 +2203,12 @@ function inst_exportResults(fmt, includeGrade) {
 // --- Importar / exportar config de Instrumentos ---
 function inst_exportConfig() {
     downloadJSON(
-        {actividad:instrumentState.actividad,clase:instrumentState.clase,students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments.map(i=>({name:i.name,weight:i.weight}))},
+        {actividad:instrumentState.actividad,clase:instrumentState.clase,students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments.map(i=>({name:i.name,weight:i.weight,description:i.description||''})),criteriaDescriptions:{...(instrumentState.criteriaDescriptions||{})}},
         `${makeBaseName('Configuración_Instrumentos', instrumentState.actividad, instrumentState.clase)}.json`
     );
 }
 function inst_applyConfig(data) {
-    Object.assign(instrumentState,{actividad:data.actividad||'',clase:data.clase||'',students:(data.students||[]).map(n=>({id:uuid(),fullName:n})),instruments:(data.instruments||[]).map(i=>({name:i.name,weight:parseFloat(i.weight)||0}))});
+    Object.assign(instrumentState,{actividad:data.actividad||'',clase:data.clase||'',students:(data.students||[]).map(n=>({id:uuid(),fullName:n})),instruments:(data.instruments||[]).map(i=>({name:i.name,weight:parseFloat(i.weight)||0,description:i.description||''})),criteriaDescriptions:data.criteriaDescriptions||{}});
     inst_recalcLastWeight();
     instrumentState.matrix=instrumentState.instruments.map(()=>new Array(instrumentCriteria.length).fill(false));
     instrumentState.evalScores=instrumentState.students.map(()=>new Array(instrumentState.instruments.length).fill(0));
@@ -1869,7 +2221,7 @@ function inst_applyConfig(data) {
 function inst_importConfig(file) { readJSONFile(file, data => { inst_applyConfig(data); alert('✅ Configuración importada.'); }); }
 
 // --- Guardar / cargar config local ---
-function inst_saveConfigLocal() { localSave('inst_config_backup', ()=>({actividad:instrumentState.actividad,clase:instrumentState.clase,students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments})); }
+function inst_saveConfigLocal() { localSave('inst_config_backup', ()=>({actividad:instrumentState.actividad,clase:instrumentState.clase,students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments.map(i=>({name:i.name,weight:i.weight,description:i.description||''})),criteriaDescriptions:{...(instrumentState.criteriaDescriptions||{})}})); }
 function inst_loadConfigLocal() { localLoad('inst_config_backup', data=>{ inst_applyConfig(data); alert('✅ Configuración cargada.'); }); }
 
 // --- Exportar / importar / guardar / cargar matriz ---
@@ -1889,7 +2241,7 @@ function inst_loadMatrixLocal() { localLoad('inst_matrix_backup', data=>{ instru
 function inst_exportEvalJson() {
     if(!instrumentState.students.length) return alert('No hay alumnos.');
     downloadJSON(
-        {actividad:instrumentState.actividad,clase:instrumentState.clase,students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments.map(i=>({name:i.name,weight:i.weight})),evalScores:instrumentState.evalScores,evalWeights:instrumentState.evalWeights,matrix:instrumentState.matrix},
+        {actividad:instrumentState.actividad,clase:instrumentState.clase,students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments.map(i=>({name:i.name,weight:i.weight,description:i.description||''})),evalScores:instrumentState.evalScores,evalWeights:instrumentState.evalWeights,matrix:instrumentState.matrix,criteriaDescriptions:{...(instrumentState.criteriaDescriptions||{})}},
         `${makeBaseName('Calificaciones_Instrumentos', instrumentState.actividad, instrumentState.clase)}.json`
     );
 }
@@ -1898,27 +2250,40 @@ function inst_importEvalJson(file) {
         if(!data.students||!data.instruments||!data.evalScores) throw new Error('Formato inesperado');
         if((data.students.length!==instrumentState.students.length||data.instruments.length!==instrumentState.instruments.length)&&!confirm('Dimensiones no coinciden. ¿Continuar?')) return;
         instrumentState.evalScores=data.evalScores; instrumentState.evalWeights=data.evalWeights||instrumentState.instruments.map(i=>i.weight); instrumentState.matrix=data.matrix||instrumentState.matrix;
-        data.instruments.forEach((inst,i)=>{ if(instrumentState.instruments[i]) instrumentState.instruments[i].weight=inst.weight; });
+        if (data.criteriaDescriptions) instrumentState.criteriaDescriptions = data.criteriaDescriptions;
+        data.instruments.forEach((inst,i)=>{ if(instrumentState.instruments[i]){ instrumentState.instruments[i].weight=inst.weight; if(inst.description!==undefined) instrumentState.instruments[i].description=inst.description; } });
         inst_recalcLastWeight(); inst_renderInstrumentsTable(); inst_renderMatrix(); inst_renderEvaluation(); inst_updateConfigButtonState();
         alert('✅ Calificaciones importadas.');
     });
 }
 function inst_saveEvalLocal() {
-    localSave('inst_eval_backup', ()=>({students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments.map(i=>({name:i.name,weight:i.weight})),evalScores:instrumentState.evalScores,evalWeights:instrumentState.evalWeights,matrix:instrumentState.matrix}));
+    localSave('inst_eval_backup', ()=>({students:instrumentState.students.map(s=>s.fullName),instruments:instrumentState.instruments.map(i=>({name:i.name,weight:i.weight,description:i.description||''})),evalScores:instrumentState.evalScores,evalWeights:instrumentState.evalWeights,matrix:instrumentState.matrix,criteriaDescriptions:{...(instrumentState.criteriaDescriptions||{})}}));
 }
 function inst_loadEvalLocal() {
     localLoad('inst_eval_backup', data=>{
         if((data.students.length!==instrumentState.students.length||data.instruments.length!==instrumentState.instruments.length)&&!confirm('Dimensiones no coinciden. ¿Cargar de todos modos?')) return;
         instrumentState.evalScores=data.evalScores; instrumentState.evalWeights=data.evalWeights; instrumentState.matrix=data.matrix;
-        data.instruments.forEach((inst,i)=>{if(instrumentState.instruments[i]) instrumentState.instruments[i].weight=inst.weight;});
+        if (data.criteriaDescriptions) instrumentState.criteriaDescriptions = data.criteriaDescriptions;
+        data.instruments.forEach((inst,i)=>{if(instrumentState.instruments[i]){ instrumentState.instruments[i].weight=inst.weight; if(inst.description!==undefined) instrumentState.instruments[i].description=inst.description; }});
         inst_recalcLastWeight(); inst_renderInstrumentsTable(); inst_renderMatrix(); inst_renderEvaluation(); inst_updateConfigButtonState();
         alert('✅ Calificaciones cargadas.');
     });
 }
 
+function openInstrDescModal(idx) {
+    const inst = instrumentState.instruments[idx];
+    if (!inst) return;
+    document.getElementById('inst_instrDescName').value = inst.name;
+    document.getElementById('inst_instrDescText').value = inst.description || '';
+    document.getElementById('inst_instrDescModal').dataset.instrIdx = idx;
+    // Actualizar título del modal con el nombre actual
+    document.getElementById('inst_instrDescModalLabel').innerHTML = `<i class="bi bi-pencil-square me-2"></i>Instrumento I${idx+1} · <small class="fw-normal opacity-75">Nombre y descripción</small>`;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('inst_instrDescModal')).show();
+}
+
 function resetInstrumentosState() {
     if (!confirm('¿Estás seguro de que deseas reiniciar todos los datos de instrumentos?')) return;
-    Object.assign(instrumentState, { actividad:'', clase:'', students:[], instruments:[{name:'Instrumento 1',weight:33.33},{name:'Instrumento 2',weight:33.33},{name:'Instrumento 3',weight:33.34}], evalScores:[], evalWeights:[] });
+    Object.assign(instrumentState, { actividad:'', clase:'', students:[], instruments:[{name:'Instrumento 1',weight:33.33,description:''},{name:'Instrumento 2',weight:33.33,description:''},{name:'Instrumento 3',weight:33.34,description:''}], evalScores:[], evalWeights:[], criteriaDescriptions:{} });
     inst_recalcLastWeight();
     instrumentState.matrix = instrumentState.instruments.map(() => new Array(instrumentCriteria.length).fill(false));
     instrumentState.evalWeights = instrumentState.instruments.map(i => i.weight);
@@ -1994,7 +2359,19 @@ window.onload = function() {
         document.getElementById(card).addEventListener('click',()=>showApp(app))
     );
 
-    // Modal compartido de criterios globales
+    // Modal descripción de pregunta (pantalla Calificación)
+    document.getElementById('examQDescSaveBtn').addEventListener('click', function() {
+        const modal = document.getElementById('examQuestionDescModal');
+        const qIdx  = parseInt(modal.dataset.qIdx);
+        if (isNaN(qIdx) || !examState.questions[qIdx]) return;
+        examState.questions[qIdx].name        = document.getElementById('examQDescName').value;
+        examState.questions[qIdx].description = document.getElementById('examQDescText').value;
+        // Actualizar tabla config y tabla calificación si están visibles
+        if (document.getElementById('examScreenConfig').classList.contains('active')) renderExamQuestionsTable();
+        renderExamGradeTable();
+    });
+
+    // Modal compartido de criterios
     document.getElementById('globalCriteriaModal').addEventListener('show.bs.modal', function(e) {
         const app = e.relatedTarget?.dataset?.app || this.dataset.currentApp || 'exam';
         this.dataset.currentApp = app; populateCriteriaModal(app);
@@ -2004,6 +2381,9 @@ window.onload = function() {
         appStates[app].globalCriteria = [...document.querySelectorAll('#globalCriteriaGroupedContainer .global-criteria-chk:checked')].map(c=>c.value);
         renderGlobalBadges(app);
         if (app==='generic') { normalizeGenericScores(); if(document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable(); }
+        if (app==='exam') { validateExamCriteria(); updateExamConfigWarning(); }
+        if (app==='test') updateTestConfigWarning();
+        if (app==='generic') updateGenericConfigWarning();
     });
 
     // Modal exportar resultados
@@ -2028,29 +2408,29 @@ window.onload = function() {
         if(!validateExamCriteria()){ alert('Criterios no asignados correctamente.'); return; }
         showAppScreen('exam','results');
     });
-    document.getElementById('examNameInput').addEventListener('input', e=>examState.examName=e.target.value);
-    document.getElementById('examCourseInput').addEventListener('input', e=>examState.course=e.target.value);
+    document.getElementById('examNameInput').addEventListener('input', e=>{ examState.examName=e.target.value; updateExamConfigWarning(); });
+    document.getElementById('examCourseInput').addEventListener('input', e=>{ examState.course=e.target.value; updateExamConfigWarning(); });
     document.getElementById('examBtnSetQuestions').addEventListener('click', function() {
         const num=parseInt(document.getElementById('examInputNumQuestions').value)||1;
-        examState.questions=Array.from({length:num},(_,i)=>({id:i+1,maxScore:10,criteriaCodes:[]}));
-        normalizeExamScores(); renderExamQuestionsTable(); validateExamCriteria();
+        examState.questions=Array.from({length:num},(_,i)=>({id:i+1,maxScore:10,criteriaCodes:[],name:'',description:''}));
+        normalizeExamScores(); renderExamQuestionsTable(); validateExamCriteria(); updateExamConfigWarning();
     });
     document.getElementById('examAppendQuestionBtn').addEventListener('click', function() {
         const newId=examState.questions.length?Math.max(...examState.questions.map(q=>q.id))+1:1;
-        examState.questions.push({id:newId,maxScore:10,criteriaCodes:[]});
+        examState.questions.push({id:newId,maxScore:10,criteriaCodes:[],name:'',description:''});
         examState.scores.forEach(row=>row.push(0)); reorderExamQuestionIds(); normalizeExamScores(); renderExamQuestionsTable();
-        document.getElementById('examInputNumQuestions').value=examState.questions.length; validateExamCriteria();
+        document.getElementById('examInputNumQuestions').value=examState.questions.length; validateExamCriteria(); updateExamConfigWarning();
     });
     document.getElementById('examBtnAddStudent').addEventListener('click', function() {
         const input=document.getElementById('examStudentNameInput'), name=input.value.trim(); if(!name) return;
         if(isStudentDuplicate(examState,name)){ showDuplicateMessage('examDuplicateMessage',`El alumno "${name}" ya existe.`); input.value=''; return; }
-        examState.students.push({id:uuid(),fullName:name}); normalizeExamScores(); sortStudents(examState,'scores'); renderExamStudentTags(); input.value=''; showDuplicateMessage('examDuplicateMessage','');
+        examState.students.push({id:uuid(),fullName:name}); normalizeExamScores(); sortStudents(examState,'scores'); renderExamStudentTags(); input.value=''; showDuplicateMessage('examDuplicateMessage',''); updateExamConfigWarning();
     });
     document.getElementById('examBtnClearStudents').addEventListener('click', function() {
-        if(confirm('¿Estás seguro de que deseas eliminar a todos los alumnos?')){ examState.students=[]; examState.scores=[]; renderExamStudentTags(); }
+        if(confirm('¿Estás seguro de que deseas eliminar a todos los alumnos?')){ examState.students=[]; examState.scores=[]; renderExamStudentTags(); updateExamConfigWarning(); }
     });
     document.getElementById('examImportFile').addEventListener('change', function() {
-        if(this.files.length) importStudentsFromFile(this.files[0],examState,'scores',()=>{ renderExamStudentTags(); if(document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable(); });
+        if(this.files.length) importStudentsFromFile(this.files[0],examState,'scores',()=>{ renderExamStudentTags(); if(document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable(); updateExamConfigWarning(); });
         this.value='';
     });
     document.getElementById('examExportConfigBtn').addEventListener('click', ()=>exportAppConfig('exam'));
@@ -2079,8 +2459,8 @@ window.onload = function() {
         if(!testState.globalCriteria.length){ alert('Selecciona al menos un criterio.'); return; }
         showAppScreen('test','results');
     });
-    document.getElementById('testExamTitleInput').addEventListener('input', e=>testState.examName=e.target.value);
-    document.getElementById('testCourseInput').addEventListener('input', e=>testState.course=e.target.value);
+    document.getElementById('testExamTitleInput').addEventListener('input', e=>{ testState.examName=e.target.value; updateTestConfigWarning(); });
+    document.getElementById('testCourseInput').addEventListener('input', e=>{ testState.course=e.target.value; updateTestConfigWarning(); });
     document.getElementById('testTotalQuestions').addEventListener('input', function() {
         let val=parseInt(this.value)||1; if(val<1) val=1; this.value=val; testState.totalQuestions=val;
         testState.studentScores=testState.students.map(()=>({correct:0,wrong:0,unanswered:val}));
@@ -2095,13 +2475,13 @@ window.onload = function() {
         const input=document.getElementById('testStudentNameInput'), name=input.value.trim(); if(!name) return;
         if(isStudentDuplicate(testState,name)){ showDuplicateMessage('testDuplicateMessage',`El alumno "${name}" ya existe.`); input.value=''; return; }
         testState.students.push({id:uuid(),fullName:name}); testState.studentScores.push({correct:0,wrong:0,unanswered:testState.totalQuestions});
-        sortStudents(testState,'studentScores'); renderTestStudentTags(); input.value=''; showDuplicateMessage('testDuplicateMessage','');
+        sortStudents(testState,'studentScores'); renderTestStudentTags(); input.value=''; showDuplicateMessage('testDuplicateMessage',''); updateTestConfigWarning();
     });
     document.getElementById('testBtnClearStudents').addEventListener('click', function() {
-        if(confirm('¿Estás seguro de que deseas eliminar a todos los alumnos?')){ testState.students=[]; testState.studentScores=[]; renderTestStudentTags(); }
+        if(confirm('¿Estás seguro de que deseas eliminar a todos los alumnos?')){ testState.students=[]; testState.studentScores=[]; renderTestStudentTags(); updateTestConfigWarning(); }
     });
     document.getElementById('testImportFile').addEventListener('change', function() {
-        if(this.files.length) importStudentsFromFile(this.files[0],testState,'studentScores',()=>{ renderTestStudentTags(); if(document.getElementById('testScreenGrade').classList.contains('active')) renderTestGradeTable(); });
+        if(this.files.length) importStudentsFromFile(this.files[0],testState,'studentScores',()=>{ renderTestStudentTags(); if(document.getElementById('testScreenGrade').classList.contains('active')) renderTestGradeTable(); updateTestConfigWarning(); });
         this.value='';
     });
     document.getElementById('testExportConfigBtn').addEventListener('click', ()=>exportAppConfig('test'));
@@ -2130,18 +2510,18 @@ window.onload = function() {
         if(!validateGenericCriteria()){ alert('Selecciona al menos un criterio.'); return; }
         showAppScreen('generic','results');
     });
-    document.getElementById('genericExamNameInput').addEventListener('input', e=>genericState.examName=e.target.value);
-    document.getElementById('genericCourseInput').addEventListener('input', e=>genericState.course=e.target.value);
+    document.getElementById('genericExamNameInput').addEventListener('input', e=>{ genericState.examName=e.target.value; updateGenericConfigWarning(); });
+    document.getElementById('genericCourseInput').addEventListener('input', e=>{ genericState.course=e.target.value; updateGenericConfigWarning(); });
     document.getElementById('genericBtnAddStudent').addEventListener('click', function() {
         const input=document.getElementById('genericStudentNameInput'), name=input.value.trim(); if(!name) return;
         if(isStudentDuplicate(genericState,name)){ showDuplicateMessage('genericDuplicateMessage',`El alumno "${name}" ya existe.`); input.value=''; return; }
-        genericState.students.push({id:uuid(),fullName:name}); normalizeGenericScores(); sortStudents(genericState,'scores'); renderGenericStudentTags(); input.value=''; showDuplicateMessage('genericDuplicateMessage','');
+        genericState.students.push({id:uuid(),fullName:name}); normalizeGenericScores(); sortStudents(genericState,'scores'); renderGenericStudentTags(); input.value=''; showDuplicateMessage('genericDuplicateMessage',''); updateGenericConfigWarning();
     });
     document.getElementById('genericBtnClearStudents').addEventListener('click', function() {
-        if(confirm('¿Estás seguro de que deseas eliminar a todos los alumnos?')){ genericState.students=[]; genericState.scores=[]; renderGenericStudentTags(); }
+        if(confirm('¿Estás seguro de que deseas eliminar a todos los alumnos?')){ genericState.students=[]; genericState.scores=[]; renderGenericStudentTags(); updateGenericConfigWarning(); }
     });
     document.getElementById('genericImportFile').addEventListener('change', function() {
-        if(this.files.length) importStudentsFromFile(this.files[0],genericState,'scores',()=>{ renderGenericStudentTags(); if(document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable(); });
+        if(this.files.length) importStudentsFromFile(this.files[0],genericState,'scores',()=>{ renderGenericStudentTags(); if(document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable(); updateGenericConfigWarning(); });
         this.value='';
     });
     document.getElementById('genericExportConfigBtn').addEventListener('click', ()=>exportAppConfig('generic'));
@@ -2159,7 +2539,7 @@ window.onload = function() {
     document.getElementById('genericResetAllBtn').addEventListener('click', ()=>resetAppState('generic'));
     document.getElementById('genericShowGlobalGrade').addEventListener('change', ()=>renderResultsTable('generic'));
 
-    // Modal edición descripción de criterio (Actividad Genérica)
+    // Modal edición descripción de criterio (todas las apps)
     document.getElementById('genericCriterionDescResetBtn').addEventListener('click', function() {
         const code = document.getElementById('genericCriterionDescModal').dataset.currentCode;
         if (code) document.getElementById('genericCriterionDescText').value = getCriteriaDescription(code);
@@ -2167,21 +2547,43 @@ window.onload = function() {
     document.getElementById('genericCriterionDescSaveBtn').addEventListener('click', function() {
         const modal = document.getElementById('genericCriterionDescModal');
         const code = modal.dataset.currentCode;
+        const app  = modal.dataset.currentApp || 'generic';
         const text = document.getElementById('genericCriterionDescText').value.trim();
         if (!code) return;
-        if (!genericState.criteriaDescriptions) genericState.criteriaDescriptions = {};
+        const state = app === 'inst' ? instrumentState : (appStates[app] || {});
+        if (!state.criteriaDescriptions) state.criteriaDescriptions = {};
         if (text && text !== getCriteriaDescription(code)) {
-            genericState.criteriaDescriptions[code] = text;
+            state.criteriaDescriptions[code] = text;
         } else {
-            delete genericState.criteriaDescriptions[code];
+            delete state.criteriaDescriptions[code];
         }
-        renderGlobalBadges('generic');
+        // Re-render todo lo pertinente según app
+        if (app === 'generic') { renderGlobalBadges('generic'); renderGenericGradeTable(); renderResultsTable('generic'); }
+        else if (app === 'exam')    { renderGlobalBadges('exam'); if(document.getElementById('examScreenGrade')?.classList.contains('active')) renderExamGradeTable(); renderResultsTable('exam'); }
+        else if (app === 'test')    { renderGlobalBadges('test'); if(document.getElementById('testScreenGrade')?.classList.contains('active')) renderTestGradeTable(); renderResultsTable('test'); }
+        else if (app === 'inst')    { if(document.getElementById('inst_relacion').classList.contains('active')) inst_renderMatrix(); if(document.getElementById('inst_eval').classList.contains('active')) inst_renderEvaluation(); }
     });
 
     // ========== INSTRUMENTOS ==========
     document.getElementById('inst_config-tab').addEventListener('click', ()=>showInstrumentosScreen('inst_config'));
     document.getElementById('inst_relacion-tab').addEventListener('click', ()=>showInstrumentosScreen('inst_relacion'));
-    document.getElementById('inst_eval-tab').addEventListener('click', ()=>showInstrumentosScreen('inst_eval'));
+    document.getElementById('inst_eval-tab').addEventListener('click', ()=>{
+        const uncovered = instrumentState.instruments
+            .map((inst, i) => ({ name: inst.name || `Instrumento ${i + 1}`, idx: i }))
+            .filter(({ idx }) => !instrumentState.matrix[idx] || !instrumentState.matrix[idx].some(v => v));
+        if (uncovered.length > 0) {
+            inst_updateIrEvalButton();
+            showInstrumentosScreen('inst_relacion');
+            const toastEl = document.getElementById('inst_toastWarning');
+            const plural = uncovered.length === 1 ? 'el instrumento' : 'los instrumentos';
+            const lista  = uncovered.map(({ name }) => name).join(', ');
+            document.getElementById('inst_toastWarningMsg').innerHTML =
+                `<i class="bi bi-exclamation-triangle-fill me-2"></i>Cada instrumento debe tener al menos un criterio asignado. Falta: ${plural} <strong>${lista}</strong>.`;
+            bootstrap.Toast.getOrCreateInstance(toastEl).show();
+            return;
+        }
+        showInstrumentosScreen('inst_eval');
+    });
     document.getElementById('inst_actividadInput').addEventListener('input', e=>{ instrumentState.actividad=e.target.value; inst_updateConfigButtonState(); });
     document.getElementById('inst_claseInput').addEventListener('input', e=>{ instrumentState.clase=e.target.value; inst_updateConfigButtonState(); });
     document.getElementById('inst_numInstrumentos').addEventListener('change', function() {
@@ -2191,6 +2593,7 @@ window.onload = function() {
     });
     document.getElementById('inst_instrumentsBody').addEventListener('input', function(e) {
         if(e.target.matches('input[data-field="name"]')){ instrumentState.instruments[e.target.dataset.idx].name=e.target.value; }
+        if(e.target.matches('textarea[data-field="description"]')){ instrumentState.instruments[e.target.dataset.idx].description=e.target.value; }
         if(e.target.matches('input[data-field="weight"]:not(.inst-weight-readonly)')){
             const idx=parseInt(e.target.dataset.idx), nI=instrumentState.instruments.length;
             if(idx===nI-1) return;
@@ -2225,7 +2628,7 @@ window.onload = function() {
         inst_renderMatrix(); showInstrumentosScreen('inst_relacion');
     });
     document.getElementById('inst_irEvalBtn').addEventListener('click', function() {
-        if(this.disabled){ alert('Selecciona al menos un criterio.'); return; }
+        if(this.disabled){ alert('Asigna al menos un criterio a cada instrumento antes de continuar.'); return; }
         instrumentState.evalWeights=instrumentState.instruments.map(i=>i.weight);
         if(instrumentState.evalScores.length!==instrumentState.students.length) instrumentState.evalScores=instrumentState.students.map(()=>new Array(instrumentState.instruments.length).fill(0));
         inst_renderEvaluation(); showInstrumentosScreen('inst_eval');
@@ -2249,6 +2652,45 @@ window.onload = function() {
     document.getElementById('inst_loadMatrixLocal').addEventListener('click', inst_loadMatrixLocal);
     document.getElementById('inst_resetAllBtn').addEventListener('click', resetInstrumentosState);
 
+    // Delegación global: clic en encabezado de criterio editable en cualquier tabla
+    document.addEventListener('click', function(e) {
+        const th = e.target.closest('th.criteria-th-editable');
+        if (!th) return;
+        const code = th.dataset.code;
+        const app  = th.dataset.app || 'generic';
+        if (code) openCriterionDescModal(code, app);
+    });
+
+    // Delegación global: clic en badge de criterio editable en tabla de preguntas del examen
+    // (Los badges globales de renderGlobalBadges tienen listener directo; estos llevan data-code)
+    document.addEventListener('click', function(e) {
+        const badge = e.target.closest('span.badge.criteria-badge-editable[data-code]');
+        if (!badge) return;
+        const code = badge.dataset.code;
+        const app  = badge.dataset.app || 'exam';
+        if (code) openCriterionDescModal(code, app);
+    });
+
+    // Modal descripción de instrumento (pantalla Evaluación)
+    document.getElementById('inst_instrDescSaveBtn').addEventListener('click', function() {
+        const modal = document.getElementById('inst_instrDescModal');
+        const idx = parseInt(modal.dataset.instrIdx);
+        if (isNaN(idx) || !instrumentState.instruments[idx]) return;
+        // Guardar nombre (si no está vacío)
+        const newName = document.getElementById('inst_instrDescName').value.trim();
+        if (newName) instrumentState.instruments[idx].name = newName;
+        // Guardar descripción
+        instrumentState.instruments[idx].description = document.getElementById('inst_instrDescText').value;
+        // Sync tabla Configuración
+        const cfgNameInput = document.querySelector(`#inst_instrumentsBody input[data-idx="${idx}"][data-field="name"]`);
+        if (cfgNameInput) cfgNameInput.value = instrumentState.instruments[idx].name;
+        const cfgTextarea = document.querySelector(`#inst_instrumentsBody textarea[data-idx="${idx}"][data-field="description"]`);
+        if (cfgTextarea) cfgTextarea.value = instrumentState.instruments[idx].description;
+        // Re-render pantallas activas
+        if (document.getElementById('inst_relacion').classList.contains('active')) inst_renderMatrix();
+        if (document.getElementById('inst_eval').classList.contains('active')) inst_renderEvaluation();
+    });
+
     // Intro overlay
     const intro = document.getElementById('intro-overlay');
     if (intro) {
@@ -2262,6 +2704,9 @@ window.onload = function() {
     renderExamStudentTags();
     renderTestStudentTags();
     renderGenericStudentTags();
+    updateExamConfigWarning();
+    updateTestConfigWarning();
+    updateGenericConfigWarning();
     showHome();
     setBodyColor('home');
 

@@ -215,7 +215,7 @@
     <!-- CABECERA -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 border-bottom pb-3" style="gap:10px;">
         <h1 class="fw-bold mb-0" style="color: #0b4b6b; font-size: clamp(1.1rem,4vw,1.8rem);">
-            <i class="bi bi-diagram-3 me-2" style="color: #0d6efd;"></i>EVALUACIÓN TEC4 · <span id="subjectNameDisplay">Tecnología 4º ESO</span>
+            <i class="bi bi-diagram-3 me-2" style="color: #0d6efd;"></i>EVALUACIÓN CRITERIAL · <span id="subjectNameDisplay">Tecnología 4º ESO</span>
         </h1>
         <div class="app-switcher" role="group">
             <button type="button" class="btn btn-outline-secondary" id="btnHome"><i class="fas fa-home"></i> Inicio</button>
@@ -838,7 +838,7 @@ const capitalizeBasename = name => name.split('_').map(capitalizeFirst).join('_'
 const makeBaseName = (prefix, name, course) => capitalizeBasename(sanitizeFilename(`${prefix}_${name}_${course}`).replace(/_+/g,'_'));
 
 function setBodyColor(app) {
-    const colors = { 'exam':'#e8f1ff', 'test':'#e8f5ee', 'generic':'#fff4e5', 'instrumentos':'#f0eafa', 'home':'#e9f0f5' };
+    const colors = { 'exam':'#e8f1ff', 'test':'#e8f5ee', 'generic':'#fff4e5', 'instrumentos':'#f0eafa', 'home':'#FFFFF7' };
     document.body.style.backgroundColor = colors[app] || '#e9f0f5';
 }
 function downloadJSON(data, filename) {

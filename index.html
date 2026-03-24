@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>EVALUACIÓN TEC4 · INTEGRADA · V11.3</title>
+    <title>EVALUACIÓN TEC4 · INTEGRADA · V12.0</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="theme-color" content="#0b4b6b">
@@ -149,6 +149,11 @@
         th.criteria-th-editable::after { content: " ✎"; font-size: 0.65em; opacity: 0.55; }
         /* En cabeceras verticales (Relación) el ✎ queda fuera — se suprime */
         th.inst-criteria-header.criteria-th-editable::after { content: none; }
+        /* Franjas por familia de criterio */
+        .crit-family-stripe { background-color: var(--crit-stripe-bg, #eef4ff); }
+        /* Centrado universal de celdas de calificación */
+        .criteria-cell, .grade-cell { text-align: center !important; vertical-align: middle !important; font-weight: 600; }
+        input.grade-text-input { text-align: center !important; font-weight: 600; }
         /* Preguntas examen */
         .exam-q-name-input { font-weight: 700; color: #0b4b6b; border: 1px solid #dee2e6; border-radius: 6px;
             padding: 4px 8px; width: 100%; min-width: 60px; background: #f8fbff; }
@@ -203,6 +208,15 @@
             .table-responsive { overflow: visible; }
             .section-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
         }
+        /* PONDERACIÓN */
+        #cardPonderacion { background-color: #e0f7fa; border-color: #9dd8e8; }
+        #cardPonderacion:hover { border-color: #0dcaf0; }
+        .btn-cyan { background-color: #0dcaf0; border-color: #0dcaf0; color: #000; }
+        .btn-cyan:hover { background-color: #0bb5d7; border-color: #0bb5d7; color: #000; }
+        .pond-activity-card { border-radius: 14px; border: 2px solid #b2ebf2; background: #f0fdff; padding: 16px; margin-bottom: 12px; }
+        .pond-weight-sum-badge { font-size: 0.9rem; padding: 5px 14px; border-radius: 20px; font-weight: 700; display:inline-block; }
+        .pond-loaded-badge { font-size: 0.82rem; white-space:nowrap; }
+        .pond-act-info { font-size:0.82rem; margin-top:6px; }
     </style>
 </head>
 <body>
@@ -223,6 +237,7 @@
             <button type="button" class="btn btn-outline-success" id="btnAppTest"><i class="fas fa-calculator"></i> Examen Tipo Test</button>
             <button type="button" class="btn btn-outline-warning" id="btnAppGeneric"><i class="bi bi-check2-circle"></i> Actividad por Criterios</button>
             <button type="button" class="btn btn-outline-secondary" id="btnAppInstrumentos"><i class="bi bi-grid-3x3-gap-fill"></i> Actividad por Instrumentos</button>
+            <button type="button" class="btn btn-outline-info" id="btnAppPonderacion"><i class="bi bi-layers-half"></i> Ponderación</button>
         </div>
     </div>
 
@@ -240,6 +255,9 @@
         <div class="row g-4 justify-content-center mt-2">
             <div class="col-md-6"><div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardGeneric"><i class="bi bi-check2-circle" style="font-size: 3rem; color: #fd7e14;"></i><h3 class="mt-3 fw-bold">Actividad por criterios</h3><p class="text-muted flex-grow-1">Califica directamente cada criterio con nota 0-10.</p><button class="btn btn-warning mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button></div></div>
             <div class="col-md-6"><div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardInstrumentos"><i class="bi bi-grid-3x3-gap-fill" style="font-size: 3rem; color: #6f42c1;"></i><h3 class="mt-3 fw-bold">Actividad por instrumentos</h3><p class="text-muted flex-grow-1">Define instrumentos, relación con criterios TEC.4.X.Y. y califica.</p><button class="btn btn-purple mt-auto"><i class="bi bi-box-arrow-in-right"></i> Usar</button></div></div>
+        </div>
+        <div class="row g-4 justify-content-center mt-2">
+            <div class="col-md-8"><div class="card home-card p-4 text-center h-100 d-flex flex-column" id="cardPonderacion"><i class="bi bi-layers-half" style="font-size: 3rem; color: #0dcaf0;"></i><h3 class="mt-3 fw-bold">Ponderación de actividades</h3><p class="text-muted flex-grow-1">Combina los resultados de varias actividades del mismo tipo aplicando un peso porcentual a cada una y obtén la nota ponderada por criterio.</p><button class="btn btn-info mt-auto text-white"><i class="bi bi-box-arrow-in-right"></i> Usar</button></div></div>
         </div>
         <div class="alert alert-info mt-5 text-center"><i class="bi bi-info-circle"></i> Criterios <strong>TEC.4.X.Y.</strong> incluidos (Tecnología 4º ESO · LOMLOE).</div>
     </div>
@@ -306,6 +324,7 @@
                 <div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por pregunta <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Introduce la nota de cada alumno en cada pregunta (0-10)."></i></div>
                 <div id="examGradeTableWrapper" class="table-responsive" style="max-height:500px; overflow-y:auto;"><table class="table table-bordered table-striped" id="examGradeTable"><thead class="sticky-top bg-white"></thead><tbody id="examGradeTbody"></tbody></table></div>
                 <div class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
+                    <button id="examClearScoresBtn" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                     <button id="examExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
                     <button id="examImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
                     <input type="file" id="examImportScoresFile" accept=".json" class="hidden">
@@ -405,6 +424,7 @@
                 <div class="section-title"><i class="fas fa-pencil-alt"></i> Calificaciones por alumno <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Selecciona aciertos y fallos. NS/NC se calcula automáticamente."></i></div>
                 <div id="testGradeTableWrapper" class="table-responsive" style="max-height:600px;"><table class="table table-bordered table-striped" id="testGradeTable"><thead class="table-secondary sticky-top"></thead><tbody id="testGradeTbody"></tbody></table></div>
                 <div class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
+                    <button id="testClearScoresBtn" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                     <button id="testExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
                     <button id="testImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
                     <input type="file" id="testImportScoresFile" accept=".json" class="hidden">
@@ -487,6 +507,7 @@
                 <div class="section-title"><i class="bi bi-pencil-square"></i> Calificaciones por criterio <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Introduce una nota (0-10) para cada alumno en cada criterio."></i></div>
                 <div id="genericGradeTableWrapper" class="table-responsive" style="max-height:500px;"><table class="table table-bordered table-striped" id="genericGradeTable"><thead class="sticky-top bg-white"></thead><tbody id="genericGradeTbody"></tbody></table></div>
                 <div class="mt-3 d-flex flex-wrap gap-2 justify-content-end">
+                    <button id="genericClearScoresBtn" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                     <button id="genericExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
                     <button id="genericImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
                     <input type="file" id="genericImportScoresFile" accept=".json" class="hidden">
@@ -607,11 +628,11 @@
                     <div class="section-title"><i class="bi bi-table"></i> Calificaciones</div>
                     <div class="inst-switch-container"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="inst_showGradeColumn" checked><label class="form-check-label" for="inst_showGradeColumn">Mostrar columna Calificación</label></div></div>
                     <div class="inst-btn-file-group mt-3 mb-3">
+                        <button id="inst_clearScoresBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                         <button id="inst_exportEvalJson" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
                         <button id="inst_importEvalJsonBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
                         <input type="file" id="inst_importEvalFile" accept=".json" class="hidden"><button id="inst_saveEvalLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar calificaciones</button>
                         <button id="inst_loadEvalLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Recuperar calificaciones</button>
-
                     </div>
                     <div class="table-responsive" style="max-height:500px;"><table class="table table-bordered table-striped" id="inst_evalTable"><thead class="inst-fixed-header" id="inst_evalThead"></thead><tbody id="inst_evalTbody"></tbody></table></div>
                     <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between">
@@ -623,6 +644,137 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP 5: PONDERACIÓN DE ACTIVIDADES -->
+    <div id="appPonderacionContainer" class="screen">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:10px;">
+            <h3 class="fw-bold mb-0" style="font-size:clamp(0.95rem,3vw,1.4rem);">
+                <i class="bi bi-layers-half" style="color:#0dcaf0;"></i> Ponderación de actividades
+            </h3>
+            <div class="btn-group flex-shrink-0" role="group">
+                <button type="button" class="btn btn-outline-info active" id="pond_tabConfig"><i class="bi bi-gear-fill"></i> Configuración</button>
+                <button type="button" class="btn btn-outline-info" id="pond_tabImport"><i class="bi bi-cloud-upload"></i> Importar</button>
+                <button type="button" class="btn btn-outline-info" id="pond_tabResults"><i class="bi bi-bar-chart-line"></i> Resultados</button>
+            </div>
+        </div>
+
+        <!-- CONFIG -->
+        <div id="pond_screenConfig" class="screen active">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-pencil-square"></i> Configuración de la ponderación</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">📌 Nombre <span class="text-danger">*</span></label>
+                        <input type="text" id="pond_nombreInput" class="form-control" placeholder="Ej: Evaluación 1ª Evaluación">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">📚 Curso <span class="text-danger">*</span></label>
+                        <input type="text" id="pond_cursoInput" class="form-control" placeholder="Ej: 4º ESO">
+                    </div>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-list-ol"></i> Número de actividades a ponderar</div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Nº de actividades</label>
+                        <input type="number" id="pond_numActividadesInput" class="form-control" min="2" max="10" value="2">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="alert alert-info mb-0 small">
+                            <i class="bi bi-info-circle-fill"></i> Indica cuántas actividades del mismo tipo deseas combinar (mín. 2, máx. 10). En el paso siguiente importarás un <strong>archivo JSON de resultados</strong> exportado desde cualquiera de las cuatro aplicaciones de evaluación para cada actividad.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="pond_configWarning" class="validation-warning" style="display:none;"></div>
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-gear-wide-connected"></i> Gestión de información</div>
+                <div class="d-flex flex-wrap gap-2 justify-content-start">
+                    <button id="pond_exportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar configuración</button>
+                    <button id="pond_importConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar configuración</button>
+                    <input type="file" id="pond_importConfigFile" accept=".json" class="hidden">
+                    <button id="pond_saveConfigLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
+                    <button id="pond_loadConfigLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
+                    <button id="pond_resetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button id="pond_btnGoImport" class="btn btn-info btn-lg text-white"><i class="bi bi-arrow-right"></i> Ir a Importar</button>
+            </div>
+        </div>
+
+        <!-- IMPORTAR -->
+        <div id="pond_screenImport" class="screen">
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-cloud-upload"></i> Importar archivos de resultados y asignar pesos</div>
+                <div class="alert alert-info mb-3 small">
+                    <i class="bi bi-info-circle-fill"></i> Importa el <strong>JSON de resultados</strong> de cada actividad (exportado desde ⚙ Resultados → JSON en cualquier app). Asigna el peso (%) de cada actividad. Los pesos deben sumar <strong>100%</strong>. El peso de la última actividad se calcula automáticamente.
+                </div>
+                <div id="pond_actividadCards"></div>
+                <div class="d-flex align-items-center gap-3 mt-3 p-3 rounded-3" style="background:#e0f7fa; border:2px solid #b2ebf2;">
+                    <span class="fw-bold">Suma de pesos:</span>
+                    <span id="pond_weightSumBadge" class="pond-weight-sum-badge bg-danger text-white">0%</span>
+                    <span id="pond_weightSumWarning" class="text-danger small fw-semibold"></span>
+                </div>
+            </div>
+            <div id="pond_importWarning" class="validation-warning" style="display:none;"></div>
+            <div class="section-card">
+                <div class="section-title"><i class="bi bi-gear-wide-connected"></i> Gestión de archivos importados</div>
+                <p class="text-muted small mb-3"><i class="bi bi-info-circle"></i> Exporta o importa el conjunto completo de actividades cargadas (nombre, pesos y datos de cada archivo). El nombre del archivo indicará cuántos archivos están cargados en ese momento.</p>
+                <div class="d-flex flex-wrap gap-2 justify-content-start">
+                    <button id="pond_exportImportBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar importación</button>
+                    <button id="pond_importImportBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar importación</button>
+                    <input type="file" id="pond_importImportFile" accept=".json" class="hidden">
+                    <button id="pond_saveImportLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
+                    <button id="pond_loadImportLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
+                </div>
+                <div id="pond_importMgmtMessage" class="small mt-2"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-3">
+                <button id="pond_btnBackConfig" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver</button>
+                <button id="pond_btnGoResults" class="btn btn-info btn-lg text-white" disabled><i class="bi bi-bar-chart-line"></i> Ver Resultados</button>
+            </div>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div id="pond_screenResults" class="screen">
+            <div class="section-card">
+                <div class="section-title">
+                    <i class="bi bi-bar-chart-line"></i> Resultados ponderados
+                    <span id="pond_resultsTitleBadge" class="badge bg-info ms-3 fs-6" style="color:#000;"></span>
+                </div>
+                <div id="pond_activitiesInfoBadges" class="mb-3 d-flex flex-wrap gap-2"></div>
+                <div class="mb-3 d-flex flex-wrap gap-3 align-items-center">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="pond_showGradeColumn" checked>
+                        <label class="form-check-label" for="pond_showGradeColumn">Mostrar columna Calificación</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="pond_showActivityCols" checked>
+                        <label class="form-check-label" for="pond_showActivityCols">Mostrar desglose por actividad</label>
+                    </div>
+                </div>
+                <div id="pond_resultsTableWrapper" class="table-responsive">
+                    <table class="table table-bordered table-hover" id="pond_resultsTable">
+                        <thead class="table-secondary" id="pond_resultsThead"></thead>
+                        <tbody id="pond_resultsTbody"></tbody>
+                    </table>
+                </div>
+                <div class="d-flex flex-wrap gap-3 mt-4 justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-download"></i> Exportar resultados:</span>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-outline-dark" id="pond_exportJsonBtn"><i class="bi bi-filetype-json"></i> JSON</button>
+                        <button class="btn btn-outline-success" id="pond_exportExcelBtn"><i class="bi bi-file-earmark-excel"></i> Excel</button>
+                        <button class="btn btn-outline-danger" id="pond_exportPdfBtn"><i class="bi bi-file-pdf"></i> PDF</button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-start mt-3">
+                <button id="pond_btnBackImport" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Volver a Importar</button>
             </div>
         </div>
     </div>
@@ -753,7 +905,7 @@
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="sharedExportIncludeGrade" checked><label class="form-check-label" for="sharedExportIncludeGrade">Incluir columna Calificación</label></div></div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="sharedExportConfirm">Exportar</button></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="sharedExportConfirm" data-bs-dismiss="modal">Exportar</button></div>
             </div>
         </div>
     </div>
@@ -838,7 +990,7 @@ const capitalizeBasename = name => name.split('_').map(capitalizeFirst).join('_'
 const makeBaseName = (prefix, name, course) => capitalizeBasename(sanitizeFilename(`${prefix}_${name}_${course}`).replace(/_+/g,'_'));
 
 function setBodyColor(app) {
-    const colors = { 'exam':'#e8f1ff', 'test':'#e8f5ee', 'generic':'#fff4e5', 'instrumentos':'#f0eafa', 'home':'#FFFFF7' };
+    const colors = { 'exam':'#e8f1ff', 'test':'#e8f5ee', 'generic':'#fff4e5', 'instrumentos':'#f0eafa', 'ponderacion':'#e0f7fa', 'home':'#FFFFF7' };
     document.body.style.backgroundColor = colors[app] || '#e9f0f5';
 }
 function downloadJSON(data, filename) {
@@ -1163,6 +1315,26 @@ function normalizeGenericScores() {
 // =============================================================================
 // TABLA DE CALIFICACIÓN SIMPLE (genérica y compatibles)
 // =============================================================================
+
+/**
+ * Devuelve el color de fondo de franja para un criterio según su familia (TEC.4.N.x).
+ * Las familias impares llevan un tinte suave dependiente de la app.
+ */
+const FAMILY_STRIPE_COLORS = {
+    exam:    '#eef4ff',   // azul muy tenue
+    test:    '#edfaf3',   // verde muy tenue
+    generic: '#fff7ee',   // naranja muy tenue
+    inst:    '#f5eeff',   // violeta muy tenue
+    pond:    '#e8fdff'    // cian muy tenue
+};
+function getCriteriaFamilyIndex(code) {
+    const m = code.match(/^TEC\.\d+\.(\d+)\./);
+    return m ? parseInt(m[1]) : 0;
+}
+function criteriaFamilyBg(code, app) {
+    const fam = getCriteriaFamilyIndex(code);
+    return (fam % 2 === 1) ? (FAMILY_STRIPE_COLORS[app] || FAMILY_STRIPE_COLORS.exam) : '';
+}
 function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
     const getDesc = descFn || getCriteriaDescription;
     const thead = document.querySelector(`#${tableId} thead`);
@@ -1177,14 +1349,18 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
     thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => {
         const custom = hasCustom(c) ? ' criteria-th-custom' : '';
         const appAttr = app ? ` data-app="${app}"` : '';
-        return `<th class="criteria-th-editable${custom}" data-code="${c}"${appAttr} title="${getDesc(c).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.<br><small>(0-10)</small></th>`;
+        const fbg = criteriaFamilyBg(c, app);
+        const bgStyle = fbg ? ` style="background-color:${fbg};"` : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}"${appAttr}${bgStyle} title="${getDesc(c).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.<br><small>(0-10)</small></th>`;
     }).join('') + '</tr>';
     tbody.innerHTML = '';
     state.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
-        state.globalCriteria.forEach((_, cIdx) => {
+        state.globalCriteria.forEach((c, cIdx) => {
             const td = document.createElement('td'); td.style.minWidth='100px';
+            const fbg = criteriaFamilyBg(c, app);
+            if (fbg) td.style.backgroundColor = fbg;
             const val = state.scores[sIdx]?.[cIdx] ?? 0;
             td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input generic-score-input" data-student="${sIdx}" data-criterion="${cIdx}" value="${formatGradeDisplay(val)}" placeholder="0">`;
             tr.appendChild(td);
@@ -1269,7 +1445,9 @@ function renderResultsTable(app) {
     const criteria = state.globalCriteria;
     thead.innerHTML = '<tr><th>ALUMNADO</th>' + criteria.map(c=>{
         const custom = state.criteriaDescriptions && state.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
-        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="${app}" title="${getAppCriterionDesc(c,app).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
+        const fbg = criteriaFamilyBg(c, app);
+        const bgStyle = fbg ? ` style="background-color:${fbg};"` : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="${app}"${bgStyle} title="${getAppCriterionDesc(c,app).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
     }).join('') + (showGlobal ? '<th>Calificación</th>' : '') + '</tr>';
     tbody.innerHTML = '';
     const gradeColor = v => `hsl(${v * 12}, 80%, 70%)`;
@@ -1278,9 +1456,10 @@ function renderResultsTable(app) {
         tr.innerHTML = `<td><strong>${row.Alumno}</strong></td>`;
         criteria.forEach(c => {
             const td = document.createElement('td');
+            const fbg = criteriaFamilyBg(c, app);
             const val = row[c+'.'];
-            if (val === null || val === undefined) { td.className='text-muted'; td.textContent='—'; }
-            else { td.textContent = typeof val==='number' ? val.toFixed(2) : val; if(typeof val==='number') td.style.backgroundColor=gradeColor(val); }
+            if (val === null || val === undefined) { td.className='text-muted'; td.textContent='—'; if(fbg) td.style.backgroundColor=fbg; }
+            else { td.textContent = typeof val==='number' ? val.toFixed(2) : val; td.style.backgroundColor = typeof val==='number' ? gradeColor(val) : (fbg||''); }
             tr.appendChild(td);
         });
         if (showGlobal) {
@@ -1317,10 +1496,10 @@ function exportResults(app, fmt, includeGrade) {
         XLSX.writeFile(wb, `Resultados_${baseName}.xlsx`);
     } else if (fmt === 'pdf') {
         const {jsPDF} = window.jspdf; const doc = new jsPDF({orientation:'landscape'});
-        doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(state.examName.toUpperCase(), 14, 20);
-        doc.setFontSize(10); doc.setFont(undefined,'normal');
-        const headers = Object.keys(resultados[0] || {});
-        doc.autoTable({ head:[headers], body:resultados.map(r=>headers.map(h=>r[h]??'')), startY:30, theme:'grid' });
+		doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(state.examName.toUpperCase(), 14, 20);
+		doc.setFontSize(11); doc.setFont(undefined,'normal'); doc.text(`Curso: ${state.course || ''}`, 14, 28);
+		const headers = Object.keys(resultados[0] || {});
+		doc.autoTable({ head:[headers], body:resultados.map(r=>headers.map(h=>r[h]??'')), startY:36, theme:'grid' });
         doc.save(`Resultados_${baseName}.pdf`);
     }
 }
@@ -1747,7 +1926,9 @@ function renderTestGradeTable() {
     if (!testState.students.length) { thead.innerHTML=''; tbody.innerHTML='<tr><td colspan="4" class="text-center p-4">Añade alumnos en Configuración.</td></tr>'; return; }
     thead.innerHTML = '<tr><th>ALUMNADO</th><th>Aciertos</th><th>Fallos</th><th>NS/NC</th>' + testState.globalCriteria.map(c=>{
         const custom = testState.criteriaDescriptions && testState.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
-        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="test" title="${getAppCriterionDesc(c,'test').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
+        const fbg = criteriaFamilyBg(c, 'test');
+        const bgStyle = fbg ? ` style="background-color:${fbg};"` : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="test"${bgStyle} title="${getAppCriterionDesc(c,'test').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
     }).join('') + '</tr>';
     tbody.innerHTML = '';
     testState.students.forEach((student, sIdx) => {
@@ -1769,7 +1950,13 @@ function renderTestGradeTable() {
         const spanU = document.createElement('span'); spanU.className='unanswered-field d-block'; spanU.id=`test_unanswered_${sIdx}`; spanU.textContent=sc.unanswered;
         tdU.appendChild(spanU); tr.appendChild(tdU);
         const grade = computeTestGrade(sc.correct, sc.wrong);
-        testState.globalCriteria.forEach(() => { const td=document.createElement('td'); td.className='text-center fw-bold'; td.textContent=grade.toFixed(2); tr.appendChild(td); });
+        testState.globalCriteria.forEach(c => {
+            const td=document.createElement('td'); td.className='text-center fw-bold';
+            td.textContent=grade.toFixed(2);
+            const fbg = criteriaFamilyBg(c, 'test');
+            if (fbg) td.style.backgroundColor = fbg;
+            tr.appendChild(td);
+        });
         tbody.appendChild(tr);
     });
     attachTestGradeEvents();
@@ -2049,9 +2236,14 @@ function inst_computeCriteriaForStudent(sIdx) {
 
 function inst_updateCriteriaRow(sIdx, showGrade) {
     const scores=inst_computeCriteriaForStudent(sIdx);
+    const usedCriteria=inst_getUsedCriteria();
     const rows=document.getElementById('inst_evalTbody').children;
     if(!rows[sIdx]) return;
-    rows[sIdx].querySelectorAll('.criteria-cell').forEach((cell,idx)=>{ cell.textContent=scores[idx].toFixed(2); cell.style.backgroundColor=`hsl(${scores[idx]*12},80%,70%)`; });
+    rows[sIdx].querySelectorAll('.criteria-cell').forEach((cell,idx)=>{
+        cell.textContent=scores[idx].toFixed(2);
+        const fbg = criteriaFamilyBg(usedCriteria[idx]||'', 'inst');
+        cell.style.backgroundColor = scores[idx] > 0 ? `hsl(${scores[idx]*12},80%,70%)` : (fbg||'');
+    });
     if(showGrade){
         const gc=rows[sIdx].querySelector('.grade-cell');
         if(gc){const avg=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:0; gc.textContent=avg.toFixed(2); gc.style.backgroundColor=`hsl(${avg*12},80%,70%)`;}
@@ -2086,7 +2278,9 @@ function inst_renderEvaluation() {
             `<span class="inst-desc-indicator">${hasDesc ? '📝' : '✎'}</span></th>`;
     }).join('')+usedCriteria.map(c=>{
         const custom = instrumentState.criteriaDescriptions && instrumentState.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
-        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="inst" title="${getAppCriterionDesc(c,'inst').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}</th>`;
+        const fbg = criteriaFamilyBg(c, 'inst');
+        const bgStyle = fbg ? ` style="background-color:${fbg};"` : '';
+        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="inst"${bgStyle} title="${getAppCriterionDesc(c,'inst').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}</th>`;
     }).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
     const tbody=document.getElementById('inst_evalTbody'); tbody.innerHTML='';
     instrumentState.students.forEach((student,sIdx)=>{
@@ -2108,7 +2302,15 @@ function inst_renderEvaluation() {
             });
             td.appendChild(inp); tr.appendChild(td);
         });
-        usedCriteria.forEach((_,u)=>{ const td=document.createElement('td'); td.classList.add('criteria-cell'); td.dataset.student=sIdx; td.dataset.cidx=u; td.textContent='0.00'; tr.appendChild(td); });
+        usedCriteria.forEach((c,u)=>{
+            const td=document.createElement('td');
+            td.classList.add('criteria-cell');
+            td.dataset.student=sIdx; td.dataset.cidx=u;
+            const fbg = criteriaFamilyBg(c, 'inst');
+            if (fbg) td.style.backgroundColor = fbg;
+            td.textContent='0.00';
+            tr.appendChild(td);
+        });
         if(showGrade){ const td=document.createElement('td'); td.classList.add('grade-cell'); td.dataset.student=sIdx; td.textContent='0.00'; tr.appendChild(td); }
         tbody.appendChild(tr);
     });
@@ -2135,18 +2337,15 @@ function inst_renderEvaluation() {
 
 function inst_getExportRows(includeGrade) {
     const usedCriteria=inst_getUsedCriteria();
-    const header=['Alumno',...instrumentState.instruments.map((inst,i)=>`I${i+1}: ${inst.name}`),...usedCriteria.map(c=>c+'.')];
+    const header=['Alumno',...usedCriteria.map(c=>c+'.')];
     if(includeGrade) header.push('Calificación');
-    // Fila de descripciones (debajo del encabezado, solo columnas de instrumentos)
-    const descRow=['Descripción',...instrumentState.instruments.map(inst=>inst.description||''),...usedCriteria.map(()=>'')];
-    if(includeGrade) descRow.push('');
     const rows=instrumentState.students.map((student,sIdx)=>{
-        const row=[student.fullName,...instrumentState.instruments.map((_,i)=>instrumentState.evalScores[sIdx]?.[i]||0)];
-        const critScores=inst_computeCriteriaForStudent(sIdx); row.push(...critScores);
-        if(includeGrade){ const avg=critScores.length?critScores.reduce((a,b)=>a+b,0)/critScores.length:0; row.push(avg); }
+        const critScores=inst_computeCriteriaForStudent(sIdx);
+        const row=[student.fullName,...critScores];
+        if(includeGrade){ const avg=critScores.length?critScores.reduce((a,b)=>a+b,0)/critScores.length:0; row.push(parseFloat(avg.toFixed(2))); }
         return row;
     });
-    return {header, descRow, rows};
+    return {header, rows};
 }
 
 function inst_exportResults(fmt, includeGrade) {
@@ -2158,43 +2357,34 @@ function inst_exportResults(fmt, includeGrade) {
             actividad:instrumentState.actividad,
             clase:instrumentState.clase,
             criteriaDescriptions:{...(instrumentState.criteriaDescriptions||{})},
-            instrumentos:instrumentState.instruments.map(i=>({nombre:i.name,peso:i.weight,descripcion:i.description||''})),
             resultados:instrumentState.students.map((student,sIdx)=>{
                 const row={Alumno:student.fullName};
-                instrumentState.instruments.forEach((inst,i)=>row[inst.name]=instrumentState.evalScores[sIdx]?.[i]||0);
                 const critScores=inst_computeCriteriaForStudent(sIdx);
-                usedCriteria.forEach((c,u)=>row[c+'.']=critScores[u]);
-                if(includeGrade){const avg=critScores.length?critScores.reduce((a,b)=>a+b,0)/critScores.length:0; row['Calificación']=avg;}
+                usedCriteria.forEach((c,u)=>row[c+'.']=parseFloat(critScores[u].toFixed(2)));
+                if(includeGrade){const avg=critScores.length?critScores.reduce((a,b)=>a+b,0)/critScores.length:0; row['Calificación']=parseFloat(avg.toFixed(2));}
                 return row;
             })
         };
         downloadJSON(exportData, `Resultados_${baseName}.json`);
     } else if(fmt==='excel'){
-        const {header,descRow,rows}=inst_getExportRows(includeGrade);
-        const wsData=[[`Actividad: ${instrumentState.actividad}`],[`Clase: ${instrumentState.clase}`],[],header,descRow,...rows];
+        const {header,rows}=inst_getExportRows(includeGrade);
+        const wsData=[[`Actividad: ${instrumentState.actividad}`],[`Clase: ${instrumentState.clase}`],[],header,...rows];
         const wb=XLSX.utils.book_new();
         const ws=XLSX.utils.aoa_to_sheet(wsData);
-        // Estilo cursiva para fila descripción (fila índice 4, base 0)
-        const descRowIdx=4;
-        header.forEach((_,c)=>{
-            const cellAddr=XLSX.utils.encode_cell({r:descRowIdx,c});
-            if(ws[cellAddr]) ws[cellAddr].s={font:{italic:true},fill:{fgColor:{rgb:'FFF3CD'}}};
-        });
         XLSX.utils.book_append_sheet(wb,ws,'Resultados');
         XLSX.writeFile(wb,`Resultados_${baseName}.xlsx`);
     } else if(fmt==='pdf'){
         const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'});
         doc.setFontSize(14); doc.setFont(undefined,'bold'); doc.text(`Actividad: ${instrumentState.actividad}`,14,20);
         doc.text(`Clase: ${instrumentState.clase}`,14,28); doc.setFont(undefined,'normal'); doc.setFontSize(10);
-        const {header,descRow,rows}=inst_getExportRows(includeGrade);
+        const {header,rows}=inst_getExportRows(includeGrade);
         doc.autoTable({
             head:[header],
-            body:[descRow,...rows],
+            body:rows,
             startY:35,
             theme:'grid',
             styles:{fontSize:8,cellPadding:2},
-            headStyles:{fillColor:[41,128,185],textColor:255},
-            didParseCell: function(data){ if(data.section==='body'&&data.row.index===0){ data.cell.styles.fontStyle='italic'; data.cell.styles.fillColor=[255,243,205]; } }
+            headStyles:{fillColor:[41,128,185],textColor:255}
         });
         doc.save(`Resultados_${baseName}.pdf`);
     }
@@ -2297,22 +2487,549 @@ function resetInstrumentosState() {
 }
 
 // =============================================================================
+// PONDERACIÓN DE ACTIVIDADES
+// =============================================================================
+const ponderacionState = {
+    nombre: '',
+    curso: '',
+    numActividades: 2,
+    actividades: [] // [{nombre, peso, resultados:[], loaded:bool, fileName:''}]
+};
+
+function pond_initActividades(n) {
+    const prev = ponderacionState.actividades;
+    ponderacionState.actividades = Array.from({length: n}, (_, i) => {
+        const existing = prev[i];
+        return existing
+            ? existing
+            : { nombre: `Actividad ${i+1}`, peso: parseFloat((100/n).toFixed(2)), resultados: [], loaded: false, fileName: '' };
+    });
+    pond_recalcLastWeight();
+}
+
+function pond_recalcLastWeight() {
+    const acts = ponderacionState.actividades;
+    const n = acts.length;
+    if (n === 0) return;
+    const sumFirst = acts.slice(0, n-1).reduce((s, a) => s + (parseFloat(a.peso)||0), 0);
+    acts[n-1].peso = Math.max(0, parseFloat((100 - sumFirst).toFixed(2)));
+}
+
+function pond_getWeightSum() {
+    return ponderacionState.actividades.reduce((s, a) => s + (parseFloat(a.peso)||0), 0);
+}
+
+function pond_getActivityCriteria(act) {
+    if (!act.resultados?.length) return [];
+    return Object.keys(act.resultados[0]).filter(k => /^TEC\.\d+\.\d+\.\d+\.$/.test(k));
+}
+
+function pond_renderImportCards() {
+    const container = document.getElementById('pond_actividadCards');
+    if (!container) return;
+    container.innerHTML = '';
+    ponderacionState.actividades.forEach((act, i) => {
+        const isLast = (i === ponderacionState.actividades.length - 1);
+        const criteriaList = pond_getActivityCriteria(act);
+        const card = document.createElement('div');
+        card.className = 'pond-activity-card';
+        card.innerHTML = `
+            <div class="d-flex flex-wrap gap-3 align-items-end">
+                <div style="min-width:180px; flex:2;">
+                    <label class="form-label fw-semibold small text-uppercase" style="color:#006064;">Actividad ${i+1}</label>
+                    <input type="text" class="form-control form-control-sm pond-act-nombre" data-idx="${i}"
+                        value="${(act.nombre||'').replace(/"/g,'&quot;')}" placeholder="Nombre de la actividad">
+                </div>
+                <div style="width:130px; flex-shrink:0;">
+                    <label class="form-label fw-semibold small text-uppercase" style="color:#006064;">Peso (%)</label>
+                    <input type="number" class="form-control form-control-sm pond-act-peso" data-idx="${i}"
+                        value="${act.peso}" min="0" max="100" step="0.01"
+                        ${isLast ? 'readonly style="background:#f0f4fa;color:#6c757d;"' : ''}>
+                    ${isLast ? '<small class="text-muted"><i class="bi bi-calculator"></i> Automático</small>' : ''}
+                </div>
+                <div style="flex-shrink:0;">
+                    <label class="form-label fw-semibold small text-uppercase" style="color:#006064;">Datos</label>
+                    <div>
+                        <label for="pond_file_${i}" class="import-label" style="background:#e0f7fa; border-color:#80deea; cursor:pointer;">
+                            <i class="bi bi-file-earmark-arrow-up"></i> Importar JSON
+                        </label>
+                        <input type="file" id="pond_file_${i}" accept=".json" class="hidden" data-idx="${i}">
+                    </div>
+                </div>
+                <div style="flex-shrink:0; padding-bottom:2px;">
+                    ${act.loaded
+                        ? `<span class="badge bg-success pond-loaded-badge"><i class="bi bi-check-circle-fill"></i> ${(act.fileName||'Cargado').substring(0,30)}</span>`
+                        : `<span class="badge bg-secondary pond-loaded-badge"><i class="bi bi-x-circle"></i> Sin datos</span>`}
+                </div>
+            </div>
+            ${act.loaded && criteriaList.length
+                ? `<div class="pond-act-info text-success">
+                    <i class="bi bi-people-fill"></i> <strong>${act.resultados.length}</strong> alumnos &nbsp;·&nbsp;
+                    <i class="bi bi-patch-check"></i> Criterios: <span class="text-muted">${criteriaList.join(' ')}</span>
+                   </div>`
+                : (act.loaded ? `<div class="pond-act-info text-warning"><i class="bi bi-exclamation-triangle"></i> El archivo no contiene criterios TEC reconocibles.</div>` : '')
+            }
+        `;
+        container.appendChild(card);
+    });
+
+    // Events: nombre
+    container.querySelectorAll('.pond-act-nombre').forEach(inp => {
+        inp.addEventListener('change', function() {
+            ponderacionState.actividades[parseInt(this.dataset.idx)].nombre = this.value.trim() || `Actividad ${parseInt(this.dataset.idx)+1}`;
+        });
+    });
+    // Events: peso (editable only)
+    container.querySelectorAll('.pond-act-peso:not([readonly])').forEach(inp => {
+        inp.addEventListener('input', function() {
+            const idx = parseInt(this.dataset.idx);
+            let val = parseFloat(this.value);
+            if (isNaN(val) || val < 0) val = 0;
+            if (val > 100) val = 100;
+            ponderacionState.actividades[idx].peso = val;
+            pond_recalcLastWeight();
+            const lastIdx = ponderacionState.actividades.length - 1;
+            const lastInp = container.querySelector(`.pond-act-peso[data-idx="${lastIdx}"]`);
+            if (lastInp) lastInp.value = ponderacionState.actividades[lastIdx].peso;
+            pond_updateWeightBadge();
+            pond_updateGoResultsBtn();
+        });
+    });
+    // Events: file
+    container.querySelectorAll('input[type="file"][data-idx]').forEach(inp => {
+        inp.addEventListener('change', function() {
+            if (this.files.length) pond_loadFile(parseInt(this.dataset.idx), this.files[0]);
+            this.value = '';
+        });
+    });
+
+    pond_updateWeightBadge();
+    pond_updateGoResultsBtn();
+}
+
+function pond_loadFile(idx, file) {
+    readJSONFile(file, data => {
+        let resultados = Array.isArray(data) ? data : (data.resultados || []);
+        if (!resultados.length) { alert('El archivo no contiene datos en el campo "resultados". Asegúrate de exportar el JSON desde la pantalla de Resultados.'); return; }
+        if (!resultados[0]?.Alumno) { alert('El archivo no tiene columna "Alumno". Exporta desde la pantalla Resultados (no Calificaciones).'); return; }
+        const hasCriteria = Object.keys(resultados[0]).some(k => /^TEC\.\d+\.\d+\.\d+\.$/.test(k));
+        if (!hasCriteria) { alert('El archivo no contiene criterios TEC. Comprueba que sea un archivo de Resultados de esta aplicación.'); return; }
+
+        const act = ponderacionState.actividades[idx];
+        act.resultados = resultados;
+        act.loaded = true;
+        act.fileName = file.name.replace(/\.json$/i,'').substring(0,35);
+        if (!act.nombre || act.nombre === `Actividad ${idx+1}`) {
+            act.nombre = data.actividad || data.examen || data.nombre || act.nombre;
+        }
+        pond_renderImportCards();
+        // Sync nombre input
+        const nombreInp = document.querySelector(`.pond-act-nombre[data-idx="${idx}"]`);
+        if (nombreInp) nombreInp.value = act.nombre;
+    });
+}
+
+function pond_updateWeightBadge() {
+    const sum = pond_getWeightSum();
+    const badge = document.getElementById('pond_weightSumBadge');
+    const warn = document.getElementById('pond_weightSumWarning');
+    if (!badge) return;
+    badge.textContent = sum.toFixed(1) + '%';
+    const ok = Math.abs(sum - 100) < 0.51;
+    badge.className = `pond-weight-sum-badge ${ok ? 'bg-success' : 'bg-danger'} text-white`;
+    if (warn) warn.textContent = ok ? '' : `⚠ Deben sumar 100% (actualmente ${sum.toFixed(1)}%)`;
+}
+
+function pond_updateGoResultsBtn() {
+    const btn = document.getElementById('pond_btnGoResults');
+    if (!btn) return;
+    const allLoaded = ponderacionState.actividades.every(a => a.loaded);
+    const weightOk = Math.abs(pond_getWeightSum() - 100) < 0.51;
+    btn.disabled = !(allLoaded && weightOk);
+
+    const warn = document.getElementById('pond_importWarning');
+    if (!warn) return;
+    const issues = [];
+    const notLoaded = ponderacionState.actividades.filter(a => !a.loaded).length;
+    if (notLoaded) issues.push(`<strong>${notLoaded} actividad(es)</strong> sin archivo importado`);
+    if (!weightOk) issues.push(`<strong>la suma de pesos</strong> no es 100% (es ${pond_getWeightSum().toFixed(1)}%)`);
+    if (issues.length) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Pendiente: ' + issues.join(' y ');
+        warn.style.display = 'block';
+    } else {
+        warn.style.display = 'none';
+    }
+}
+
+function pond_computeResults() {
+    const acts = ponderacionState.actividades.filter(a => a.loaded && a.resultados?.length);
+    if (!acts.length) return { rows: [], criteria: [] };
+
+    // Students map (key=lowercase trimmed name → display name)
+    const studentsMap = new Map();
+    acts.forEach(a => a.resultados.forEach(r => {
+        const key = (r.Alumno||'').trim().toLowerCase();
+        if (key && !studentsMap.has(key)) studentsMap.set(key, (r.Alumno||'').trim());
+    }));
+
+    // Collect and sort criteria
+    const critSet = new Set();
+    acts.forEach(a => pond_getActivityCriteria(a).forEach(c => critSet.add(c)));
+    const criteria = [...critSet].sort((a, b) => {
+        const parse = s => s.replace(/\.$/, '').split('.').map(Number);
+        const [pa, pb] = [parse(a), parse(b)];
+        for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+            const d = (pa[i]||0) - (pb[i]||0);
+            if (d) return d;
+        }
+        return 0;
+    });
+
+    const rows = [...studentsMap.values()].sort((a,b) => a.localeCompare(b,'es',{sensitivity:'base'})).map(studentName => {
+        const key = studentName.toLowerCase();
+        const row = { Alumno: studentName };
+
+        // Per-activity grade for breakdown column (keyed by index to avoid name-mismatch)
+        acts.forEach((act, ai) => {
+            const r = act.resultados.find(r => (r.Alumno||'').trim().toLowerCase() === key);
+            const grade = r ? (r['Calificación'] ?? null) : null;
+            row[`__ACT__${ai}`] = (grade !== null && grade !== undefined) ? parseFloat(grade) : null;
+        });
+
+        // Weighted criteria
+        criteria.forEach(crit => {
+            let wSum = 0, wUsed = 0;
+            acts.forEach(act => {
+                const r = act.resultados.find(r => (r.Alumno||'').trim().toLowerCase() === key);
+                if (!r) return;
+                const val = r[crit];
+                if (val === null || val === undefined) return;
+                wSum += act.peso * parseFloat(val);
+                wUsed += act.peso;
+            });
+            row[crit] = wUsed > 0 ? parseFloat((wSum / wUsed).toFixed(2)) : null;
+        });
+
+        // Overall grade = mean of criteria scores
+        const critVals = criteria.map(c => row[c]).filter(v => v !== null && v !== undefined);
+        row['Calificación'] = critVals.length > 0
+            ? parseFloat((critVals.reduce((a,b)=>a+b,0)/critVals.length).toFixed(2))
+            : null;
+
+        return row;
+    });
+
+    return { rows, criteria };
+}
+
+function pond_renderResults() {
+    const { rows, criteria } = pond_computeResults();
+    const thead = document.getElementById('pond_resultsThead');
+    const tbody = document.getElementById('pond_resultsTbody');
+    const titleBadge = document.getElementById('pond_resultsTitleBadge');
+    const infoDiv = document.getElementById('pond_activitiesInfoBadges');
+
+    if (titleBadge) titleBadge.textContent = ponderacionState.nombre || 'Ponderación';
+
+    if (infoDiv) {
+        infoDiv.innerHTML = ponderacionState.actividades.filter(a => a.loaded).map((a, i) =>
+            `<span class="badge" style="background:#00bcd4;color:#fff;font-size:0.83rem;padding:6px 12px;border-radius:20px;">
+                <strong>A${i+1}:</strong> ${a.nombre} · <strong>${a.peso}%</strong>
+            </span>`
+        ).join('');
+    }
+
+    if (!rows.length || !criteria.length) {
+        if (thead) thead.innerHTML = '<tr><th>ALUMNADO</th><th>Sin datos</th></tr>';
+        if (tbody) tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">No hay datos para mostrar.</td></tr>';
+        return;
+    }
+
+    const showGrade = document.getElementById('pond_showGradeColumn')?.checked !== false;
+    const showActs  = document.getElementById('pond_showActivityCols')?.checked !== false;
+    const acts = ponderacionState.actividades.filter(a => a.loaded);
+    const gradeColor = v => `hsl(${v * 12}, 80%, 70%)`;
+
+    // Header
+    let hHtml = '<tr><th>ALUMNADO</th>';
+    if (showActs) acts.forEach((a,i) => {
+        hHtml += `<th style="background:#b2ebf2;font-size:0.8rem;" title="Peso: ${a.peso}%">
+            <span style="color:#006064;">A${i+1}: ${a.nombre}</span><br>
+            <small class="text-muted fw-normal">${a.peso}%</small></th>`;
+    });
+    criteria.forEach(c => {
+        const fbg = criteriaFamilyBg(c, 'pond');
+        const bgStyle = fbg ? ` style="background-color:${fbg};"` : '';
+        hHtml += `<th${bgStyle}>${c}</th>`;
+    });
+    if (showGrade) hHtml += '<th><strong>Calificación</strong></th>';
+    hHtml += '</tr>';
+    if (thead) thead.innerHTML = hHtml;
+
+    // Body
+    if (tbody) {
+        tbody.innerHTML = '';
+        rows.forEach(row => {
+            const tr = document.createElement('tr');
+            let html = `<td><strong>${row.Alumno}</strong></td>`;
+            if (showActs) acts.forEach((a, ai) => {
+                const v = row[`__ACT__${ai}`];
+                html += v===null||v===undefined
+                    ? `<td class="text-muted">—</td>`
+                    : `<td style="background:${gradeColor(v)}">${typeof v==='number'?v.toFixed(2):v}</td>`;
+            });
+            criteria.forEach(c => {
+                const v = row[c];
+                const fbg = criteriaFamilyBg(c, 'pond');
+                html += v===null||v===undefined
+                    ? `<td class="text-muted"${fbg ? ` style="background-color:${fbg};"`:''}>—</td>`
+                    : `<td style="background:${gradeColor(v)}">${v.toFixed(2)}</td>`;
+            });
+            if (showGrade) {
+                const g = row['Calificación'];
+                html += g===null||g===undefined
+                    ? `<td>—</td>`
+                    : `<td style="background:${gradeColor(g)}"><strong>${g.toFixed(2)}</strong></td>`;
+            }
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+        });
+    }
+}
+
+function pond_exportResults(fmt) {
+    const { rows, criteria } = pond_computeResults();
+    if (!rows.length) return alert('No hay datos para exportar.');
+    const showGrade = document.getElementById('pond_showGradeColumn')?.checked !== false;
+    const baseName = makeBaseName('Ponderación', ponderacionState.nombre, ponderacionState.curso);
+    const acts = ponderacionState.actividades.filter(a => a.loaded);
+
+    if (fmt === 'json') {
+        const exportData = {
+            nombre: ponderacionState.nombre,
+            curso: ponderacionState.curso,
+            actividades: acts.map(a => ({nombre: a.nombre, peso: a.peso})),
+            resultados: rows.map(row => {
+                const r = {Alumno: row.Alumno};
+                criteria.forEach(c => r[c] = row[c]);
+                if (showGrade) r['Calificación'] = row['Calificación'];
+                return r;
+            })
+        };
+        downloadJSON(exportData, `Resultados_${baseName}.json`);
+    } else if (fmt === 'excel') {
+        const headers = ['Alumno', ...criteria, ...(showGrade ? ['Calificación'] : [])];
+        const wsData = [
+            [`Ponderación: ${ponderacionState.nombre}`],
+            [`Curso: ${ponderacionState.curso}`],
+            [`Actividades: ${acts.map(a=>`${a.nombre} (${a.peso}%)`).join(' | ')}`],
+            [],
+            headers,
+            ...rows.map(row => headers.map(h => {
+                if (h === 'Alumno') return row.Alumno;
+                const v = row[h];
+                return v === null || v === undefined ? '' : v;
+            }))
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(wsData), 'Resultados');
+        XLSX.writeFile(wb, `Resultados_${baseName}.xlsx`);
+    } else if (fmt === 'pdf') {
+        const {jsPDF} = window.jspdf;
+        const doc = new jsPDF({orientation:'landscape'});
+        doc.setFontSize(14); doc.setFont(undefined,'bold');
+        doc.text(`Ponderación: ${ponderacionState.nombre}`, 14, 18);
+        doc.setFontSize(10); doc.setFont(undefined,'normal');
+        doc.text(`Curso: ${ponderacionState.curso}`, 14, 26);
+        const actLine = acts.map(a=>`${a.nombre} (${a.peso}%)`).join('  ·  ');
+        doc.text(`Actividades: ${actLine}`, 14, 34);
+        const headers = ['Alumno', ...criteria, ...(showGrade ? ['Calificación'] : [])];
+        doc.autoTable({
+            head: [headers],
+            body: rows.map(row => headers.map(h => {
+                if (h === 'Alumno') return row.Alumno;
+                const v = row[h];
+                return v===null||v===undefined ? '—' : (typeof v==='number' ? v.toFixed(2) : v);
+            })),
+            startY: 40,
+            theme: 'grid',
+            styles: {fontSize: 8, cellPadding: 2},
+            headStyles: {fillColor: [0, 188, 212], textColor: 255}
+        });
+        doc.save(`Resultados_${baseName}.pdf`);
+    }
+}
+
+
+// --- Gestión Configuración (pantalla Config) ---
+function pond_exportConfig() {
+    const cfg = { nombre: ponderacionState.nombre, curso: ponderacionState.curso, numActividades: ponderacionState.numActividades };
+    const baseName = makeBaseName('PonderacionConfig', ponderacionState.nombre || 'sin_nombre', ponderacionState.curso || '');
+    downloadJSON(cfg, `${baseName}.json`);
+}
+function pond_importConfig(file) {
+    readJSONFile(file, data => {
+        if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
+        if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
+        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || 2;
+        const ni = document.getElementById('pond_nombreInput');
+        const ci = document.getElementById('pond_cursoInput');
+        const na = document.getElementById('pond_numActividadesInput');
+        if (ni) ni.value = ponderacionState.nombre;
+        if (ci) ci.value = ponderacionState.curso;
+        if (na) na.value = ponderacionState.numActividades;
+        alert('\u2705 Configuraci\u00f3n importada.');
+    });
+}
+function pond_saveConfigLocal() {
+    localSave('pond_config_backup', () => ({ nombre: ponderacionState.nombre, curso: ponderacionState.curso, numActividades: ponderacionState.numActividades }));
+}
+function pond_loadConfigLocal() {
+    localLoad('pond_config_backup', data => {
+        if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
+        if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
+        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || 2;
+        const ni = document.getElementById('pond_nombreInput');
+        const ci = document.getElementById('pond_cursoInput');
+        const na = document.getElementById('pond_numActividadesInput');
+        if (ni) ni.value = ponderacionState.nombre;
+        if (ci) ci.value = ponderacionState.curso;
+        if (na) na.value = ponderacionState.numActividades;
+        alert('\u2705 Configuraci\u00f3n cargada.');
+    });
+}
+function pond_resetAll() {
+    if (!confirm('\u00bfReiniciar todos los datos de ponderaci\u00f3n?')) return;
+    ponderacionState.nombre = '';
+    ponderacionState.curso  = '';
+    ponderacionState.numActividades = 2;
+    ponderacionState.actividades = [];
+    const ni = document.getElementById('pond_nombreInput');
+    const ci = document.getElementById('pond_cursoInput');
+    const na = document.getElementById('pond_numActividadesInput');
+    if (ni) ni.value = '';
+    if (ci) ci.value = '';
+    if (na) na.value = 2;
+    const warn = document.getElementById('pond_configWarning');
+    if (warn) warn.style.display = 'none';
+    localStorage.removeItem('pond_config_backup');
+    localStorage.removeItem('pond_import_backup');
+    alert('\u2705 Datos de ponderaci\u00f3n reiniciados.');
+}
+
+// --- Gestión Importación (pantalla Import) ---
+function pond_exportImport() {
+    const loadedCount = ponderacionState.actividades.filter(a => a.loaded).length;
+    const total = ponderacionState.actividades.length;
+    const baseName = makeBaseName('PonderacionImport', ponderacionState.nombre || 'sin_nombre', ponderacionState.curso || '');
+    const filename = `${baseName}_${loadedCount}de${total}.json`;
+    const exportData = {
+        nombre: ponderacionState.nombre, curso: ponderacionState.curso, numActividades: ponderacionState.numActividades,
+        actividades: ponderacionState.actividades.map(a => ({ nombre: a.nombre, peso: a.peso, loaded: a.loaded, fileName: a.fileName, resultados: a.resultados || [] }))
+    };
+    downloadJSON(exportData, filename);
+}
+function pond_importImport(file) {
+    readJSONFile(file, data => {
+        if (!data.actividades || !Array.isArray(data.actividades)) { alert('Formato no v\u00e1lido: falta campo "actividades".'); return; }
+        if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
+        if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
+        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || data.actividades.length;
+        ponderacionState.actividades = data.actividades.map((a, i) => ({
+            nombre: a.nombre || `Actividad ${i+1}`, peso: parseFloat(a.peso) || 0,
+            loaded: a.loaded || (Array.isArray(a.resultados) && a.resultados.length > 0),
+            fileName: a.fileName || '', resultados: Array.isArray(a.resultados) ? a.resultados : []
+        }));
+        pond_recalcLastWeight();
+        pond_renderImportCards();
+        const lc = ponderacionState.actividades.filter(a => a.loaded).length;
+        showMessage('pond_importMgmtMessage', `<i class="bi bi-check-circle text-success"></i> Importado: ${lc} de ${ponderacionState.actividades.length} actividades con datos.`);
+        pond_updateGoResultsBtn();
+    });
+}
+function pond_saveImportLocal() {
+    const lc = ponderacionState.actividades.filter(a => a.loaded).length;
+    localSave('pond_import_backup', () => ({
+        nombre: ponderacionState.nombre, curso: ponderacionState.curso, numActividades: ponderacionState.numActividades,
+        actividades: ponderacionState.actividades.map(a => ({ nombre: a.nombre, peso: a.peso, loaded: a.loaded, fileName: a.fileName, resultados: a.resultados || [] }))
+    }));
+    showMessage('pond_importMgmtMessage', `<i class="bi bi-check-circle text-success"></i> Guardado localmente (${lc} de ${ponderacionState.actividades.length} con datos).`);
+}
+function pond_loadImportLocal() {
+    localLoad('pond_import_backup', data => {
+        if (!data.actividades || !Array.isArray(data.actividades)) { alert('Datos locales con formato no v\u00e1lido.'); return; }
+        if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
+        if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
+        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || data.actividades.length;
+        ponderacionState.actividades = data.actividades.map((a, i) => ({
+            nombre: a.nombre || `Actividad ${i+1}`, peso: parseFloat(a.peso) || 0,
+            loaded: a.loaded || (Array.isArray(a.resultados) && a.resultados.length > 0),
+            fileName: a.fileName || '', resultados: Array.isArray(a.resultados) ? a.resultados : []
+        }));
+        pond_recalcLastWeight();
+        pond_renderImportCards();
+        const lc = ponderacionState.actividades.filter(a => a.loaded).length;
+        showMessage('pond_importMgmtMessage', `<i class="bi bi-check-circle text-success"></i> Cargado: ${lc} de ${ponderacionState.actividades.length} actividades con datos.`);
+        pond_updateGoResultsBtn();
+    });
+}
+
+function pond_showScreen(screen) {
+    ['pond_screenConfig','pond_screenImport','pond_screenResults'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    });
+    const target = document.getElementById(`pond_screen${screen}`);
+    if (target) target.classList.add('active');
+
+    ['pond_tabConfig','pond_tabImport','pond_tabResults'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    });
+    const tabMap = { Config:'pond_tabConfig', Import:'pond_tabImport', Results:'pond_tabResults' };
+    const tabEl = document.getElementById(tabMap[screen]);
+    if (tabEl) tabEl.classList.add('active');
+
+    if (screen === 'Import') {
+        pond_initActividades(ponderacionState.numActividades);
+        pond_renderImportCards();
+    }
+    if (screen === 'Results') pond_renderResults();
+}
+
+function pond_validateConfig() {
+    const warn = document.getElementById('pond_configWarning');
+    if (!warn) return true;
+    const missing = [];
+    if (!ponderacionState.nombre.trim()) missing.push('<strong>el nombre</strong>');
+    if (!ponderacionState.curso.trim()) missing.push('<strong>el curso</strong>');
+    if (missing.length) {
+        warn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Completa: ' + missing.join(', ');
+        warn.style.display = 'block';
+        return false;
+    }
+    warn.style.display = 'none';
+    return true;
+}
+
+// =============================================================================
 // NAVEGACIÓN
 // =============================================================================
 let currentApp = 'home';
 
 function hideAllApps() {
-    ['homeScreen','appExamContainer','appTestContainer','appGenericContainer','appInstrumentosContainer'].forEach(id => document.getElementById(id).classList.remove('active'));
+    ['homeScreen','appExamContainer','appTestContainer','appGenericContainer','appInstrumentosContainer','appPonderacionContainer'].forEach(id => document.getElementById(id).classList.remove('active'));
 }
 function showHome() { hideAllApps(); document.getElementById('homeScreen').classList.add('active'); currentApp='home'; setBodyColor('home'); }
 
 function showApp(appId) {
     hideAllApps();
     document.getElementById(appId).classList.add('active');
-    const map = {'appExamContainer':'exam','appTestContainer':'test','appGenericContainer':'generic','appInstrumentosContainer':'instrumentos'};
+    const map = {'appExamContainer':'exam','appTestContainer':'test','appGenericContainer':'generic','appInstrumentosContainer':'instrumentos','appPonderacionContainer':'ponderacion'};
     currentApp = map[appId] || 'home';
     setBodyColor(currentApp);
     if (appId === 'appInstrumentosContainer') showInstrumentosScreen('inst_config');
+    if (appId === 'appPonderacionContainer') pond_showScreen('Config');
 }
 
 function showAppScreen(prefix, screen) {
@@ -2352,10 +3069,10 @@ window.onload = function() {
 
     // Navegación principal
     document.getElementById('btnHome').addEventListener('click', showHome);
-    [['btnAppExam','appExamContainer'],['btnAppTest','appTestContainer'],['btnAppGeneric','appGenericContainer'],['btnAppInstrumentos','appInstrumentosContainer']].forEach(([btn,app])=>
+    [['btnAppExam','appExamContainer'],['btnAppTest','appTestContainer'],['btnAppGeneric','appGenericContainer'],['btnAppInstrumentos','appInstrumentosContainer'],['btnAppPonderacion','appPonderacionContainer']].forEach(([btn,app])=>
         document.getElementById(btn).addEventListener('click',()=>showApp(app))
     );
-    [['cardExam','appExamContainer'],['cardTest','appTestContainer'],['cardGeneric','appGenericContainer'],['cardInstrumentos','appInstrumentosContainer']].forEach(([card,app])=>
+    [['cardExam','appExamContainer'],['cardTest','appTestContainer'],['cardGeneric','appGenericContainer'],['cardInstrumentos','appInstrumentosContainer'],['cardPonderacion','appPonderacionContainer']].forEach(([card,app])=>
         document.getElementById(card).addEventListener('click',()=>showApp(app))
     );
 
@@ -2392,9 +3109,16 @@ window.onload = function() {
         const checkId = { exam:'examShowGlobalGrade', test:'testShowGlobalGrade', generic:'genericShowGlobalGrade', inst:'inst_showGradeColumn' }[this.dataset.app];
         document.getElementById('sharedExportIncludeGrade').checked = checkId ? document.getElementById(checkId).checked : true;
     }));
+    // Guarda la opción "incluir calificación" al pulsar Exportar (el modal se cierra por data-bs-dismiss)
     document.getElementById('sharedExportConfirm').addEventListener('click', function() {
-        exportResults(_pendingExport.app, _pendingExport.fmt, document.getElementById('sharedExportIncludeGrade').checked);
-        bootstrap.Modal.getInstance(document.getElementById('sharedExportModal')).hide();
+        _pendingExport.grade = document.getElementById('sharedExportIncludeGrade').checked;
+    });
+    // La exportación real se ejecuta DESPUÉS de que el modal se haya cerrado completamente (sin backdrop)
+    document.getElementById('sharedExportModal').addEventListener('hidden.bs.modal', function() {
+        if (_pendingExport.app && _pendingExport.fmt) {
+            exportResults(_pendingExport.app, _pendingExport.fmt, _pendingExport.grade !== undefined ? _pendingExport.grade : true);
+            _pendingExport = { app:'', fmt:'', grade:true };
+        }
     });
 
     // ========== EXAMEN ==========
@@ -2652,6 +3376,36 @@ window.onload = function() {
     document.getElementById('inst_loadMatrixLocal').addEventListener('click', inst_loadMatrixLocal);
     document.getElementById('inst_resetAllBtn').addEventListener('click', resetInstrumentosState);
 
+    // ── BORRAR CALIFICACIONES ─────────────────────────────────────────────────
+    document.getElementById('examClearScoresBtn').addEventListener('click', function() {
+        if (!examState.students.length) return;
+        if (!confirm('¿Borrar todas las calificaciones del examen? Los alumnos y la configuración se mantendrán.')) return;
+        examState.scores = examState.students.map(() => new Array(examState.questions.length).fill(0));
+        renderExamGradeTable();
+        showMessage('examGradeMessage', '<i class="bi bi-check-circle"></i> Calificaciones borradas.');
+    });
+    document.getElementById('testClearScoresBtn').addEventListener('click', function() {
+        if (!testState.students.length) return;
+        if (!confirm('¿Borrar todas las calificaciones del test? Los alumnos y la configuración se mantendrán.')) return;
+        testState.studentScores = testState.students.map(() => ({ correct: 0, wrong: 0, unanswered: testState.totalQuestions }));
+        renderTestGradeTable();
+        showMessage('testGradeMessage', '<i class="bi bi-check-circle"></i> Calificaciones borradas.');
+    });
+    document.getElementById('genericClearScoresBtn').addEventListener('click', function() {
+        if (!genericState.students.length) return;
+        if (!confirm('¿Borrar todas las calificaciones de la actividad? Los alumnos y la configuración se mantendrán.')) return;
+        genericState.scores = genericState.students.map(() => new Array(genericState.globalCriteria.length).fill(0));
+        renderGenericGradeTable();
+        showMessage('genericGradeMessage', '<i class="bi bi-check-circle"></i> Calificaciones borradas.');
+    });
+    document.getElementById('inst_clearScoresBtn').addEventListener('click', function() {
+        if (!instrumentState.students.length) return;
+        if (!confirm('¿Borrar todas las calificaciones de instrumentos? Los alumnos, instrumentos y matriz se mantendrán.')) return;
+        instrumentState.evalScores = instrumentState.students.map(() => new Array(instrumentState.instruments.length).fill(0));
+        inst_renderEvaluation();
+    });
+    // ─────────────────────────────────────────────────────────────────────────
+
     // Delegación global: clic en encabezado de criterio editable en cualquier tabla
     document.addEventListener('click', function(e) {
         const th = e.target.closest('th.criteria-th-editable');
@@ -2698,6 +3452,78 @@ window.onload = function() {
         setTimeout(hideIntro, 5000);
         document.addEventListener('click', hideIntro, {once:true});
     }
+
+    // ── PONDERACIÓN ──────────────────────────────────────────────────────────
+    // Tab buttons
+    document.getElementById('pond_tabConfig')?.addEventListener('click', () => pond_showScreen('Config'));
+    document.getElementById('pond_tabImport')?.addEventListener('click', () => {
+        ponderacionState.nombre = document.getElementById('pond_nombreInput')?.value.trim() || ponderacionState.nombre;
+        ponderacionState.curso  = document.getElementById('pond_cursoInput')?.value.trim()  || ponderacionState.curso;
+        ponderacionState.numActividades = parseInt(document.getElementById('pond_numActividadesInput')?.value) || 2;
+        pond_showScreen('Import');
+    });
+    document.getElementById('pond_tabResults')?.addEventListener('click', () => {
+        const { rows } = pond_computeResults();
+        if (!rows.length) { alert('Importa al menos una actividad con datos para ver resultados.'); return; }
+        pond_showScreen('Results');
+    });
+
+    // Config inputs
+    document.getElementById('pond_nombreInput')?.addEventListener('input', function() { ponderacionState.nombre = this.value.trim(); });
+    document.getElementById('pond_cursoInput')?.addEventListener('input', function() { ponderacionState.curso = this.value.trim(); });
+    document.getElementById('pond_numActividadesInput')?.addEventListener('change', function() {
+        let n = parseInt(this.value);
+        if (isNaN(n) || n < 2) { n = 2; this.value = 2; }
+        if (n > 10) { n = 10; this.value = 10; }
+        ponderacionState.numActividades = n;
+    });
+
+    // Config management buttons
+    document.getElementById('pond_exportConfigBtn')?.addEventListener('click', pond_exportConfig);
+    document.getElementById('pond_importConfigBtn')?.addEventListener('click', () => document.getElementById('pond_importConfigFile').click());
+    document.getElementById('pond_importConfigFile')?.addEventListener('change', function() { if (this.files.length) pond_importConfig(this.files[0]); this.value = ''; });
+    document.getElementById('pond_saveConfigLocal')?.addEventListener('click', pond_saveConfigLocal);
+    document.getElementById('pond_loadConfigLocal')?.addEventListener('click', pond_loadConfigLocal);
+    document.getElementById('pond_resetAllBtn')?.addEventListener('click', pond_resetAll);
+
+    // Config → Importar
+    document.getElementById('pond_btnGoImport')?.addEventListener('click', () => {
+        ponderacionState.nombre = document.getElementById('pond_nombreInput').value.trim();
+        ponderacionState.curso  = document.getElementById('pond_cursoInput').value.trim();
+        ponderacionState.numActividades = parseInt(document.getElementById('pond_numActividadesInput').value) || 2;
+        if (!pond_validateConfig()) return;
+        pond_showScreen('Import');
+    });
+
+    // Importar → atrás
+    document.getElementById('pond_btnBackConfig')?.addEventListener('click', () => pond_showScreen('Config'));
+
+    // Import management buttons
+    document.getElementById('pond_exportImportBtn')?.addEventListener('click', pond_exportImport);
+    document.getElementById('pond_importImportBtn')?.addEventListener('click', () => document.getElementById('pond_importImportFile').click());
+    document.getElementById('pond_importImportFile')?.addEventListener('change', function() { if (this.files.length) pond_importImport(this.files[0]); this.value = ''; });
+    document.getElementById('pond_saveImportLocal')?.addEventListener('click', pond_saveImportLocal);
+    document.getElementById('pond_loadImportLocal')?.addEventListener('click', pond_loadImportLocal);
+
+    // Importar → Resultados
+    document.getElementById('pond_btnGoResults')?.addEventListener('click', () => pond_showScreen('Results'));
+
+    // Resultados → atrás
+    document.getElementById('pond_btnBackImport')?.addEventListener('click', () => pond_showScreen('Import'));
+
+    // Toggle re-render
+    document.getElementById('pond_showGradeColumn')?.addEventListener('change', () => {
+        if (document.getElementById('pond_screenResults').classList.contains('active')) pond_renderResults();
+    });
+    document.getElementById('pond_showActivityCols')?.addEventListener('change', () => {
+        if (document.getElementById('pond_screenResults').classList.contains('active')) pond_renderResults();
+    });
+
+    // Export buttons
+    document.getElementById('pond_exportJsonBtn')?.addEventListener('click', () => pond_exportResults('json'));
+    document.getElementById('pond_exportExcelBtn')?.addEventListener('click', () => pond_exportResults('excel'));
+    document.getElementById('pond_exportPdfBtn')?.addEventListener('click', () => pond_exportResults('pdf'));
+    // ─────────────────────────────────────────────────────────────────────────
 
     renderAllBadges();
     renderExamQuestionsTable();

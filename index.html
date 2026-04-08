@@ -46,7 +46,7 @@
             --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-purple: var(--gradient-primary);
         }
 
         /* ===== BASE STYLES ===== */
@@ -97,9 +97,8 @@
             transition: var(--transition);
         }
         
-        .section-card:hover { 
-            box-shadow: var(--shadow-md); 
-            transform: translateY(-2px);
+        .section-card:hover {
+            box-shadow: var(--shadow-md);
             border-color: #cbd5e0;
         }
         
@@ -152,7 +151,6 @@
         
         .criteria-group:hover {
             box-shadow: var(--shadow-md);
-            transform: translateX(4px);
         }
         
         .group-title { 
@@ -303,32 +301,16 @@
         #cardPonderacion:hover { border-color: var(--info); }
 
         /* ===== BUTTONS ===== */
-        .btn-purple { 
-            background: linear-gradient(135deg, #6f42c1, #5a34a0); 
-            border: none; 
+        .btn-purple {
+            background: linear-gradient(135deg, #6f42c1, #5a34a0);
+            border: none;
             color: #fff;
             box-shadow: var(--shadow-sm);
             transition: var(--transition);
         }
-        .btn-purple:hover { 
-            background: linear-gradient(135deg, #5a34a0, #48288a); 
-            border: none; 
+        .btn-purple:hover {
+            background: linear-gradient(135deg, #5a34a0, #48288a);
             color: #fff;
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-        
-        .btn-cyan { 
-            background: linear-gradient(135deg, #0dcaf0, #0bb5d7); 
-            border: none; 
-            color: #000;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-        }
-        .btn-cyan:hover { 
-            background: linear-gradient(135deg, #0bb5d7, #09a0c0); 
-            border: none; 
-            color: #000;
             box-shadow: var(--shadow-md);
             transform: translateY(-2px);
         }
@@ -456,24 +438,24 @@
         
         input.grade-text-input {
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
             border: 2px solid #e2e8f0;
             border-radius: var(--border-radius-sm);
             padding: 8px 12px;
             transition: var(--transition);
         }
-        
+
         input.grade-text-input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
         }
-        
+
         input.grade-text-input.input-invalid {
             border-color: var(--danger) !important;
             background-color: #fef2f2;
         }
-        
-        .grade-select { 
+
+        /* ===== EXAM QUESTIONS ===== */        .grade-select { 
             width: 100%; 
             padding: 10px 12px; 
             border: 2px solid #e2e8f0; 
@@ -849,22 +831,12 @@
         th.inst-criteria-header.criteria-th-editable::after { 
             content: none; 
         }
-        
-        .crit-family-stripe { 
-            background-color: var(--crit-stripe-bg, #f8fafc); 
-        }
-        
-        .criteria-cell, .grade-cell { 
+
+        .criteria-cell, .grade-cell {
             text-align: center !important; 
             vertical-align: middle !important; 
             font-weight: 700;
             padding: 10px;
-        }
-        
-        input.grade-text-input { 
-            text-align: center !important; 
-            font-weight: 700;
-            border-radius: var(--border-radius-sm);
         }
 
         /* ===== EXAM QUESTIONS ===== */
@@ -1075,27 +1047,29 @@
                 transform: translateY(0);
             }
         }
-        
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
-        
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .animate-pulse {
             animation: pulse 2s ease-in-out infinite;
         }
-        
+
         .animate-slideInUp {
             animation: slideInUp 0.5s ease;
-        }
-        
-        .animate-fadeInScale {
-            animation: fadeInScale 0.4s ease;
         }
 
         /* ===== BUTTON RIPPLE EFFECT ===== */
@@ -1202,11 +1176,6 @@
             text-decoration: underline;
         }
 
-        /* ===== LOADING SPINNER ===== */
-        .spinner-border-sm {
-            border-width: 0.15em;
-        }
-
         /* ===== BADGE ENHANCEMENTS ===== */
         .badge {
             font-weight: 600;
@@ -1242,12 +1211,12 @@
             <i class="bi bi-diagram-3 me-2" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>EVALUACIÓN CRITERIAL · <span id="subjectNameDisplay">Tecnología 4º ESO</span>
         </h1>
         <div class="app-switcher" role="group">
-            <button type="button" class="btn btn-outline-secondary" id="btnHome"><i class="fas fa-home me-1"></i> Inicio</button>
-            <button type="button" class="btn btn-outline-primary" id="btnAppExam"><i class="bi bi-pencil-square me-1"></i> Examen Preguntas/Criterios</button>
-            <button type="button" class="btn btn-outline-success" id="btnAppTest"><i class="fas fa-calculator me-1"></i> Examen Tipo Test</button>
-            <button type="button" class="btn btn-outline-warning" id="btnAppGeneric"><i class="bi bi-check2-circle me-1"></i> Actividad por Criterios</button>
-            <button type="button" class="btn btn-outline-secondary" id="btnAppInstrumentos"><i class="bi bi-grid-3x3-gap-fill me-1"></i> Actividad por Instrumentos</button>
-            <button type="button" class="btn btn-outline-info" id="btnAppPonderacion"><i class="bi bi-layers-half me-1"></i> Ponderación</button>
+            <button class="btn btn-outline-secondary" id="btnHome"><i class="fas fa-home me-1"></i> Inicio</button>
+            <button class="btn btn-outline-primary" id="btnAppExam"><i class="bi bi-pencil-square me-1"></i> Examen Preguntas/Criterios</button>
+            <button class="btn btn-outline-success" id="btnAppTest"><i class="fas fa-calculator me-1"></i> Examen Tipo Test</button>
+            <button class="btn btn-outline-warning" id="btnAppGeneric"><i class="bi bi-check2-circle me-1"></i> Actividad por Criterios</button>
+            <button class="btn btn-outline-secondary" id="btnAppInstrumentos"><i class="bi bi-grid-3x3-gap-fill me-1"></i> Actividad por Instrumentos</button>
+            <button class="btn btn-outline-info" id="btnAppPonderacion"><i class="bi bi-layers-half me-1"></i> Ponderación</button>
         </div>
     </div>
 
@@ -1279,9 +1248,9 @@
                 <i class="bi bi-pencil-square" style="color:#0d6efd;"></i> Examen por preguntas
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
-                <button type="button" class="btn btn-outline-primary active" id="examNavConfig">⚙️ Configuración</button>
-                <button type="button" class="btn btn-outline-primary" id="examNavGrade">📝 Calificación</button>
-                <button type="button" class="btn btn-outline-primary" id="examNavResults">📊 Resultados</button>
+                <button class="btn btn-outline-primary active" id="examNavConfig">⚙️ Configuración</button>
+                <button class="btn btn-outline-primary" id="examNavGrade">📝 Calificación</button>
+                <button class="btn btn-outline-primary" id="examNavResults">📊 Resultados</button>
             </div>
         </div>
         <div id="examScreenConfig" class="screen active">
@@ -1296,7 +1265,7 @@
                 <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos."></i></div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="d-flex flex-wrap"><input type="text" id="examStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="examBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
-                    <div><label for="examImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="examImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
+                    <div><label for="examImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="examImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
                     <button id="examBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                 </div>
                 <div id="examStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="examStudentCountBadge">0</span> alumnos<div id="examStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1321,7 +1290,7 @@
                 <div class="d-flex flex-wrap gap-2 justify-content-start">
                     <button id="examExportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
                     <button id="examImportConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
-                    <input type="file" id="examImportConfigFile" accept=".json" class="hidden">
+                    <input type="file" id="examImportConfigFile" accept=".json" hidden>
                     <button id="examSaveToLocalBtn" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
                     <button id="examLoadFromLocalBtn" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
                     <button id="examResetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
@@ -1337,7 +1306,7 @@
                     <button id="examClearScoresBtn" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                     <button id="examExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
                     <button id="examImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
-                    <input type="file" id="examImportScoresFile" accept=".json" class="hidden">
+                    <input type="file" id="examImportScoresFile" accept=".json" hidden>
                     <button id="examBtnSaveScores" class="btn btn-primary"><i class="bi bi-save"></i> Guardar calificaciones</button>
                     <button id="examRecoverScoresBtn" class="btn btn-outline-info"><i class="bi bi-arrow-repeat"></i> Recuperar calificaciones</button>
                 </div>
@@ -1368,9 +1337,9 @@
                 <i class="fas fa-calculator" style="color:#198754;"></i> Examen tipo test
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
-                <button type="button" class="btn btn-outline-primary active" id="testNavConfig">⚙️ Configuración</button>
-                <button type="button" class="btn btn-outline-primary" id="testNavGrade">📝 Calificación</button>
-                <button type="button" class="btn btn-outline-primary" id="testNavResults">📊 Resultados</button>
+                <button class="btn btn-outline-primary active" id="testNavConfig">⚙️ Configuración</button>
+                <button class="btn btn-outline-primary" id="testNavGrade">📝 Calificación</button>
+                <button class="btn btn-outline-primary" id="testNavResults">📊 Resultados</button>
             </div>
         </div>
         <div id="testScreenConfig" class="screen active">
@@ -1385,7 +1354,7 @@
 				<div class="section-title"><i class="fas fa-users"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos que realizarán el test."></i></div>
 				<div class="d-flex flex-wrap gap-3 align-items-center">
 					<div class="d-flex flex-wrap"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
-					<div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
+					<div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
 					<button id="testBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
 				</div>
 				<div id="testStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="testStudentCountBadge">0</span> alumnos<div id="testStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1394,7 +1363,7 @@
             <div class="section-card">
                 <div class="section-title"><i class="fas fa-check-double"></i> Criterios TEC.4.X.Y. <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Todos los alumnos recibirán la misma nota en cada criterio."></i></div>
                 <div class="d-flex flex-wrap align-items-center gap-3">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#globalCriteriaModal" data-app="test"><i class="fas fa-tags"></i> Seleccionar criterios</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#globalCriteriaModal" data-app="test"><i class="fas fa-tags"></i> Seleccionar criterios</button>
                     <span id="testSelectedCriteriaBadges" class="d-flex flex-wrap gap-1"></span>
                 </div>
                 <div id="testNoCriteriaWarning" class="validation-warning" style="display:none;"></div>
@@ -1421,7 +1390,7 @@
                 <div class="d-flex flex-wrap justify-content-start gap-2 mt-2">
                     <button id="testExportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="fas fa-download"></i> Exportar JSON</button>
                     <button id="testImportConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="fas fa-upload"></i> Importar JSON</button>
-                    <input type="file" id="testImportConfigFile" accept=".json" class="hidden">
+                    <input type="file" id="testImportConfigFile" accept=".json" hidden>
                     <button id="testSaveToLocalBtn" class="btn btn-outline-success btn-sm"><i class="fas fa-save"></i> Guardar local</button>
                     <button id="testLoadFromLocalBtn" class="btn btn-outline-info btn-sm"><i class="fas fa-folder-open"></i> Cargar local</button>
                     <button id="testResetAllBtn2" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
@@ -1437,7 +1406,7 @@
                     <button id="testClearScoresBtn" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                     <button id="testExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
                     <button id="testImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
-                    <input type="file" id="testImportScoresFile" accept=".json" class="hidden">
+                    <input type="file" id="testImportScoresFile" accept=".json" hidden>
                     <button id="testBtnSaveScores" class="btn btn-primary"><i class="fas fa-save"></i> Guardar calificaciones</button>
                     <button id="testRecoverScoresBtn" class="btn btn-outline-info"><i class="bi bi-arrow-repeat"></i> Recuperar calificaciones</button>
                 </div>
@@ -1468,9 +1437,9 @@
                 <i class="bi bi-check2-circle" style="color:#fd7e14;"></i> Actividad evaluada mediante criterios
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
-                <button type="button" class="btn btn-outline-primary active" id="genericNavConfig">⚙️ Configuración</button>
-                <button type="button" class="btn btn-outline-primary" id="genericNavGrade">📝 Calificación</button>
-                <button type="button" class="btn btn-outline-primary" id="genericNavResults">📊 Resultados</button>
+                <button class="btn btn-outline-primary active" id="genericNavConfig">⚙️ Configuración</button>
+                <button class="btn btn-outline-primary" id="genericNavGrade">📝 Calificación</button>
+                <button class="btn btn-outline-primary" id="genericNavResults">📊 Resultados</button>
             </div>
         </div>
         <div id="genericScreenConfig" class="screen active">
@@ -1485,7 +1454,7 @@
                 <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos."></i></div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="d-flex flex-wrap"><input type="text" id="genericStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="genericBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
-                    <div><label for="genericImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="genericImportFile" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
+                    <div><label for="genericImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="genericImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
                     <button id="genericBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                 </div>
                 <div id="genericStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="genericStudentCountBadge">0</span> alumnos<div id="genericStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1504,7 +1473,7 @@
                 <div class="d-flex flex-wrap gap-2 justify-content-start">
                     <button id="genericExportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
                     <button id="genericImportConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
-                    <input type="file" id="genericImportConfigFile" accept=".json" class="hidden">
+                    <input type="file" id="genericImportConfigFile" accept=".json" hidden>
                     <button id="genericSaveToLocalBtn" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
                     <button id="genericLoadFromLocalBtn" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
                     <button id="genericResetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
@@ -1520,7 +1489,7 @@
                     <button id="genericClearScoresBtn" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                     <button id="genericExportScoresBtn" class="btn btn-outline-dark"><i class="bi bi-download"></i> Exportar calificaciones</button>
                     <button id="genericImportScoresBtn" class="btn btn-outline-secondary"><i class="bi bi-upload"></i> Importar calificaciones</button>
-                    <input type="file" id="genericImportScoresFile" accept=".json" class="hidden">
+                    <input type="file" id="genericImportScoresFile" accept=".json" hidden>
                     <button id="genericBtnSaveScores" class="btn btn-primary"><i class="bi bi-save"></i> Guardar calificaciones</button>
                     <button id="genericRecoverScoresBtn" class="btn btn-outline-info"><i class="bi bi-arrow-repeat"></i> Recuperar calificaciones</button>
                 </div>
@@ -1551,9 +1520,9 @@
                 <i class="bi bi-grid-3x3-gap-fill" style="color:#6f42c1;"></i> Actividad evaluada por instrumentos
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
-                <button type="button" class="btn btn-outline-primary active" id="inst_config-tab"><i class="bi bi-gear-fill"></i> Configuración</button>
-                <button type="button" class="btn btn-outline-primary" id="inst_relacion-tab"><i class="bi bi-diagram-3"></i> Relación</button>
-                <button type="button" class="btn btn-outline-primary" id="inst_eval-tab"><i class="bi bi-bar-chart-line"></i> Evaluación</button>
+                <button class="btn btn-outline-primary active" id="inst_config-tab"><i class="bi bi-gear-fill"></i> Configuración</button>
+                <button class="btn btn-outline-primary" id="inst_relacion-tab"><i class="bi bi-diagram-3"></i> Relación</button>
+                <button class="btn btn-outline-primary" id="inst_eval-tab"><i class="bi bi-bar-chart-line"></i> Evaluación</button>
             </div>
         </div>
         <div class="tab-content">
@@ -1570,7 +1539,7 @@
                     <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos."></i></div>
                     <div class="d-flex flex-wrap gap-3 align-items-center">
                         <div class="d-flex flex-wrap"><input type="text" id="inst_studentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="inst_btnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
-                        <div><label for="inst_importExcel" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="inst_importExcel" accept=".xlsx,.xls,.json,.csv" class="hidden"></div>
+                        <div><label for="inst_importExcel" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="inst_importExcel" accept=".xlsx,.xls,.json,.csv" hidden></div>
                         <button id="inst_btnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                     </div>
                     <div id="inst_studentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="inst_studentCountBadge">0</span> alumnos<div id="inst_studentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1590,7 +1559,7 @@
                     <div class="d-flex flex-wrap gap-2 justify-content-start">
                         <button id="inst_exportConfigJson" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
                         <button id="inst_importConfigJsonBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
-                        <input type="file" id="inst_importConfigFile" accept=".json" class="hidden">
+                        <input type="file" id="inst_importConfigFile" accept=".json" hidden>
                         <button id="inst_saveConfigLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
                         <button id="inst_loadConfigLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
                         <button id="inst_resetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
@@ -1612,7 +1581,7 @@
                         <button id="inst_saveMatrixLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-save"></i> Guardar local</button>
                         <button id="inst_loadMatrixLocal" class="btn btn-outline-secondary btn-sm"><i class="bi bi-folder-symlink"></i> Recuperar local</button>
                     </div>
-                    <input type="file" id="inst_importMatrixFile" accept=".json" class="hidden">
+                    <input type="file" id="inst_importMatrixFile" accept=".json" hidden>
                     <div class="d-flex justify-content-end"><button id="inst_irEvalBtn" class="btn btn-primary btn-lg" disabled><i class="bi bi-arrow-right"></i> Ir a Evaluación</button></div>
                 </div>
             </div>
@@ -1641,7 +1610,7 @@
                         <button id="inst_clearScoresBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash3"></i> Borrar calificaciones</button>
                         <button id="inst_exportEvalJson" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar JSON</button>
                         <button id="inst_importEvalJsonBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar JSON</button>
-                        <input type="file" id="inst_importEvalFile" accept=".json" class="hidden"><button id="inst_saveEvalLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar calificaciones</button>
+                        <input type="file" id="inst_importEvalFile" accept=".json" hidden><button id="inst_saveEvalLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar calificaciones</button>
                         <button id="inst_loadEvalLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Recuperar calificaciones</button>
                     </div>
                     <div class="table-responsive" style="max-height:500px;"><table class="table table-bordered table-striped" id="inst_evalTable"><thead class="inst-fixed-header" id="inst_evalThead"></thead><tbody id="inst_evalTbody"></tbody></table></div>
@@ -1665,9 +1634,9 @@
                 <i class="bi bi-layers-half" style="color:#0dcaf0;"></i> Ponderación de actividades
             </h3>
             <div class="btn-group flex-shrink-0" role="group">
-                <button type="button" class="btn btn-outline-info active" id="pond_tabConfig"><i class="bi bi-gear-fill"></i> Configuración</button>
-                <button type="button" class="btn btn-outline-info" id="pond_tabImport"><i class="bi bi-cloud-upload"></i> Importar</button>
-                <button type="button" class="btn btn-outline-info" id="pond_tabResults"><i class="bi bi-bar-chart-line"></i> Resultados</button>
+                <button class="btn btn-outline-info active" id="pond_tabConfig"><i class="bi bi-gear-fill"></i> Configuración</button>
+                <button class="btn btn-outline-info" id="pond_tabImport"><i class="bi bi-cloud-upload"></i> Importar</button>
+                <button class="btn btn-outline-info" id="pond_tabResults"><i class="bi bi-bar-chart-line"></i> Resultados</button>
             </div>
         </div>
 
@@ -1706,7 +1675,7 @@
                 <div class="d-flex flex-wrap gap-2 justify-content-start">
                     <button id="pond_exportConfigBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar configuración</button>
                     <button id="pond_importConfigBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar configuración</button>
-                    <input type="file" id="pond_importConfigFile" accept=".json" class="hidden">
+                    <input type="file" id="pond_importConfigFile" accept=".json" hidden>
                     <button id="pond_saveConfigLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
                     <button id="pond_loadConfigLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
                     <button id="pond_resetAllBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-eraser"></i> Reiniciar todo</button>
@@ -1738,7 +1707,7 @@
                 <div class="d-flex flex-wrap gap-2 justify-content-start">
                     <button id="pond_exportImportBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-arrow-down"></i> Exportar importación</button>
                     <button id="pond_importImportBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-arrow-up"></i> Importar importación</button>
-                    <input type="file" id="pond_importImportFile" accept=".json" class="hidden">
+                    <input type="file" id="pond_importImportFile" accept=".json" hidden>
                     <button id="pond_saveImportLocal" class="btn btn-outline-success btn-sm"><i class="bi bi-save"></i> Guardar local</button>
                     <button id="pond_loadImportLocal" class="btn btn-outline-info btn-sm"><i class="bi bi-folder-symlink"></i> Cargar local</button>
                 </div>
@@ -1793,9 +1762,9 @@
     <div class="modal fade" id="globalCriteriaModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title" id="globalCriteriaModalTitle">Criterios TEC.4.X.Y.</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header"><h5 class="modal-title" id="globalCriteriaModalTitle">Criterios TEC.4.X.Y.</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body" id="globalCriteriaGroupedContainer"></div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="saveGlobalCriteriaBtn" data-bs-dismiss="modal">Guardar</button></div>
+                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" id="saveGlobalCriteriaBtn" data-bs-dismiss="modal">Guardar</button></div>
             </div>
         </div>
     </div>
@@ -1804,9 +1773,9 @@
     <div class="modal fade" id="examQuestionCriteriaModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-fullscreen-md-down">
             <div class="modal-content">
-                <div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body" id="examQuestionCriteriaGroupedContainer"></div>
-                <div class="modal-footer"><button type="button" class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div>
+                <div class="modal-footer"><button class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div>
             </div>
         </div>
     </div>
@@ -1817,7 +1786,7 @@
             <div class="modal-content">
                 <div class="modal-header" id="criterionDescModalHeader" style="background: linear-gradient(145deg, #0b4b6b, #0d6efd);">
                     <h5 class="modal-title text-white" id="genericCriterionDescModalLabel"><i class="bi bi-pencil-square me-2"></i>Descripción del criterio</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -1829,13 +1798,13 @@
                         <textarea id="genericCriterionDescText" class="form-control" rows="5" placeholder="Describe qué se evalúa con este criterio en esta actividad concreta..."></textarea>
                         <div class="form-text"><i class="bi bi-info-circle"></i> Puedes editar el enunciado oficial o escribir una descripción personalizada para esta actividad.</div>
                     </div>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="genericCriterionDescResetBtn">
+                    <button class="btn btn-outline-secondary btn-sm" id="genericCriterionDescResetBtn">
                         <i class="bi bi-arrow-counterclockwise"></i> Restaurar descripción oficial
                     </button>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="genericCriterionDescSaveBtn" data-bs-dismiss="modal">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="genericCriterionDescSaveBtn" data-bs-dismiss="modal">
                         <i class="bi bi-save"></i> Guardar descripción
                     </button>
                 </div>
@@ -1849,7 +1818,7 @@
             <div class="modal-content">
                 <div class="modal-header" style="background: linear-gradient(145deg, #6f42c1, #5a34a0);">
                     <h5 class="modal-title text-white" id="inst_instrDescModalLabel"><i class="bi bi-pencil-square me-2"></i>Descripción del instrumento</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -1863,8 +1832,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-purple" id="inst_instrDescSaveBtn" data-bs-dismiss="modal">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-purple" id="inst_instrDescSaveBtn" data-bs-dismiss="modal">
                         <i class="bi bi-save"></i> Guardar descripción
                     </button>
                 </div>
@@ -1877,7 +1846,7 @@
         <div id="inst_toastWarning" class="toast align-items-center text-bg-warning border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
             <div class="d-flex">
                 <div class="toast-body fw-semibold" id="inst_toastWarningMsg" style="font-size:1rem;"></div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                <button class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
             </div>
         </div>
     </div>
@@ -1888,7 +1857,7 @@
             <div class="modal-content">
                 <div class="modal-header" style="background: linear-gradient(145deg, #0d6efd, #0b5ed7);">
                     <h5 class="modal-title text-white"><i class="bi bi-pencil-square me-2"></i>Nombre y descripción de la pregunta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -1902,8 +1871,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="examQDescSaveBtn" data-bs-dismiss="modal"><i class="bi bi-save"></i> Guardar</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="examQDescSaveBtn" data-bs-dismiss="modal"><i class="bi bi-save"></i> Guardar</button>
                 </div>
             </div>
         </div>
@@ -1913,9 +1882,9 @@
     <div class="modal fade" id="sharedExportModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="sharedExportIncludeGrade" checked><label class="form-check-label" for="sharedExportIncludeGrade">Incluir columna Calificación</label></div></div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="sharedExportConfirm" data-bs-dismiss="modal">Exportar</button></div>
+                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" id="sharedExportConfirm" data-bs-dismiss="modal">Exportar</button></div>
             </div>
         </div>
     </div>
@@ -1949,7 +1918,7 @@ const ALL_CRITERIA_DESCRIPTIONS = {
     "TEC.4.6.2": "Analizar los beneficios que, en el cuidado del entorno, aportan la arquitectura bioclimática y el ecotransporte, valorando la contribución de las tecnologías al desarrollo sostenible.",
     "TEC.4.6.3": "Identificar y valorar la repercusión y los beneficios del desarrollo de proyectos tecnológicos de carácter social, por medio de comunidades abiertas, acciones de voluntariado o proyectos de servicio a la comunidad."
 };
-let subjectInfo = { name:'TEC4', course:'4º ESO', criteriaCodes:ALL_CRITERIA_CODES, criteriaDescriptions:ALL_CRITERIA_DESCRIPTIONS };
+let subjectInfo = { criteriaCodes:ALL_CRITERIA_CODES, criteriaDescriptions:ALL_CRITERIA_DESCRIPTIONS };
 
 const competenceColors = ['#0d6efd','#198754','#fd7e14','#6f42c1','#d63384','#20c997','#0dcaf0','#ffc107','#dc3545','#6610f2'];
 const getCriteriaDescription = code => subjectInfo.criteriaDescriptions[code] || `Criterio ${code}.`;
@@ -2229,11 +2198,6 @@ function getAppCriterionDesc(code, app) {
         : getCriteriaDescription(code);
 }
 
-/** Compatibilidad: devuelve descripción personalizada de criterio para la app genérica. */
-function getGenericCriterionDescription(code) {
-    return getAppCriterionDesc(code, 'generic');
-}
-
 const _appDescColors = {
     exam:    'linear-gradient(145deg, #0d6efd, #0b5ed7)',
     test:    'linear-gradient(145deg, #198754, #146c43)',
@@ -2255,9 +2219,6 @@ function openCriterionDescModal(code, app) {
     if (label) label.innerHTML = `<i class="bi bi-pencil-square me-2"></i>Criterio · <small class="fw-normal">${_appDescNames[app]||app}</small>`;
     bootstrap.Modal.getOrCreateInstance(modal).show();
 }
-
-/** Alias para compatibilidad con código heredado. */
-function openGenericCriterionDescModal(code) { openCriterionDescModal(code, 'generic'); }
 
 // =============================================================================
 // BADGES DE CRITERIOS
@@ -2482,7 +2443,7 @@ function renderResultsTable(app) {
 // =============================================================================
 // EXPORTACIÓN DE RESULTADOS (JSON / Excel / PDF)
 // =============================================================================
-let _pendingExport = { app:'', fmt:'' };
+let _pendingExport = { app:'', fmt:'', grade:true };
 
 function exportResults(app, fmt, includeGrade) {
     if (app === 'inst') { inst_exportResults(fmt, includeGrade); return; }
@@ -3049,7 +3010,7 @@ function updateGenericConfigWarning() {
         warn.style.display = 'none';
     }
 }
-function renderGenericGradeTable() { renderSimpleGradeTable(genericState, 'genericGradeTable', 'genericGradeTbody', getGenericCriterionDescription, 'generic'); }
+function renderGenericGradeTable() { renderSimpleGradeTable(genericState, 'genericGradeTable', 'genericGradeTbody', (c)=>getAppCriterionDesc(c,'generic'), 'generic'); }
 function renderGenericStudentTags() {
     renderStudentTags(genericState,'genericStudentTags','genericStudentCountBadge',() => {
         sortStudents(genericState,'scores'); normalizeGenericScores(); renderGenericStudentTags();
@@ -3559,7 +3520,7 @@ function pond_renderImportCards() {
                         <label for="pond_file_${i}" class="import-label" style="background:#e0f7fa; border-color:#80deea; cursor:pointer;">
                             <i class="bi bi-file-earmark-arrow-up"></i> Importar JSON
                         </label>
-                        <input type="file" id="pond_file_${i}" accept=".json" class="hidden" data-idx="${i}">
+                        <input type="file" id="pond_file_${i}" accept=".json" hidden data-idx="${i}">
                     </div>
                 </div>
                 <div style="flex-shrink:0; padding-bottom:2px;">
@@ -4140,7 +4101,7 @@ window.onload = function() {
     // La exportación real se ejecuta DESPUÉS de que el modal se haya cerrado completamente (sin backdrop)
     document.getElementById('sharedExportModal').addEventListener('hidden.bs.modal', function() {
         if (_pendingExport.app && _pendingExport.fmt) {
-            exportResults(_pendingExport.app, _pendingExport.fmt, _pendingExport.grade !== undefined ? _pendingExport.grade : true);
+            exportResults(_pendingExport.app, _pendingExport.fmt, _pendingExport.grade);
             _pendingExport = { app:'', fmt:'', grade:true };
         }
     });

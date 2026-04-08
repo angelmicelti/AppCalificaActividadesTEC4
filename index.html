@@ -333,30 +333,116 @@
             transform: translateY(-2px);
         }
 
-        /* ===== APP SWITCHER ===== */
+        /* ===== MOBILE NAV MENU ===== */
+        .mobile-nav-toggle {
+            display: none;
+            background: linear-gradient(135deg, #0b4b6b, #0d6efd);
+            border: none;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--border-radius-sm);
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .mobile-nav-toggle:hover, .mobile-nav-toggle:focus {
+            background: linear-gradient(135deg, #0d6efd, #667eea);
+            box-shadow: var(--shadow-md);
+            transform: scale(1.05);
+        }
+
+        .mobile-nav-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            z-index: 1000;
+            min-width: 280px;
+            animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mobile-nav-menu.show {
+            display: block;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #2d3748;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mobile-nav-item:hover, .mobile-nav-item:focus {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            color: var(--dark);
+        }
+
+        .mobile-nav-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .mobile-nav-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 8px 0;
+        }
+
+        /* ===== APP SWITCHER (DESKTOP) ===== */
         .app-switcher { 
-            display: flex !important; 
-            flex-wrap: nowrap !important; 
+            display: flex !important;
+            flex-wrap: nowrap !important;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: none; 
-            gap: 8px; 
-            padding-bottom: 8px; 
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            gap: 8px;
+            padding-bottom: 8px;
         }
         .app-switcher::-webkit-scrollbar { display: none; }
         .app-switcher .btn { 
-            border-radius: 50px; 
-            white-space: nowrap; 
-            flex-shrink: 0; 
+            border-radius: 50px;
+            white-space: nowrap;
+            flex-shrink: 0;
             margin-left: 0;
             touch-action: manipulation;
             transition: var(--transition);
             font-weight: 500;
         }
-        
+
         .app-switcher .btn:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
+        }
+
+        .nav-container {
+            position: relative;
         }
 
         /* ===== INTRO OVERLAY ===== */
@@ -914,24 +1000,35 @@
         
         @media (max-width: 768px) {
             body { padding: 8px; }
-            .container-custom { 
-                padding: 20px 24px; 
-                border-radius: var(--border-radius); 
+            .container-custom {
+                padding: 20px 24px;
+                border-radius: var(--border-radius);
             }
-            .section-card { 
-                padding: 20px 24px; 
-                border-radius: var(--border-radius); 
+            .section-card {
+                padding: 20px 24px;
+                border-radius: var(--border-radius);
             }
-            .section-title { 
-                flex-wrap: wrap; 
+            .section-title {
+                flex-wrap: wrap;
                 font-size: 1.1rem;
-            } 
-            .section-title .help-icon { 
-                margin-left: 0; 
             }
-            .btn-group[role="group"] { 
-                display: flex; 
-                flex-wrap: nowrap; 
+            .section-title .help-icon {
+                margin-left: 0;
+            }
+            
+            /* Show mobile nav toggle */
+            .mobile-nav-toggle {
+                display: flex !important;
+            }
+            
+            /* Hide desktop app-switcher */
+            .app-switcher {
+                display: none !important;
+            }
+            
+            .btn-group[role="group"] {
+                display: flex;
+                flex-wrap: nowrap;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch; 
                 scrollbar-width: none; 
@@ -1017,7 +1114,7 @@
         }
         
         @media print {
-            .app-switcher, #intro-overlay, .btn:not(.badge) { display: none !important; }
+            .app-switcher, .mobile-nav-toggle, .mobile-nav-menu, #intro-overlay, .btn:not(.badge) { display: none !important; }
             .container-custom { 
                 box-shadow: none; 
                 padding: 0; 
@@ -1214,13 +1311,47 @@
         <h1 class="fw-bold mb-0" style="color: #0b4b6b; font-size: clamp(1.2rem,4vw,2rem); font-weight: 800;">
             <i class="bi bi-diagram-3 me-2" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>EVALUACIÓN CRITERIAL · <span id="subjectNameDisplay">Tecnología 4º ESO</span>
         </h1>
-        <div class="app-switcher" role="group">
-            <button type="button" class="btn btn-outline-secondary" id="btnHome"><i class="fas fa-home me-1"></i> Inicio</button>
-            <button type="button" class="btn btn-outline-primary" id="btnAppExam"><i class="bi bi-pencil-square me-1"></i> Examen Preguntas/Criterios</button>
-            <button type="button" class="btn btn-outline-success" id="btnAppTest"><i class="fas fa-calculator me-1"></i> Examen Tipo Test</button>
-            <button type="button" class="btn btn-outline-warning" id="btnAppGeneric"><i class="bi bi-check2-circle me-1"></i> Actividad por Criterios</button>
-            <button type="button" class="btn btn-outline-secondary" id="btnAppInstrumentos"><i class="bi bi-grid-3x3-gap-fill me-1"></i> Actividad por Instrumentos</button>
-            <button type="button" class="btn btn-outline-info" id="btnAppPonderacion"><i class="bi bi-layers-half me-1"></i> Ponderación</button>
+        <div class="nav-container">
+            <!-- Desktop navigation -->
+            <div class="app-switcher" role="group">
+                <button type="button" class="btn btn-outline-secondary" id="btnHome"><i class="fas fa-home me-1"></i> Inicio</button>
+                <button type="button" class="btn btn-outline-primary" id="btnAppExam"><i class="bi bi-pencil-square me-1"></i> Examen Preguntas/Criterios</button>
+                <button type="button" class="btn btn-outline-success" id="btnAppTest"><i class="fas fa-calculator me-1"></i> Examen Tipo Test</button>
+                <button type="button" class="btn btn-outline-warning" id="btnAppGeneric"><i class="bi bi-check2-circle me-1"></i> Actividad por Criterios</button>
+                <button type="button" class="btn btn-outline-secondary" id="btnAppInstrumentos"><i class="bi bi-grid-3x3-gap-fill me-1"></i> Actividad por Instrumentos</button>
+                <button type="button" class="btn btn-outline-info" id="btnAppPonderacion"><i class="bi bi-layers-half me-1"></i> Ponderación</button>
+            </div>
+            <!-- Mobile navigation toggle -->
+            <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Menú de navegación">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="mobile-nav-menu" id="mobileNavMenu">
+                <button class="mobile-nav-item" data-target="btnHome">
+                    <i class="fas fa-home" style="color: #6c757d;"></i>
+                    <span>Inicio</span>
+                </button>
+                <div class="mobile-nav-divider"></div>
+                <button class="mobile-nav-item" data-target="btnAppExam">
+                    <i class="bi bi-pencil-square" style="color: #0d6efd;"></i>
+                    <span>Examen Preguntas/Criterios</span>
+                </button>
+                <button class="mobile-nav-item" data-target="btnAppTest">
+                    <i class="fas fa-calculator" style="color: #198754;"></i>
+                    <span>Examen Tipo Test</span>
+                </button>
+                <button class="mobile-nav-item" data-target="btnAppGeneric">
+                    <i class="bi bi-check2-circle" style="color: #fd7e14;"></i>
+                    <span>Actividad por Criterios</span>
+                </button>
+                <button class="mobile-nav-item" data-target="btnAppInstrumentos">
+                    <i class="bi bi-grid-3x3-gap-fill" style="color: #6f42c1;"></i>
+                    <span>Actividad por Instrumentos</span>
+                </button>
+                <button class="mobile-nav-item" data-target="btnAppPonderacion">
+                    <i class="bi bi-layers-half" style="color: #0dcaf0;"></i>
+                    <span>Ponderación</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -4054,6 +4185,52 @@ window.onload = function() {
     [['cardExam','appExamContainer'],['cardTest','appTestContainer'],['cardGeneric','appGenericContainer'],['cardInstrumentos','appInstrumentosContainer'],['cardPonderacion','appPonderacionContainer']].forEach(([card,app])=>
         document.getElementById(card).addEventListener('click',()=>showApp(app))
     );
+
+    // Mobile navigation menu
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const mobileNavMenu = document.getElementById('mobileNavMenu');
+    
+    if (mobileNavToggle && mobileNavMenu) {
+        // Toggle menu visibility
+        mobileNavToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mobileNavMenu.classList.toggle('show');
+            const icon = mobileNavToggle.querySelector('i');
+            if (mobileNavMenu.classList.contains('show')) {
+                icon.classList.remove('bi-list');
+                icon.classList.add('bi-x-lg');
+            } else {
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-list');
+            }
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileNavMenu.contains(e.target) && !mobileNavToggle.contains(e.target)) {
+                mobileNavMenu.classList.remove('show');
+                const icon = mobileNavToggle.querySelector('i');
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-list');
+            }
+        });
+
+        // Handle mobile menu item clicks
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const targetId = item.dataset.target;
+                const targetBtn = document.getElementById(targetId);
+                if (targetBtn) {
+                    targetBtn.click();
+                }
+                // Close the menu
+                mobileNavMenu.classList.remove('show');
+                const icon = mobileNavToggle.querySelector('i');
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-list');
+            });
+        });
+    }
 
     // Modal descripción de pregunta (pantalla Calificación)
     document.getElementById('examQDescSaveBtn').addEventListener('click', function() {

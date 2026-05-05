@@ -518,7 +518,6 @@
             border: none;
             border-radius: var(--border-radius-lg);
             box-shadow: var(--shadow-xl);
-            overflow: hidden;
         }
 
         /* ===== VALIDATION WARNING ===== */
@@ -1759,8 +1758,8 @@
     </div>
 
     <!-- MODAL COMPARTIDO: CRITERIOS -->
-    <div class="modal fade" id="globalCriteriaModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
+    <div class="modal" id="globalCriteriaModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title" id="globalCriteriaModalTitle">Criterios TEC.4.X.Y.</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body" id="globalCriteriaGroupedContainer"></div>
@@ -1770,8 +1769,8 @@
     </div>
 
     <!-- MODAL ASIGNAR CRITERIOS A PREGUNTA (solo examen) -->
-    <div class="modal fade" id="examQuestionCriteriaModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-fullscreen-md-down">
+    <div class="modal" id="examQuestionCriteriaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-fullscreen-md-down modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body" id="examQuestionCriteriaGroupedContainer"></div>

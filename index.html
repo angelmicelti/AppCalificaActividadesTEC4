@@ -4546,13 +4546,31 @@ window.onload = function() {
         footer.innerHTML = html;
     }
 
+    // Fallback: lee sw.js directamente y extrae la versión de CACHE_NAME
+    function fetchSWVersion() {
+        fetch('sw.js', { cache: 'no-store' })
+            .then(function(r) { return r.text(); })
+            .then(function(text) {
+                var m = text.match(/CACHE_NAME\s*=\s*['"][^'"]*v([\d.]+)/);
+                showAppVersion(m ? m[1] : null);
+            })
+            .catch(function() { showAppVersion(null); });
+    }
+
+    // Intenta obtener la versión del SW activo vía MessageChannel
     function askSWVersion() {
         if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            var responded = false;
             var mc = new MessageChannel();
-            mc.port1.onmessage = function(e) { showAppVersion(e.data.version); };
+            mc.port1.onmessage = function(e) {
+                responded = true;
+                showAppVersion(e.data.version);
+            };
             navigator.serviceWorker.controller.postMessage({ type: 'GET_VERSION' }, [mc.port2]);
+            // Si el SW antiguo (sin handler) no responde, fallback a fetch directo
+            setTimeout(function() { if (!responded) fetchSWVersion(); }, 1500);
         } else {
-            showAppVersion(null);
+            fetchSWVersion();
         }
     }
 
@@ -4561,18 +4579,21 @@ window.onload = function() {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('sw.js').then(function(reg) {
                 askSWVersion();
-                // Si se detecta una nueva versión del SW en segundo plano
                 reg.addEventListener('updatefound', function() {
                     var newWorker = reg.installing;
                     newWorker.addEventListener('statechange', function() {
-                        if (newWorker.state === 'activated') askSWVersion();
+                        if (newWorker.state === 'activated') {
+                            setTimeout(askSWVersion, 200);
+                        }
                     });
                 });
-            }).catch(function(err) { console.warn('SW:', err); showAppVersion(null); });
-            navigator.serviceWorker.addEventListener('controllerchange', askSWVersion);
+            }).catch(function(err) { console.warn('SW:', err); fetchSWVersion(); });
+            navigator.serviceWorker.addEventListener('controllerchange', function() {
+                setTimeout(askSWVersion, 200);
+            });
         });
     } else {
-        showAppVersion(null);
+        fetchSWVersion();
     }
 };
 </script>

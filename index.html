@@ -1238,6 +1238,7 @@
             <div class="col-lg-8 col-md-8"><div class="card home-card p-5 text-center h-100 d-flex flex-column animate-slideInUp" id="cardPonderacion" style="animation-delay: 0.5s;"><i class="bi bi-layers-half mb-3" style="font-size: 4rem; background: linear-gradient(135deg, #4facfe, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i><h3 class="mt-2 mb-3 fw-bold" style="font-size: 1.5rem;">Ponderación de actividades</h3><p class="text-muted flex-grow-1 mb-3" style="font-size: 1rem; line-height: 1.6;">Combina los resultados de varias actividades del mismo tipo aplicando un peso porcentual a cada una y obtén la nota ponderada por criterio.</p><button class="btn btn-info mt-auto btn-lg text-white"><i class="bi bi-box-arrow-in-right me-2"></i>Usar</button></div></div>
         </div>
         <div class="alert alert-info mt-5 text-center shadow-sm" style="border-radius: 16px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border: none; font-size: 1.05rem;"><i class="bi bi-info-circle-fill me-2" style="color: #0d6efd;"></i> Criterios <strong>TEC.4.X.Y.</strong> incluidos (Tecnología 4º ESO · LOMLOE).</div>
+        <div id="homeVersionFooter" class="text-center mt-4 mb-2" style="font-size: 0.78rem; color: #94a3b8;"></div>
     </div>
 
     <!-- APP 1: EXAMEN POR PREGUNTAS -->
@@ -4528,9 +4529,50 @@ window.onload = function() {
     showHome();
     setBodyColor('home');
 
+    // === VERSIÓN DESDE SERVICE WORKER ===
+    function showAppVersion(version) {
+        const footer = document.getElementById('homeVersionFooter');
+        if (!footer) return;
+        let html = '';
+        if (version) {
+            html += '<span class="me-1">App <strong>v' + version + '</strong></span>';
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                html += '<span class="me-1"><i class="bi bi-broadcast-pin" style="color:#198754;"></i> SW</span>';
+            }
+        } else if ('serviceWorker' in navigator) {
+            html += '<span class="me-1" style="color:#94a3b8;">SW sin caché</span>';
+        }
+        html += '<span>· by @angelmicelti</span>';
+        footer.innerHTML = html;
+    }
+
+    function askSWVersion() {
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            var mc = new MessageChannel();
+            mc.port1.onmessage = function(e) { showAppVersion(e.data.version); };
+            navigator.serviceWorker.controller.postMessage({ type: 'GET_VERSION' }, [mc.port2]);
+        } else {
+            showAppVersion(null);
+        }
+    }
+
     // Service Worker
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW:', err)));
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').then(function(reg) {
+                askSWVersion();
+                // Si se detecta una nueva versión del SW en segundo plano
+                reg.addEventListener('updatefound', function() {
+                    var newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', function() {
+                        if (newWorker.state === 'activated') askSWVersion();
+                    });
+                });
+            }).catch(function(err) { console.warn('SW:', err); showAppVersion(null); });
+            navigator.serviceWorker.addEventListener('controllerchange', askSWVersion);
+        });
+    } else {
+        showAppVersion(null);
     }
 };
 </script>

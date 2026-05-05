@@ -30,6 +30,14 @@ self.addEventListener('fetch', event => {
   );
 });
 
+// Devuelve la versión al solicitante
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'GET_VERSION') {
+    const match = CACHE_NAME.match(/v([\d.]+)$/);
+    event.ports[0].postMessage({ version: match ? match[1] : CACHE_NAME });
+  }
+});
+
 // Limpia cachés antiguas al activar
 self.addEventListener('activate', event => {
   event.waitUntil(

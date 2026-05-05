@@ -1350,16 +1350,16 @@
                     <div class="col-md-6"><label class="form-label fw-semibold">📚 Curso</label><input type="text" id="testCourseInput" class="form-control" placeholder="Ejemplo 4º ESO"></div>
                 </div>
             </div>
-			<div class="section-card">
-				<div class="section-title"><i class="fas fa-users"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos que realizarán el test."></i></div>
-				<div class="d-flex flex-wrap gap-3 align-items-center">
-					<div class="d-flex flex-wrap"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
-					<div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
-					<button id="testBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
-				</div>
-				<div id="testStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="testStudentCountBadge">0</span> alumnos<div id="testStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
-				<div id="testDuplicateMessage" class="small text-danger mt-2"></div>
-			</div>
+                        <div class="section-card">
+                                <div class="section-title"><i class="fas fa-users"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos que realizarán el test."></i></div>
+                                <div class="d-flex flex-wrap gap-3 align-items-center">
+                                        <div class="d-flex flex-wrap"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
+                                        <div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
+                                        <button id="testBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
+                                </div>
+                                <div id="testStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="testStudentCountBadge">0</span> alumnos<div id="testStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
+                                <div id="testDuplicateMessage" class="small text-danger mt-2"></div>
+                        </div>
             <div class="section-card">
                 <div class="section-title"><i class="fas fa-check-double"></i> Criterios TEC.4.X.Y. <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Todos los alumnos recibirán la misma nota en cada criterio."></i></div>
                 <div class="d-flex flex-wrap align-items-center gap-3">
@@ -2463,10 +2463,10 @@ function exportResults(app, fmt, includeGrade) {
         XLSX.writeFile(wb, `Resultados_${baseName}.xlsx`);
     } else if (fmt === 'pdf') {
         const {jsPDF} = window.jspdf; const doc = new jsPDF({orientation:'landscape'});
-		doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(state.examName.toUpperCase(), 14, 20);
-		doc.setFontSize(11); doc.setFont(undefined,'normal'); doc.text(`Curso: ${state.course || ''}`, 14, 28);
-		const headers = Object.keys(resultados[0] || {});
-		doc.autoTable({ head:[headers], body:resultados.map(r=>headers.map(h=>r[h]??'')), startY:36, theme:'grid' });
+                doc.setFontSize(16); doc.setFont(undefined,'bold'); doc.text(state.examName.toUpperCase(), 14, 20);
+                doc.setFontSize(11); doc.setFont(undefined,'normal'); doc.text(`Curso: ${state.course || ''}`, 14, 28);
+                const headers = Object.keys(resultados[0] || {});
+                doc.autoTable({ head:[headers], body:resultados.map(r=>headers.map(h=>r[h]??'')), startY:36, theme:'grid' });
         doc.save(`Resultados_${baseName}.pdf`);
     }
 }
@@ -2825,7 +2825,11 @@ function populateExamQuestionCriteria(question) {
     });
     document.getElementById('examSaveQuestionCriteria').onclick = function() {
         question.criteriaCodes = [...container.querySelectorAll('.question-criteria-chk:checked')].map(c=>c.value);
-        renderExamQuestionsTable(); validateExamCriteria(); updateExamConfigWarning();
+        var modalEl = document.getElementById('examQuestionCriteriaModal');
+        modalEl.addEventListener('hidden.bs.modal', function handler() {
+            modalEl.removeEventListener('hidden.bs.modal', handler);
+            renderExamQuestionsTable(); validateExamCriteria(); updateExamConfigWarning();
+        });
     };
 }
 
@@ -4081,11 +4085,15 @@ window.onload = function() {
     document.getElementById('saveGlobalCriteriaBtn').addEventListener('click', function() {
         const app = document.getElementById('globalCriteriaModal').dataset.currentApp;
         appStates[app].globalCriteria = [...document.querySelectorAll('#globalCriteriaGroupedContainer .global-criteria-chk:checked')].map(c=>c.value);
-        renderGlobalBadges(app);
-        if (app==='generic') { normalizeGenericScores(); if(document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable(); }
-        if (app==='exam') { validateExamCriteria(); updateExamConfigWarning(); }
-        if (app==='test') updateTestConfigWarning();
-        if (app==='generic') updateGenericConfigWarning();
+        var modalEl = document.getElementById('globalCriteriaModal');
+        modalEl.addEventListener('hidden.bs.modal', function handler() {
+            modalEl.removeEventListener('hidden.bs.modal', handler);
+            renderGlobalBadges(app);
+            if (app==='generic') { normalizeGenericScores(); if(document.getElementById('genericScreenGrade').classList.contains('active')) renderGenericGradeTable(); }
+            if (app==='exam') { validateExamCriteria(); updateExamConfigWarning(); }
+            if (app==='test') updateTestConfigWarning();
+            if (app==='generic') updateGenericConfigWarning();
+        });
     });
 
     // Modal exportar resultados

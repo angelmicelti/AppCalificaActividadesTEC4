@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tec4-cache-v12.18';
+const CACHE_NAME = 'tec4-cache-v12.19';
 const urlsToCache = [
   '.',
   './index.html',  // o el nombre de tu archivo principal
@@ -38,13 +38,13 @@ self.addEventListener('message', event => {
   }
 });
 
-// Limpia cachés antiguas al activar
+// Limpia cachés antiguas al activar y toma control inmediato
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(
       keys.map(key => {
         if (key !== CACHE_NAME) return caches.delete(key);
       })
-    ))
+    )).then(() => self.clients.claim())
   );
 });

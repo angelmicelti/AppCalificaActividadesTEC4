@@ -1,6 +1,6 @@
 {
-  "name": "AppCalificaActividadesTEC4",
-  "short_name": "CalificaTEC4",
+  "name": "Evaluación TEC4",
+  "short_name": "AppEvalTEC4",
   "icons": [
     {
       "src": "icons/icon-48x48.png",

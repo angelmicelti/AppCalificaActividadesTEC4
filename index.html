@@ -1765,7 +1765,7 @@
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title" id="globalCriteriaModalTitle">Criterios TEC.4.X.Y.</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body" id="globalCriteriaGroupedContainer"></div>
-                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" id="saveGlobalCriteriaBtn" data-bs-dismiss="modal">Guardar</button></div>
+                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" id="saveGlobalCriteriaBtn">Guardar</button></div>
             </div>
         </div>
     </div>
@@ -1776,7 +1776,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-secondary text-white"><h5 class="modal-title">Asignar criterios - Pregunta <span id="examModalQuestionId"></span></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body" id="examQuestionCriteriaGroupedContainer"></div>
-                <div class="modal-footer"><button class="btn btn-primary" id="examSaveQuestionCriteria" data-bs-dismiss="modal">Guardar</button></div>
+                <div class="modal-footer"><button class="btn btn-primary" id="examSaveQuestionCriteria">Guardar</button></div>
             </div>
         </div>
     </div>
@@ -2830,6 +2830,8 @@ function populateExamQuestionCriteria(question) {
             modalEl.removeEventListener('hidden.bs.modal', handler);
             renderExamQuestionsTable(); validateExamCriteria(); updateExamConfigWarning();
         });
+        var bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
     };
 }
 
@@ -4094,6 +4096,8 @@ window.onload = function() {
             if (app==='test') updateTestConfigWarning();
             if (app==='generic') updateGenericConfigWarning();
         });
+        var bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
     });
 
     // Modal exportar resultados

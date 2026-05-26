@@ -1035,22 +1035,6 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
-        
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
 
         @keyframes slideInUp {
             from {
@@ -1265,7 +1249,7 @@
                 <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos."></i></div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="d-flex flex-wrap"><input type="text" id="examStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="examBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
-                    <div><label for="examImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="examImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
+                    <div><label for="examImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="examImportFile" accept=".xlsx,.xls,.json" hidden></div>
                     <button id="examBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                 </div>
                 <div id="examStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="examStudentCountBadge">0</span> alumnos<div id="examStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1354,7 +1338,7 @@
                                 <div class="section-title"><i class="fas fa-users"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos que realizarán el test."></i></div>
                                 <div class="d-flex flex-wrap gap-3 align-items-center">
                                         <div class="d-flex flex-wrap"><input type="text" id="testStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="testBtnAddStudent" class="btn btn-success ms-2"><i class="fas fa-plus-circle"></i> +</button></div>
-                                        <div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
+                                        <div><label for="testImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="testImportFile" accept=".xlsx,.xls,.json" hidden></div>
                                         <button id="testBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                                 </div>
                                 <div id="testStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="testStudentCountBadge">0</span> alumnos<div id="testStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1454,7 +1438,7 @@
                 <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos."></i></div>
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="d-flex flex-wrap"><input type="text" id="genericStudentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="genericBtnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
-                    <div><label for="genericImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="genericImportFile" accept=".xlsx,.xls,.json,.csv" hidden></div>
+                    <div><label for="genericImportFile" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="genericImportFile" accept=".xlsx,.xls,.json" hidden></div>
                     <button id="genericBtnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                 </div>
                 <div id="genericStudentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="genericStudentCountBadge">0</span> alumnos<div id="genericStudentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1539,7 +1523,7 @@
                     <div class="section-title"><i class="bi bi-people-fill"></i> Alumnado (orden alfabético) <i class="bi bi-question-circle help-icon" data-bs-toggle="tooltip" title="Lista de alumnos."></i></div>
                     <div class="d-flex flex-wrap gap-3 align-items-center">
                         <div class="d-flex flex-wrap"><input type="text" id="inst_studentNameInput" class="form-control" placeholder="Apellidos, Nombre" style="width:260px;"><button id="inst_btnAddStudent" class="btn btn-success ms-2"><i class="bi bi-plus-circle"></i> +</button></div>
-                        <div><label for="inst_importExcel" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="inst_importExcel" accept=".xlsx,.xls,.json,.csv" hidden></div>
+                        <div><label for="inst_importExcel" class="import-label"><i class="fas fa-file-import"></i> Importar Excel/JSON</label><input type="file" id="inst_importExcel" accept=".xlsx,.xls,.json" hidden></div>
                         <button id="inst_btnClearStudents" class="btn btn-sm btn-outline-danger">Limpiar lista</button>
                     </div>
                     <div id="inst_studentListContainer" class="mt-3 p-3 bg-white rounded-3 border"><span class="fw-bold">📌 Lista: </span><span id="inst_studentCountBadge">0</span> alumnos<div id="inst_studentTags" class="mt-2 d-flex flex-wrap"></div></div>
@@ -1885,7 +1869,7 @@
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title">Exportar resultados</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body"><div class="form-check"><input class="form-check-input" type="checkbox" id="sharedExportIncludeGrade" checked><label class="form-check-label" for="sharedExportIncludeGrade">Incluir columna Calificación</label></div></div>
-                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" id="sharedExportConfirm" data-bs-dismiss="modal">Exportar</button></div>
+                <div class="modal-footer"><button class="btn btn-secondary" id="sharedExportCancelBtn">Cancelar</button><button class="btn btn-primary" id="sharedExportConfirm" data-bs-dismiss="modal">Exportar</button></div>
             </div>
         </div>
     </div>
@@ -1973,9 +1957,14 @@ function downloadJSON(data, filename) {
     const a = Object.assign(document.createElement('a'), {href: url, download: filename});
     a.click(); URL.revokeObjectURL(url);
 }
+const escapeHtml = str => (str||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const _msgTimers = {};
 function showMessage(id, html, ms = 3000) {
     const el = document.getElementById(id);
-    if (el) { el.innerHTML = html; setTimeout(() => el.innerHTML = '', ms); }
+    if (!el) return;
+    if (_msgTimers[id]) clearTimeout(_msgTimers[id]);
+    el.innerHTML = html;
+    _msgTimers[id] = setTimeout(() => { el.innerHTML = ''; delete _msgTimers[id]; }, ms);
 }
 function showDuplicateMessage(id, text) {
     const el = document.getElementById(id);
@@ -1993,7 +1982,8 @@ function readJSONFile(file, cb) {
 
 /** Guarda datos en localStorage y muestra confirmación. */
 function localSave(key, getData) {
-    localStorage.setItem(key, JSON.stringify(getData()));
+    try { localStorage.setItem(key, JSON.stringify(getData())); }
+    catch(e) { return alert('Error: no se pudo guardar. Almacenamiento lleno o no disponible.'); }
     alert('✅ Guardado localmente.');
 }
 
@@ -2034,11 +2024,11 @@ function renderStudentTags(state, tagsId, countId, onChange) {
     const countSpan = document.getElementById(countId);
     if (!tagsDiv) return;
     tagsDiv.innerHTML = '';
-    countSpan.textContent = state.students.length;
+    if (countSpan) countSpan.textContent = state.students.length;
     state.students.forEach((student, idx) => {
         const span = document.createElement('span');
         span.className = 'student-tag';
-        span.innerHTML = `${student.fullName}
+        span.innerHTML = `${escapeHtml(student.fullName)}
             <i class="bi bi-pencil-fill text-primary" style="cursor:pointer; margin-left:5px;" data-stuidx="${idx}" data-action="edit"></i>
             <i class="bi bi-x-circle-fill text-danger" style="cursor:pointer;" data-stuidx="${idx}" data-action="delete"></i>`;
         tagsDiv.appendChild(span);
@@ -2072,7 +2062,7 @@ function renderStudentTags(state, tagsId, countId, onChange) {
 }
 
 /**
- * Importa alumnos desde Excel/JSON/CSV.
+ * Importa alumnos desde Excel/JSON.
  * Soporta scoresField: 'scores', 'studentScores', 'evalScores'.
  */
 function importStudentsFromFile(file, state, scoresField, afterImport) {
@@ -2097,15 +2087,15 @@ function importStudentsFromFile(file, state, scoresField, afterImport) {
             if (isStudentDuplicate(state, trimmed)) { skipped++; return; }
             state.students.push({id: uuid(), fullName: trimmed});
             if (scoresField === 'scores' && state.scores)
-                state.scores.push(new Array(state.globalCriteria?.length || state.questions?.length || 0).fill(0));
+                state.scores.push(new Array(state.questions?.length || state.globalCriteria?.length || 0).fill(0));
             else if (scoresField === 'studentScores' && state.studentScores)
-                state.studentScores.push(state.totalQuestions ? {correct:0, wrong:0, unanswered:state.totalQuestions} : {});
+                state.studentScores.push({correct:0, wrong:0, unanswered: state.totalQuestions || 0});
+            else if (scoresField === 'evalScores' && state.evalScores)
+                state.evalScores.push(new Array(state.instruments?.length || 0).fill(0));
             added++;
         });
         if (added > 0) {
             sortStudents(state, scoresField);
-            if (scoresField === 'evalScores')
-                state.evalScores = state.students.map(() => new Array(state.instruments?.length || 0).fill(0));
             if (afterImport) afterImport();
         }
         showDuplicateMessage(state.duplicateMessageId, skipped > 0 ? `Se omitieron ${skipped} duplicado(s).` : '');
@@ -2323,7 +2313,7 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
     tbody.innerHTML = '';
     state.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
+        tr.innerHTML = `<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
         state.globalCriteria.forEach((c, cIdx) => {
             const td = document.createElement('td'); td.style.minWidth='100px';
             const fbg = criteriaFamilyBg(c, app);
@@ -2383,8 +2373,13 @@ function buildResultsData(app, includeGrade) {
             const row = { Alumno: student.fullName };
             genericState.globalCriteria.forEach((c, cIdx) => row[c+'.'] = genericState.scores[sIdx]?.[cIdx] ?? 0);
             if (includeGrade) {
-                const sum = genericState.scores[sIdx].reduce((a,b)=>a+b,0);
-                row['Calificación'] = parseFloat((sum / genericState.globalCriteria.length).toFixed(2));
+                const scoreRow = genericState.scores[sIdx];
+                if (scoreRow && genericState.globalCriteria.length > 0) {
+                    const sum = scoreRow.reduce((a,b)=>a+b,0);
+                    row['Calificación'] = parseFloat((sum / genericState.globalCriteria.length).toFixed(2));
+                } else {
+                    row['Calificación'] = null;
+                }
             }
             return row;
         });
@@ -2420,7 +2415,7 @@ function renderResultsTable(app) {
     const gradeColor = v => `hsl(${v * 12}, 80%, 70%)`;
     buildResultsData(app, showGlobal).forEach(row => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><strong>${row.Alumno}</strong></td>`;
+        tr.innerHTML = `<td><strong>${escapeHtml(row.Alumno)}</strong></td>`;
         criteria.forEach(c => {
             const td = document.createElement('td');
             const fbg = criteriaFamilyBg(c, app);
@@ -2447,6 +2442,8 @@ let _pendingExport = { app:'', fmt:'', grade:true };
 
 function exportResults(app, fmt, includeGrade) {
     if (app === 'inst') { inst_exportResults(fmt, includeGrade); return; }
+    if (app === 'exam') normalizeExamScores();
+    if (app === 'generic') normalizeGenericScores();
     const state = appStates[app];
     if (!state.students.length) return alert('No hay datos para exportar.');
     const prefixMap = { exam:'Examen', test:'Test', generic:'Actividad' };
@@ -2557,7 +2554,7 @@ function importAppScores(file, app) {
         } else if (app === 'test') {
             if (!data.examName||!Array.isArray(data.students)||!Array.isArray(data.studentScores)||!data.totalQuestions) throw new Error('Formato inválido');
             if (data.students.length!==testState.students.length && !confirm('El número de alumnos no coincide. ¿Continuar?')) return;
-            testState.studentScores = data.studentScores.map(ss=>({ correct:ss.correct||0, wrong:ss.wrong||0, unanswered:testState.totalQuestions-(ss.correct||0)-(ss.wrong||0) }));
+            testState.studentScores = data.studentScores.map(ss=>({ correct:ss.correct||0, wrong:ss.wrong||0, unanswered: Math.max(0, testState.totalQuestions-(ss.correct||0)-(ss.wrong||0)) }));
             renderTestGradeTable(); showMessage('testGradeMessage','<i class="bi bi-check-circle"></i> Calificaciones importadas.');
         } else {
             if (!data.examName||!Array.isArray(data.students)||!Array.isArray(data.scores)||!Array.isArray(data.criteria)) throw new Error('Formato inválido');
@@ -2584,14 +2581,16 @@ function saveScoresLocal(app) {
         test:    { key:'test_scores_backup',    getData:()=>({ students:testState.students.map(s=>s.fullName), totalQuestions:testState.totalQuestions, studentScores:testState.studentScores.map(ss=>({correct:ss.correct,wrong:ss.wrong,unanswered:ss.unanswered})) }),                 msgId:'testGradeMessage' },
         generic: { key:'generic_scores_backup', getData:()=>({ students:genericState.students.map(s=>s.fullName), criteria:genericState.globalCriteria, scores:genericState.scores }),                                                                                                    msgId:'genericGradeMessage' }
     }[app];
-    localStorage.setItem(cfgs.key, JSON.stringify(cfgs.getData()));
+    try { localStorage.setItem(cfgs.key, JSON.stringify(cfgs.getData())); }
+    catch(e) { return alert('Error: no se pudo guardar. Almacenamiento lleno o no disponible.'); }
     showMessage(cfgs.msgId, '<i class="bi bi-check-circle"></i> Calificaciones guardadas localmente.');
 }
 
 /** Guarda toda la configuración de una app en localStorage. */
 function saveAppToLocal(app) {
     const keys = { exam:'tec4_exam_app', test:'tec4_test_app', generic:'tec4_generic_app' };
-    localStorage.setItem(keys[app], JSON.stringify(appStates[app]));
+    try { localStorage.setItem(keys[app], JSON.stringify(appStates[app])); }
+    catch(e) { return alert('Error: no se pudo guardar. Almacenamiento lleno o no disponible.'); }
     alert('✅ Configuración guardada.');
 }
 
@@ -2783,6 +2782,7 @@ function renderExamQuestionsTable() {
     });
     tbody.querySelectorAll('.assign-criteria-btn').forEach(btn => btn.addEventListener('click', function() {
         const q = examState.questions.find(q => q.id === parseInt(this.dataset.qid));
+        if (!q) return;
         document.getElementById('examModalQuestionId').textContent = q.id;
         populateExamQuestionCriteria(q);
     }));
@@ -2857,7 +2857,7 @@ function renderExamGradeTable() {
     tbody.innerHTML = '';
     examState.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
+        tr.innerHTML = `<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
         examState.questions.forEach((q, qIdx) => {
             const td = document.createElement('td'); td.style.minWidth='80px';
             td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input exam-score-input" data-student="${sIdx}" data-question="${qIdx}" value="${formatGradeDisplay(examState.scores[sIdx]?.[qIdx]??0)}" placeholder="0">`;
@@ -2909,7 +2909,7 @@ function renderTestGradeTable() {
         const sc = testState.studentScores[sIdx];
         sc.unanswered = Math.max(0, testState.totalQuestions - sc.correct - sc.wrong);
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><strong>${student.fullName}</strong></td>`;
+        tr.innerHTML = `<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
         const tdC = document.createElement('td');
         const selC = document.createElement('select'); selC.className='grade-select test-correct-select'; selC.dataset.student=sIdx;
         for (let i=0;i<=testState.totalQuestions;i++) { const o=document.createElement('option'); o.value=i; o.textContent=i; if(i===sc.correct) o.selected=true; selC.appendChild(o); }
@@ -3079,6 +3079,7 @@ function inst_updateConfigButtonState() {
             if (!instrumentState.actividad.trim()) missing.push('<strong>el nombre de la actividad</strong>');
             if (!instrumentState.clase.trim()) missing.push('<strong>el curso</strong>');
             if (!instrumentState.students.length) missing.push('<strong>al menos un alumno/a en la lista</strong>');
+            if (!instrumentState.instruments.length) missing.push('<strong>al menos un instrumento</strong>');
             cfgWarn.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i> Para continuar, completa:'
                 + '<ul style="margin:4px 0 0;padding-left:1.4em;list-style:none;">'
                 + missing.map(m => '<li>— ' + m + '</li>').join('')
@@ -3139,14 +3140,14 @@ function inst_renderMatrix() {
     instrumentState.instruments.forEach((inst,i)=>{
         const tr=document.createElement('tr');
         const descPreview = inst.description && inst.description.trim()
-            ? `<div style="font-size:0.73rem;color:#6c757d;margin-top:3px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${inst.description.replace(/"/g,'&quot;')}">${inst.description}</div>`
+            ? `<div style="font-size:0.73rem;color:#6c757d;margin-top:3px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(inst.description)}">${escapeHtml(inst.description)}</div>`
             : `<div style="font-size:0.68rem;color:#b0b8c1;margin-top:2px;font-style:italic;">Sin descripción</div>`;
         const firstTd = document.createElement('td');
         firstTd.style.cssText = 'cursor:pointer;min-width:140px;';
         firstTd.title = 'Clic para editar nombre y descripción';
         firstTd.classList.add('inst-instr-matrix-cell');
         firstTd.dataset.instrIdx = i;
-        firstTd.innerHTML = `<strong style="color:#0b4b6b;">${inst.name}</strong>${descPreview}<div style="font-size:0.62rem;color:#6f42c1;margin-top:2px;opacity:0.7;">✎ editar</div>`;
+        firstTd.innerHTML = `<strong style="color:#0b4b6b;">${escapeHtml(inst.name)}</strong>${descPreview}<div style="font-size:0.62rem;color:#6f42c1;margin-top:2px;opacity:0.7;">✎ editar</div>`;
         firstTd.addEventListener('click', () => openInstrDescModal(i));
         tr.appendChild(firstTd);
         for(let j=0;j<criteriaToShow.length;j++){
@@ -3237,27 +3238,26 @@ function inst_renderEvaluation() {
         const isLast=(i===n-1);
         const div=document.createElement('div'); div.className='input-group input-group-sm'; div.style.cssText='min-width:220px;flex:1 0 auto;';
         div.innerHTML = isLast
-            ? `<span class="input-group-text">${inst.name}</span><input type="number" step="0.01" class="form-control inst-eval-weight-input inst-weight-readonly" data-i="${i}" value="${(instrumentState.evalWeights[i]||inst.weight).toFixed(2)}" readonly tabindex="-1"><span class="input-group-text" style="background:#e8f5e9;color:#198754;font-size:0.72rem;">auto</span>`
-            : `<span class="input-group-text">${inst.name}</span><input type="number" step="0.01" min="1" max="${maxEditable}" class="form-control inst-eval-weight-input" data-i="${i}" value="${(instrumentState.evalWeights[i]||inst.weight).toFixed(2)}"><span class="input-group-text text-muted" style="font-size:0.75rem;">%</span>`;
+            ? `<span class="input-group-text">${escapeHtml(inst.name)}</span><input type="number" step="0.01" class="form-control inst-eval-weight-input inst-weight-readonly" data-i="${i}" value="${(instrumentState.evalWeights[i]||inst.weight).toFixed(2)}" readonly tabindex="-1"><span class="input-group-text" style="background:#e8f5e9;color:#198754;font-size:0.72rem;">auto</span>`
+            : `<span class="input-group-text">${escapeHtml(inst.name)}</span><input type="number" step="0.01" min="1" max="${maxEditable}" class="form-control inst-eval-weight-input" data-i="${i}" value="${(instrumentState.evalWeights[i]||inst.weight).toFixed(2)}"><span class="input-group-text text-muted" style="font-size:0.75rem;">%</span>`;
         weightsDiv.appendChild(div);
     });
     inst_syncPesosBadge();
     const showGrade=document.getElementById('inst_showGradeColumn').checked;
     document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((inst,i)=>{
         const hasDesc = inst.description && inst.description.trim();
-        const descTitle = (hasDesc ? inst.description + '\n\n' : '') + 'Clic para editar nombre y descripción';
-        return `<th class="inst-header-clickable" data-instr-idx="${i}" title="${descTitle.replace(/"/g,'&quot;')}" style="white-space:nowrap;min-width:110px;vertical-align:middle;">`+
-            `<span style="display:block;font-size:0.85rem;font-weight:700;color:#0b4b6b;">${inst.name}</span>`+
+        return `<th class="inst-header-clickable" data-instr-idx="${i}" title="${escapeHtml(hasDesc ? inst.description + '\n\n' : '')}Clic para editar nombre y descripción" style="white-space:nowrap;min-width:110px;vertical-align:middle;">`+
+            `<span style="display:block;font-size:0.85rem;font-weight:700;color:#0b4b6b;">${escapeHtml(inst.name)}</span>`+
             `<span class="inst-desc-indicator">${hasDesc ? '📝' : '✎'}</span></th>`;
     }).join('')+usedCriteria.map(c=>{
         const custom = instrumentState.criteriaDescriptions && instrumentState.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
         const fbg = criteriaFamilyBg(c, 'inst');
         const bgStyle = fbg ? ` style="background-color:${fbg};"` : '';
-        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="inst"${bgStyle} title="${getAppCriterionDesc(c,'inst').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}</th>`;
+        return `<th class="criteria-th-editable${custom}" data-code="${c}" data-app="inst"${bgStyle} title="${getAppCriterionDesc(c,'inst').replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.</th>`;
     }).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
     const tbody=document.getElementById('inst_evalTbody'); tbody.innerHTML='';
     instrumentState.students.forEach((student,sIdx)=>{
-        const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${student.fullName}</strong></td>`;
+        const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
         instrumentState.instruments.forEach((_,i)=>{
             const td=document.createElement('td');
             td.style.cssText='text-align:center;vertical-align:middle;padding:4px;';
@@ -3297,14 +3297,6 @@ function inst_renderEvaluation() {
         const lastCfg=document.querySelector(`#inst_instrumentsBody input[data-idx="${nI-1}"][data-field="weight"]`); if(lastCfg) lastCfg.value=instrumentState.instruments[nI-1].weight.toFixed(2);
         inst_syncPesosBadge(); inst_updateAllCriteria();
     }));
-    // Click en encabezado de instrumento → modal descripción
-    document.getElementById('inst_evalThead').addEventListener('click', function(e) {
-        const th = e.target.closest('th.inst-header-clickable');
-        if (!th) return;
-        const idx = parseInt(th.dataset.instrIdx);
-        if (isNaN(idx)) return;
-        openInstrDescModal(idx);
-    });
     inst_updateAllCriteria();
 }
 
@@ -3393,12 +3385,13 @@ function inst_exportMatrix() {
 }
 function inst_importMatrix(file) {
     readJSONFile(file, data => {
+        if (!data.matrix || !Array.isArray(data.matrix)) return alert('El archivo no contiene una matriz válida.');
         if(data.matrix.length!==instrumentState.instruments.length) return alert('El número de instrumentos no coincide.');
         instrumentState.matrix=data.matrix; inst_renderMatrix(); inst_updateIrEvalButton(); alert('✅ Matriz importada.');
     });
 }
 function inst_saveMatrixLocal() { localSave('inst_matrix_backup', ()=>({matrix:instrumentState.matrix})); }
-function inst_loadMatrixLocal() { localLoad('inst_matrix_backup', data=>{ instrumentState.matrix=data.matrix; inst_renderMatrix(); inst_updateIrEvalButton(); alert('✅ Matriz cargada.'); }); }
+function inst_loadMatrixLocal() { localLoad('inst_matrix_backup', data=>{ if(!data.matrix||!Array.isArray(data.matrix)){alert('Matriz no válida.');return;} instrumentState.matrix=data.matrix; inst_renderMatrix(); inst_updateIrEvalButton(); alert('✅ Matriz cargada.'); }); }
 
 // --- Exportar / importar / guardar / cargar calificaciones ---
 function inst_exportEvalJson() {
@@ -3470,6 +3463,7 @@ const ponderacionState = {
 };
 
 function pond_initActividades(n) {
+    if (!n || n < 1) n = 2;
     const prev = ponderacionState.actividades;
     ponderacionState.actividades = Array.from({length: n}, (_, i) => {
         const existing = prev[i];
@@ -3707,7 +3701,7 @@ function pond_renderResults() {
     if (infoDiv) {
         infoDiv.innerHTML = ponderacionState.actividades.filter(a => a.loaded).map((a, i) =>
             `<span class="badge" style="background:#00bcd4;color:#fff;font-size:0.83rem;padding:6px 12px;border-radius:20px;">
-                <strong>A${i+1}:</strong> ${a.nombre} · <strong>${a.peso}%</strong>
+                <strong>A${i+1}:</strong> ${escapeHtml(a.nombre)} · <strong>${a.peso}%</strong>
             </span>`
         ).join('');
     }
@@ -3721,13 +3715,13 @@ function pond_renderResults() {
     const showGrade = document.getElementById('pond_showGradeColumn')?.checked !== false;
     const showActs  = document.getElementById('pond_showActivityCols')?.checked !== false;
     const acts = ponderacionState.actividades.filter(a => a.loaded);
-    const gradeColor = v => `hsl(${v * 12}, 80%, 70%)`;
+    const gradeColor = v => `hsl(${Math.min(10, Math.max(0, v)) * 12}, 80%, 70%)`;
 
     // Header
     let hHtml = '<tr><th>ALUMNADO</th>';
     if (showActs) acts.forEach((a,i) => {
         hHtml += `<th style="background:#b2ebf2;font-size:0.8rem;" title="Peso: ${a.peso}%">
-            <span style="color:#006064;">A${i+1}: ${a.nombre}</span><br>
+            <span style="color:#006064;">A${i+1}: ${escapeHtml(a.nombre)}</span><br>
             <small class="text-muted fw-normal">${a.peso}%</small></th>`;
     });
     criteria.forEach(c => {
@@ -3744,7 +3738,7 @@ function pond_renderResults() {
         tbody.innerHTML = '';
         rows.forEach(row => {
             const tr = document.createElement('tr');
-            let html = `<td><strong>${row.Alumno}</strong></td>`;
+            let html = `<td><strong>${escapeHtml(row.Alumno)}</strong></td>`;
             if (showActs) acts.forEach((a, ai) => {
                 const v = row[`__ACT__${ai}`];
                 html += v===null||v===undefined
@@ -3795,7 +3789,7 @@ function pond_exportResults(fmt) {
         const wsData = [
             [`Ponderación: ${ponderacionState.nombre}`],
             [`Curso: ${ponderacionState.curso}`],
-            [`Actividades: ${acts.map(a=>`${a.nombre} (${a.peso}%)`).join(' | ')}`],
+            [`Actividades: ${acts.map(a=>`${escapeHtml(a.nombre)} (${a.peso}%)`).join(' | ')}`],
             [],
             headers,
             ...rows.map(row => headers.map(h => {
@@ -3844,7 +3838,7 @@ function pond_importConfig(file) {
     readJSONFile(file, data => {
         if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
         if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
-        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || 2;
+        if (data.numActividades !== undefined) { const nA = parseInt(data.numActividades); if (!isNaN(nA) && nA >= 2 && nA <= 10) ponderacionState.numActividades = nA; }
         const ni = document.getElementById('pond_nombreInput');
         const ci = document.getElementById('pond_cursoInput');
         const na = document.getElementById('pond_numActividadesInput');
@@ -3861,7 +3855,7 @@ function pond_loadConfigLocal() {
     localLoad('pond_config_backup', data => {
         if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
         if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
-        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || 2;
+        if (data.numActividades !== undefined) { const nA = parseInt(data.numActividades); if (!isNaN(nA) && nA >= 2 && nA <= 10) ponderacionState.numActividades = nA; }
         const ni = document.getElementById('pond_nombreInput');
         const ci = document.getElementById('pond_cursoInput');
         const na = document.getElementById('pond_numActividadesInput');
@@ -3907,7 +3901,7 @@ function pond_importImport(file) {
         if (!data.actividades || !Array.isArray(data.actividades)) { alert('Formato no v\u00e1lido: falta campo "actividades".'); return; }
         if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
         if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
-        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || data.actividades.length;
+        if (data.numActividades !== undefined) { const nA = parseInt(data.numActividades); if (!isNaN(nA) && nA >= 2 && nA <= 10) ponderacionState.numActividades = nA; }
         ponderacionState.actividades = data.actividades.map((a, i) => ({
             nombre: a.nombre || `Actividad ${i+1}`, peso: parseFloat(a.peso) || 0,
             loaded: a.loaded || (Array.isArray(a.resultados) && a.resultados.length > 0),
@@ -3933,7 +3927,7 @@ function pond_loadImportLocal() {
         if (!data.actividades || !Array.isArray(data.actividades)) { alert('Datos locales con formato no v\u00e1lido.'); return; }
         if (data.nombre !== undefined) ponderacionState.nombre = data.nombre;
         if (data.curso  !== undefined) ponderacionState.curso  = data.curso;
-        if (data.numActividades) ponderacionState.numActividades = parseInt(data.numActividades) || data.actividades.length;
+        if (data.numActividades !== undefined) { const nA = parseInt(data.numActividades); if (!isNaN(nA) && nA >= 2 && nA <= 10) ponderacionState.numActividades = nA; }
         ponderacionState.actividades = data.actividades.map((a, i) => ({
             nombre: a.nombre || `Actividad ${i+1}`, peso: parseFloat(a.peso) || 0,
             loaded: a.loaded || (Array.isArray(a.resultados) && a.resultados.length > 0),
@@ -4040,6 +4034,15 @@ window.onload = function() {
     inst_renderInstrumentsTable();
     renderInstrumentosStudentTags();
 
+    // Click delegado en encabezados de instrumento (Evaluación) → modal descripción (registrado una vez)
+    document.getElementById('inst_evalThead').addEventListener('click', function(e) {
+        const th = e.target.closest('th.inst-header-clickable');
+        if (!th) return;
+        const idx = parseInt(th.dataset.instrIdx);
+        if (isNaN(idx)) return;
+        openInstrDescModal(idx);
+    });
+
     // Navegación principal
     document.getElementById('btnHome').addEventListener('click', showHome);
     [['btnAppExam','appExamContainer'],['btnAppTest','appTestContainer'],['btnAppGeneric','appGenericContainer'],['btnAppInstrumentos','appInstrumentosContainer'],['btnAppPonderacion','appPonderacionContainer']].forEach(([btn,app])=>
@@ -4110,6 +4113,13 @@ window.onload = function() {
     document.getElementById('sharedExportConfirm').addEventListener('click', function() {
         _pendingExport.grade = document.getElementById('sharedExportIncludeGrade').checked;
     });
+    // Cancelar: limpiar _pendingExport para que no se exporte
+    document.getElementById('sharedExportCancelBtn').addEventListener('click', function() {
+        _pendingExport = { app:'', fmt:'', grade:true };
+        var modalEl = document.getElementById('sharedExportModal');
+        var bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
+    });
     // La exportación real se ejecuta DESPUÉS de que el modal se haya cerrado completamente (sin backdrop)
     document.getElementById('sharedExportModal').addEventListener('hidden.bs.modal', function() {
         if (_pendingExport.app && _pendingExport.fmt) {
@@ -4151,7 +4161,7 @@ window.onload = function() {
         if(confirm('¿Estás seguro de que deseas eliminar a todos los alumnos?')){ examState.students=[]; examState.scores=[]; renderExamStudentTags(); updateExamConfigWarning(); }
     });
     document.getElementById('examImportFile').addEventListener('change', function() {
-        if(this.files.length) importStudentsFromFile(this.files[0],examState,'scores',()=>{ renderExamStudentTags(); if(document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable(); updateExamConfigWarning(); });
+        if(this.files.length) importStudentsFromFile(this.files[0],examState,'scores',()=>{ normalizeExamScores(); renderExamStudentTags(); if(document.getElementById('examScreenGrade').classList.contains('active')) renderExamGradeTable(); updateExamConfigWarning(); });
         this.value='';
     });
     document.getElementById('examExportConfigBtn').addEventListener('click', ()=>exportAppConfig('exam'));
@@ -4457,6 +4467,7 @@ window.onload = function() {
         ponderacionState.nombre = document.getElementById('pond_nombreInput')?.value.trim() || ponderacionState.nombre;
         ponderacionState.curso  = document.getElementById('pond_cursoInput')?.value.trim()  || ponderacionState.curso;
         ponderacionState.numActividades = parseInt(document.getElementById('pond_numActividadesInput')?.value) || 2;
+        if (!pond_validateConfig()) return;
         pond_showScreen('Import');
     });
     document.getElementById('pond_tabResults')?.addEventListener('click', () => {

@@ -1958,10 +1958,7 @@ function downloadJSON(data, filename) {
     a.click(); URL.revokeObjectURL(url);
 }
 const escapeHtml = str => (str||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-<<<<<<< HEAD
 const _msgTimers = {};
-=======
->>>>>>> 083595d0f6320a89b26cb53d1a87d4ad40e1a664
 function showMessage(id, html, ms = 3000) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -2092,11 +2089,7 @@ function importStudentsFromFile(file, state, scoresField, afterImport) {
             if (scoresField === 'scores' && state.scores)
                 state.scores.push(new Array(state.questions?.length || state.globalCriteria?.length || 0).fill(0));
             else if (scoresField === 'studentScores' && state.studentScores)
-<<<<<<< HEAD
                 state.studentScores.push({correct:0, wrong:0, unanswered: state.totalQuestions || 0});
-=======
-                state.studentScores.push(state.totalQuestions ? {correct:0, wrong:0, unanswered:state.totalQuestions} : {});
->>>>>>> 083595d0f6320a89b26cb53d1a87d4ad40e1a664
             else if (scoresField === 'evalScores' && state.evalScores)
                 state.evalScores.push(new Array(state.instruments?.length || 0).fill(0));
             added++;

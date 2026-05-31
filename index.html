@@ -1854,6 +1854,11 @@
                         <label class="form-label fw-semibold">Descripción</label>
                         <textarea id="examQDescText" class="form-control" rows="5" placeholder="Describe el enunciado, el tema o qué se evalúa con esta pregunta…"></textarea>
                     </div>
+                    <hr style="border-color:#dee2e6; margin: 20px 0 16px;">
+                    <div class="mb-0">
+                        <label class="form-label fw-semibold"><i class="bi bi-tags me-1"></i> Criterios asociados</label>
+                        <div id="examQDescCriteriaContainer" style="max-height: 280px; overflow-y: auto;"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -2687,6 +2692,32 @@ function openQuestionDescModal(qIdx) {
     if (!q) return;
     document.getElementById('examQDescName').value = q.name || '';
     document.getElementById('examQDescText').value = q.description || '';
+    // Populate criteria checkboxes
+    const container = document.getElementById('examQDescCriteriaContainer');
+    if (container) {
+        container.innerHTML = '';
+        if (!examState.globalCriteria.length) {
+            container.innerHTML = '<div class="alert alert-warning py-2 mb-0" style="font-size:0.9rem;"><i class="bi bi-exclamation-triangle me-1"></i> No hay criterios globales seleccionados. Selecciona criterios en Configuración primero.</div>';
+        } else {
+            const groups = groupCriteriaByCompetence(examState.globalCriteria);
+            Object.keys(groups).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach((key, idx) => {
+                const div = document.createElement('div');
+                div.className = 'criteria-group';
+                div.style.borderLeftColor = competenceColors[idx % competenceColors.length];
+                div.style.marginBottom = '12px';
+                div.style.padding = '14px 18px';
+                div.innerHTML = `<div class="group-title" style="font-size:1rem;margin-bottom:10px;"><i class="bi bi-diagram-3"></i> ${key}</div><div class="row"></div>`;
+                const row = div.querySelector('.row');
+                groups[key].forEach(code => {
+                    const col = document.createElement('div'); col.className = 'col-md-6 mb-2';
+                    const id = `exam_qdesc_${q.id}_${code.replace(/\./g,'_')}`;
+                    col.innerHTML = `<div class="form-check"><input class="form-check-input exam-qdesc-criteria-chk" type="checkbox" value="${code}" id="${id}" ${q.criteriaCodes.includes(code)?'checked':''}><label class="form-check-label" for="${id}" title="${getAppCriterionDesc(code,'exam').replace(/"/g,'&quot;')}">${code}.</label></div>`;
+                    row.appendChild(col);
+                });
+                container.appendChild(div);
+            });
+        }
+    }
     document.getElementById('examQuestionDescModal').dataset.qIdx = qIdx;
     bootstrap.Modal.getOrCreateInstance(document.getElementById('examQuestionDescModal')).show();
 }
@@ -2847,7 +2878,7 @@ function renderExamGradeTable() {
         const hasDesc = q.description && q.description.trim();
         const titleTxt = hasDesc ? `${label} · max ${q.maxScore}\n${q.description}\n\n(Clic para editar)` : `${label} · max ${q.maxScore}\n(Clic para editar)`;
         return `<th class="exam-q-th-clickable" data-qidx="${qIdx}" title="${titleTxt.replace(/"/g,'&quot;')}">
-            ${label}<span class="q-desc-dot">${hasDesc ? '📝 max '+q.maxScore : 'max '+q.maxScore}</span>
+            ${label}<span class="q-desc-dot">${hasDesc ? '📝 max '+q.maxScore : '✎ max '+q.maxScore}</span>
         </th>`;
     }).join('') + '</tr>';
     // click en encabezado → modal descripción
@@ -4077,9 +4108,16 @@ window.onload = function() {
         if (isNaN(qIdx) || !examState.questions[qIdx]) return;
         examState.questions[qIdx].name        = document.getElementById('examQDescName').value;
         examState.questions[qIdx].description = document.getElementById('examQDescText').value;
+        // Save criteria changes
+        const criteriaContainer = document.getElementById('examQDescCriteriaContainer');
+        if (criteriaContainer) {
+            examState.questions[qIdx].criteriaCodes = [...criteriaContainer.querySelectorAll('.exam-qdesc-criteria-chk:checked')].map(c=>c.value);
+        }
         // Actualizar tabla config y tabla calificación si están visibles
         if (document.getElementById('examScreenConfig').classList.contains('active')) renderExamQuestionsTable();
         renderExamGradeTable();
+        validateExamCriteria();
+        updateExamConfigWarning();
     });
 
     // Modal compartido de criterios

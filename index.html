@@ -2808,7 +2808,7 @@ function renderExamQuestionsTable() {
         inp.addEventListener('change', function() {
             const i = parseInt(this.dataset.qidx);
             let val = parseGradeInput(this.value); if (val <= 0) val = 10;
-            val = Math.min(Math.max(val, 0.1), 10);
+            val = Math.max(val, 0.1);
             if (examState.questions[i]) examState.questions[i].maxScore = val;
             this.value = formatGradeDisplay(val);
         });

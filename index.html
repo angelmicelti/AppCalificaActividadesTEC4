@@ -455,6 +455,46 @@
             background-color: #fef2f2;
         }
 
+        input.grade-text-input.input-max-exceeded {
+            border-color: #fd7e14 !important;
+            background-color: #fff8f1;
+            box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.25);
+        }
+
+        .max-warning-tooltip {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 4px;
+            background: #fd7e14;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fadeInTooltip 0.2s ease;
+            box-shadow: 0 4px 12px rgba(253, 126, 20, 0.35);
+        }
+
+        .max-warning-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-bottom-color: #fd7e14;
+        }
+
+        @keyframes fadeInTooltip {
+            from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
         /* ===== EXAM QUESTIONS ===== */        .grade-select { 
             width: 100%; 
             padding: 10px 12px; 
@@ -2128,7 +2168,30 @@ function formatGradeDisplay(val) {
     return parseFloat(val.toFixed(2)).toString();
 }
 
-function attachGradeInputLiveValidation(inp) {
+function removeMaxWarning(inp) {
+    const existing = inp.parentNode.querySelector('.max-warning-tooltip');
+    if (existing) existing.remove();
+    inp.classList.remove('input-max-exceeded');
+}
+
+function showMaxWarning(inp, maxVal) {
+    removeMaxWarning(inp);
+    inp.classList.add('input-max-exceeded');
+    inp.style.position = 'relative';
+    const tooltip = document.createElement('div');
+    tooltip.className = 'max-warning-tooltip';
+    tooltip.textContent = 'Máximo: ' + maxVal;
+    inp.parentNode.style.position = 'relative';
+    inp.parentNode.appendChild(tooltip);
+}
+
+function attachGradeInputLiveValidation(inp, maxVal) {
+    if (maxVal === undefined || maxVal === null) {
+        maxVal = parseFloat(inp.dataset.max);
+    }
+    if (inp.dataset.max) {
+        maxVal = parseFloat(inp.dataset.max);
+    }
     inp.addEventListener('input', function () {
         let v = this.value.replace(/[^0-9.,]/g, '');
         v = v.replace(/,/g, '.');
@@ -2142,14 +2205,42 @@ function attachGradeInputLiveValidation(inp) {
         this.value = v;
         try { this.setSelectionRange(cursor, cursor); } catch(e) {}
         const num = parseFloat(v);
-        if (v !== '' && v !== '.' && (isNaN(num) || num < 0)) {
+        const hasMax = maxVal !== undefined && maxVal !== null && !isNaN(maxVal);
+        if (v !== '' && v !== '.' && isNaN(num)) {
             this.classList.add('input-invalid');
+            this.classList.remove('input-max-exceeded');
+            removeMaxWarning(this);
+        } else if (num < 0) {
+            this.classList.add('input-invalid');
+            this.classList.remove('input-max-exceeded');
+            removeMaxWarning(this);
         } else {
             this.classList.remove('input-invalid');
+            if (hasMax && num > maxVal) {
+                showMaxWarning(this, maxVal);
+            } else {
+                removeMaxWarning(this);
+            }
         }
     });
     inp.addEventListener('blur', function () {
         this.classList.remove('input-invalid');
+        const num = parseFloat(this.value);
+        const hasMax = maxVal !== undefined && maxVal !== null && !isNaN(maxVal);
+        if (hasMax && !isNaN(num) && num > maxVal) {
+            setTimeout(() => {
+                showMaxWarning(this, maxVal);
+                this.focus();
+                this.select();
+            }, 10);
+        }
+    });
+    inp.addEventListener('focus', function () {
+        const num = parseFloat(this.value);
+        const hasMax = maxVal !== undefined && maxVal !== null && !isNaN(maxVal);
+        if (hasMax && !isNaN(num) && num > maxVal) {
+            showMaxWarning(this, maxVal);
+        }
     });
 }
 
@@ -2327,7 +2418,7 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
             const fbg = criteriaFamilyBg(c, app);
             if (fbg) td.style.backgroundColor = fbg;
             const val = state.scores[sIdx]?.[cIdx] ?? 0;
-            td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input generic-score-input" data-student="${sIdx}" data-criterion="${cIdx}" value="${formatGradeDisplay(val)}" placeholder="0">`;
+            td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input generic-score-input" data-student="${sIdx}" data-criterion="${cIdx}" data-max="10" value="${formatGradeDisplay(val)}" placeholder="0">`;
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -2934,7 +3025,7 @@ function renderExamGradeTable() {
         tr.innerHTML = `<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
         examState.questions.forEach((q, qIdx) => {
             const td = document.createElement('td'); td.style.minWidth='80px';
-            td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input exam-score-input" data-student="${sIdx}" data-question="${qIdx}" value="${formatGradeDisplay(examState.scores[sIdx]?.[qIdx]??0)}" placeholder="0">`;
+            td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input exam-score-input" data-student="${sIdx}" data-question="${qIdx}" data-max="${q.maxScore}" value="${formatGradeDisplay(examState.scores[sIdx]?.[qIdx]??0)}" placeholder="0">`;
             tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -3339,7 +3430,7 @@ function inst_renderEvaluation() {
             inp.value=formatGradeDisplay(instrumentState.evalScores[sIdx]?.[i]||0);
             inp.placeholder='0';
             inp.classList.add('form-control','form-control-sm','grade-text-input','inst-grade-input');
-            inp.dataset.student=sIdx; inp.dataset.instr=i;
+            inp.dataset.student=sIdx; inp.dataset.instr=i; inp.dataset.max='10';
             attachGradeInputLiveValidation(inp);
             inp.addEventListener('change',function(){
                 const s=parseInt(this.dataset.student), iI=parseInt(this.dataset.instr);

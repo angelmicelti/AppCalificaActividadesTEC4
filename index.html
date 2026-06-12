@@ -2187,10 +2187,9 @@ function showMaxWarning(inp, maxVal) {
 
 function attachGradeInputLiveValidation(inp, maxVal) {
     if (maxVal === undefined || maxVal === null) {
-        maxVal = parseFloat(inp.dataset.max);
-    }
-    if (inp.dataset.max) {
-        maxVal = parseFloat(inp.dataset.max);
+        if (inp.dataset.max) {
+            maxVal = parseFloat(inp.dataset.max);
+        }
     }
     inp.addEventListener('input', function () {
         let v = this.value.replace(/[^0-9.,]/g, '');
@@ -3206,7 +3205,7 @@ function inst_recalcLastWeight() {
     const n = instrumentState.instruments.length;
     if (n === 0) return;
     const sumOthers = instrumentState.instruments.slice(0, n - 1).reduce((a, b) => a + b.weight, 0);
-    instrumentState.instruments[n - 1].weight = Math.round((100 - sumOthers) * 100) / 100;
+    instrumentState.instruments[n - 1].weight = Math.max(0, Math.round((100 - sumOthers) * 100) / 100);
     instrumentState.evalWeights = instrumentState.instruments.map(i => i.weight);
 }
 
@@ -3264,8 +3263,7 @@ function inst_setNumInstruments(n) {
     const newMatrix=[];
     for(let i=0;i<n;i++) newMatrix.push(i<instrumentState.matrix.length?[...instrumentState.matrix[i]]:new Array(instrumentCriteria.length).fill(false));
     instrumentState.matrix=newMatrix;
-    instrumentState.evalScores=instrumentState.students.map(()=>new Array(n).fill(0));
-    instrumentState.evalWeights=instrumentState.instruments.map(i=>i.weight);
+    instrumentState.evalScores=instrumentState.students.map((_,si)=>{const ex=instrumentState.evalScores[si]||[];const ns=new Array(n).fill(0);for(let j=0;j<Math.min(ex.length,n);j++) ns[j]=ex[j];return ns;});
     inst_renderInstrumentsTable();
 }
 

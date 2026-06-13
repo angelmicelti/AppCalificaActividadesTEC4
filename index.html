@@ -1974,7 +1974,8 @@ function populateCriteriaModal(app) {
     Object.entries(groupCriteriaByCompetence(subjectInfo.criteriaCodes)).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})).forEach(([key, codes], idx) => {
         const div = document.createElement('div');
         div.className = 'criteria-group'; div.style.borderLeftColor = competenceColors[idx % competenceColors.length];
-        div.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${key}</div><div class="row"></div>`;
+        const grpId = `grp_${app}_${idx}`;
+        div.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${key}<div class="form-check form-check-inline" style="font-size:0.85rem;margin-left:auto;"><input class="form-check-input competence-select-all" type="checkbox" id="selAll_${grpId}" title="Seleccionar/deseleccionar todos los criterios de esta competencia"><label class="form-check-label fw-normal" for="selAll_${grpId}">Seleccionar todos</label></div></div><div class="row"></div>`;
         const row = div.querySelector('.row');
         codes.forEach(code => {
             const col = document.createElement('div'); col.className = 'col-md-4 mb-2';
@@ -1985,7 +1986,30 @@ function populateCriteriaModal(app) {
         container.appendChild(div);
     });
     container.querySelectorAll('.global-criteria-chk').forEach(chk => { chk.checked = state.globalCriteria.includes(chk.value); });
-    document.getElementById('globalCriteriaModal').dataset.currentApp = app;
+    // Sincronizar estado inicial de los checkboxes "Seleccionar todos"
+    container.querySelectorAll('.competence-select-all').forEach(chk => {
+        const groupDiv = chk.closest('.criteria-group');
+        const checks = groupDiv.querySelectorAll('.global-criteria-chk');
+        chk.checked = checks.length > 0 && [...checks].every(c => c.checked);
+        chk.indeterminate = [...checks].some(c => c.checked) && !chk.checked;
+    });
+    // Evento: "Seleccionar todos" marca/desmarca todos los criterios del grupo
+    container.querySelectorAll('.competence-select-all').forEach(chk => {
+        chk.addEventListener('change', function() {
+            const groupDiv = this.closest('.criteria-group');
+            groupDiv.querySelectorAll('.global-criteria-chk').forEach(c => c.checked = this.checked);
+        });
+    });
+    // Evento: cada criterio individual actualiza el estado de "Seleccionar todos"
+    container.querySelectorAll('.global-criteria-chk').forEach(chk => {
+        chk.addEventListener('change', function() {
+            const groupDiv = this.closest('.criteria-group');
+            const selAll = groupDiv.querySelector('.competence-select-all');
+            const checks = groupDiv.querySelectorAll('.global-criteria-chk');
+            selAll.checked = checks.length > 0 && [...checks].every(c => c.checked);
+            selAll.indeterminate = [...checks].some(c => c.checked) && !selAll.checked;
+        });
+    });
 }
 
 // =============================================================================

@@ -1975,7 +1975,7 @@ function populateCriteriaModal(app) {
         const div = document.createElement('div');
         div.className = 'criteria-group'; div.style.borderLeftColor = competenceColors[idx % competenceColors.length];
         const grpId = `grp_${app}_${idx}`;
-        div.innerHTML = `<div class="group-title"><i class="bi bi-diagram-3"></i> ${key}<div class="form-check form-check-inline" style="font-size:0.85rem;margin-left:auto;"><input class="form-check-input competence-select-all" type="checkbox" id="selAll_${grpId}" title="Seleccionar/deseleccionar todos los criterios de esta competencia"><label class="form-check-label fw-normal" for="selAll_${grpId}">Seleccionar todos</label></div></div><div class="row"></div>`;
+        div.innerHTML = `<div class="group-title"><div class="form-check form-check-inline" style="font-size:0.85rem;"><input class="form-check-input competence-select-all" type="checkbox" id="selAll_${grpId}" title="Seleccionar/deseleccionar todos los criterios de esta competencia"></div><i class="bi bi-diagram-3"></i> ${key}</div><div class="row"></div>`;
         const row = div.querySelector('.row');
         codes.forEach(code => {
             const col = document.createElement('div'); col.className = 'col-md-4 mb-2';
@@ -2036,11 +2036,14 @@ function showMessage(id, html, ms = 3000) {
     if (!el) return;
     if (_msgTimers[id]) clearTimeout(_msgTimers[id]);
     el.innerHTML = html;
-    _msgTimers[id] = setTimeout(() => { el.innerHTML = ''; delete _msgTimers[id]; }, ms);
+    _msgTimers[id] = setTimeout(() => {
+        if (document.getElementById(id)) document.getElementById(id).innerHTML = '';
+        delete _msgTimers[id];
+    }, ms);
 }
 function showDuplicateMessage(id, text) {
     const el = document.getElementById(id);
-    if (el) el.innerHTML = text ? `<i class="bi bi-exclamation-triangle-fill"></i> ${text}` : '';
+    if (el) el.innerHTML = text ? `<i class="bi bi-exclamation-triangle-fill"></i> ${escapeHtml(text)}` : '';
 }
 
 // --- Helpers reutilizables ---
@@ -4535,7 +4538,7 @@ window.onload = function() {
     });
     document.getElementById('inst_btnAddStudent').addEventListener('click', function() {
         const input=document.getElementById('inst_studentNameInput'), name=input.value.trim(); if(!name) return;
-        if(isStudentDuplicate(instrumentState,name)){ document.getElementById('inst_duplicateMessage').innerHTML=`El alumno "${name}" ya existe.`; return; }
+        if(isStudentDuplicate(instrumentState,name)){ document.getElementById('inst_duplicateMessage').innerHTML=`El alumno "${escapeHtml(name)}" ya existe.`; return; }
         instrumentState.students.push({id:uuid(),fullName:name}); instrumentState.evalScores.push(new Array(instrumentState.instruments.length).fill(0));
         sortStudents(instrumentState,'evalScores'); renderInstrumentosStudentTags(); input.value=''; document.getElementById('inst_duplicateMessage').innerHTML='';
         if(document.getElementById('inst_eval').classList.contains('active')) inst_renderEvaluation();

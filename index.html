@@ -2518,7 +2518,7 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
         const tr = document.createElement('tr');
         // Student name cell with copy-row-btn
         const copyRowBtn = `<button class="copy-row-btn" data-student="${sIdx}" title="Copiar nota del primer criterio a los demás"><i class="bi bi-arrow-right-short"></i></button>`;
-        tr.innerHTML = `<td><div class="d-flex align-items-center gap-1">${copyRowBtn}<strong class="text-nowrap">${escapeHtml(student.fullName)}</strong></div></td>`;
+        tr.innerHTML = `<td><div class="d-flex align-items-center justify-content-between"><strong class="text-nowrap">${escapeHtml(student.fullName)}</strong>${copyRowBtn}</div></td>`;
         state.globalCriteria.forEach((c, cIdx) => {
             const td = document.createElement('td'); td.style.minWidth='100px';
             const fbg = criteriaFamilyBg(c, app);
@@ -3173,7 +3173,7 @@ function renderExamGradeTable() {
     examState.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
         const copyRowBtn = `<button class="copy-row-btn" data-student="${sIdx}" data-app="exam" title="Copiar nota de la primera pregunta a las demás"><i class="bi bi-arrow-right-short"></i></button>`;
-        tr.innerHTML = `<td><div class="d-flex align-items-center gap-1">${copyRowBtn}<strong class="text-nowrap">${escapeHtml(student.fullName)}</strong></div></td>`;
+        tr.innerHTML = `<td><div class="d-flex align-items-center justify-content-between"><strong class="text-nowrap">${escapeHtml(student.fullName)}</strong>${copyRowBtn}</div></td>`;
         examState.questions.forEach((q, qIdx) => {
             const td = document.createElement('td'); td.style.minWidth='80px';
             td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input exam-score-input" data-student="${sIdx}" data-question="${qIdx}" data-max="${q.maxScore}" value="${formatGradeDisplay(examState.scores[sIdx]?.[qIdx]??0)}" placeholder="0">`;
@@ -3624,7 +3624,7 @@ function inst_renderEvaluation() {
     instrumentState.students.forEach((student,sIdx)=>{
         const tr=document.createElement('tr');
         const copyRowBtn = `<button class="copy-row-btn" data-student="${sIdx}" data-app="inst" title="Copiar nota del primer instrumento a los demás"><i class="bi bi-arrow-right-short"></i></button>`;
-        tr.innerHTML=`<td><div class="d-flex align-items-center gap-1">${copyRowBtn}<strong class="text-nowrap">${escapeHtml(student.fullName)}</strong></div></td>`;
+        tr.innerHTML=`<td><div class="d-flex align-items-center justify-content-between"><strong class="text-nowrap">${escapeHtml(student.fullName)}</strong>${copyRowBtn}</div></td>`;
         instrumentState.instruments.forEach((_,i)=>{
             const td=document.createElement('td');
             td.style.cssText='text-align:center;vertical-align:middle;padding:4px;';

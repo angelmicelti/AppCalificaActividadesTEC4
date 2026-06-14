@@ -193,14 +193,71 @@
             transform: scale(1.2);
         }
 
+        /* ===== COPY BUTTONS (grade table) ===== */
+        .copy-row-btn, .copy-col-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: 1px solid #adb5bd;
+            border-radius: 6px;
+            background: #f8f9fa;
+            color: #495057;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .copy-row-btn:hover, .copy-col-btn:hover {
+            background: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+            transform: scale(1.12);
+            box-shadow: 0 2px 8px rgba(13,110,253,0.35);
+        }
+        .copy-row-btn:active, .copy-col-btn:active {
+            transform: scale(0.95);
+        }
+        .copy-col-btn {
+            margin-bottom: 4px;
+        }
+
+        /* ===== PONDERACIÓN BREAKDOWN MODAL ===== */
+        .pond-breakdown-table th {
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+        .pond-breakdown-table td {
+            font-size: 0.9rem;
+        }
+        .pond-act-cell-clickable {
+            cursor: pointer;
+            position: relative;
+            transition: filter 0.2s;
+            user-select: none;
+        }
+        .pond-act-cell-clickable:hover {
+            filter: brightness(0.85);
+            box-shadow: inset 0 0 0 2px #0d6efd;
+        }
+        .pond-act-cell-clickable .bi-eye-fill {
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .pond-act-cell-clickable:hover .bi-eye-fill {
+            opacity: 1;
+        }
+
         /* ===== BADGES ===== */
-        .badge-criteria { 
-            background: linear-gradient(135deg, #0d4e6e, #0b3d5e); 
-            color: white; 
-            font-size: 0.85rem; 
+        .badge-criteria {
+            background: linear-gradient(135deg, #0d4e6e, #0b3d5e);
+            color: white;
+            font-size: 0.85rem;
             margin-right: 8px;
-            padding: 8px 14px; 
-            border-radius: 50px; 
+            padding: 8px 14px;
+            border-radius: 50px;
             font-weight: 600;
             box-shadow: var(--shadow-sm);
         }
@@ -1786,6 +1843,23 @@
     </div>
 </div><!-- fin container-custom -->
 
+    <!-- MODAL DESGLOSE POR ACTIVIDAD (PONDERACIÓN) -->
+    <div class="modal fade" id="pondBreakdownModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(145deg, #00bcd4, #0097a7);">
+                    <h5 class="modal-title text-white"><i class="bi bi-layers-half me-2"></i>Desglose por actividad</h5>
+                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="pondBreakdownModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL COMPARTIDO: CRITERIOS -->
     <div class="modal" id="globalCriteriaModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable">
@@ -2428,17 +2502,23 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
     normalizeScores(state, state.globalCriteria.length);
     state.scores.forEach(row => row && row.forEach((s,i,a) => { if(s>10) a[i]=10; else if(s<0) a[i]=0; }));
     const hasCustom = c => state.criteriaDescriptions && state.criteriaDescriptions[c];
-    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map(c => {
+
+    // Header: copy-col-btn on each criterion
+    thead.innerHTML = '<tr><th>ALUMNADO</th>' + state.globalCriteria.map((c, cIdx) => {
         const custom = hasCustom(c) ? ' criteria-th-custom' : '';
         const appAttr = app ? ` data-app="${app}"` : '';
         const fbg = criteriaFamilyBg(c, app);
         const bgStyle = fbg ? ` style="background-color:${fbg};"` : '';
-        return `<th class="criteria-th-editable${custom}" data-code="${c}"${appAttr}${bgStyle} title="${getDesc(c).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${c}.<br><small>(0-10)</small></th>`;
+        const copyBtn = `<button class="copy-col-btn" data-criterion="${cIdx}" title="Copiar nota del primer alumno a todos"><i class="bi bi-arrow-down-short"></i></button>`;
+        return `<th class="criteria-th-editable${custom}" data-code="${c}"${appAttr}${bgStyle} title="${getDesc(c).replace(/"/g,'&quot;')}\n\n(Clic para editar)">${copyBtn}${c}.<br><small>(0-10)</small></th>`;
     }).join('') + '</tr>';
+
     tbody.innerHTML = '';
     state.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
+        // Student name cell with copy-row-btn
+        const copyRowBtn = `<button class="copy-row-btn" data-student="${sIdx}" title="Copiar nota del primer criterio a los demás"><i class="bi bi-arrow-right-short"></i></button>`;
+        tr.innerHTML = `<td><div class="d-flex align-items-center gap-1">${copyRowBtn}<strong class="text-nowrap">${escapeHtml(student.fullName)}</strong></div></td>`;
         state.globalCriteria.forEach((c, cIdx) => {
             const td = document.createElement('td'); td.style.minWidth='100px';
             const fbg = criteriaFamilyBg(c, app);
@@ -2449,6 +2529,7 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
         });
         tbody.appendChild(tr);
     });
+    // Score input events
     tbody.querySelectorAll('.generic-score-input').forEach(inp => {
         attachGradeInputLiveValidation(inp);
         inp.addEventListener('change', function() {
@@ -2456,6 +2537,48 @@ function renderSimpleGradeTable(state, tableId, tbodyId, descFn, app) {
             let val = parseGradeInput(this.value); val = Math.min(Math.max(val,0),10); this.value = formatGradeDisplay(val);
             if (!state.scores[sIdx]) state.scores[sIdx] = [];
             state.scores[sIdx][cIdx] = val;
+        });
+    });
+    // Copy row: first criterion → rest for same student
+    tbody.querySelectorAll('.copy-row-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const sIdx = parseInt(this.dataset.student);
+            const firstInput = tbody.querySelector(`.generic-score-input[data-student="${sIdx}"][data-criterion="0"]`);
+            if (!firstInput) return;
+            const val = parseGradeInput(firstInput.value);
+            const clampedVal = Math.min(Math.max(val,0),10);
+            state.globalCriteria.forEach((c, cIdx) => {
+                if (cIdx === 0) return;
+                if (!state.scores[sIdx]) state.scores[sIdx] = [];
+                state.scores[sIdx][cIdx] = clampedVal;
+                const inp = tbody.querySelector(`.generic-score-input[data-student="${sIdx}"][data-criterion="${cIdx}"]`);
+                if (inp) { inp.value = formatGradeDisplay(clampedVal); removeMaxWarning(inp); inp.classList.remove('input-max-exceeded'); }
+            });
+            firstInput.value = formatGradeDisplay(clampedVal);
+            firstInput.classList.remove('input-max-exceeded');
+            removeMaxWarning(firstInput);
+        });
+    });
+    // Copy column: first student → rest for same criterion
+    thead.querySelectorAll('.copy-col-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const cIdx = parseInt(this.dataset.criterion);
+            const firstInput = tbody.querySelector(`.generic-score-input[data-student="0"][data-criterion="${cIdx}"]`);
+            if (!firstInput) return;
+            const val = parseGradeInput(firstInput.value);
+            const clampedVal = Math.min(Math.max(val,0),10);
+            state.students.forEach((s, sIdx) => {
+                if (sIdx === 0) return;
+                if (!state.scores[sIdx]) state.scores[sIdx] = [];
+                state.scores[sIdx][cIdx] = clampedVal;
+                const inp = tbody.querySelector(`.generic-score-input[data-student="${sIdx}"][data-criterion="${cIdx}"]`);
+                if (inp) { inp.value = formatGradeDisplay(clampedVal); removeMaxWarning(inp); inp.classList.remove('input-max-exceeded'); }
+            });
+            firstInput.value = formatGradeDisplay(clampedVal);
+            firstInput.classList.remove('input-max-exceeded');
+            removeMaxWarning(firstInput);
         });
     });
 }
@@ -3846,11 +3969,19 @@ function pond_computeResults() {
         const key = studentName.toLowerCase();
         const row = { Alumno: studentName };
 
-        // Per-activity grade for breakdown column (keyed by index to avoid name-mismatch)
+        // Per-activity grade for breakdown column (computed from criteria if Calificación missing)
         acts.forEach((act, ai) => {
             const r = act.resultados.find(r => (r.Alumno||'').trim().toLowerCase() === key);
-            const grade = r ? (r['Calificación'] ?? null) : null;
-            row[`__ACT__${ai}`] = (grade !== null && grade !== undefined) ? parseFloat(grade) : null;
+            if (!r) { row[`__ACT__${ai}`] = null; row[`__ACT_HAS_DATA__${ai}`] = false; return; }
+            // Try Calificación field first, then compute from criteria
+            let grade = r['Calificación'] ?? null;
+            if (grade === null || grade === undefined) {
+                const actCrit = pond_getActivityCriteria(act);
+                const vals = actCrit.map(c => parseFloat(r[c])).filter(v => !isNaN(v));
+                grade = vals.length > 0 ? vals.reduce((a,b)=>a+b,0) / vals.length : null;
+            }
+            row[`__ACT__${ai}`] = (grade !== null && grade !== undefined) ? parseFloat(grade.toFixed(2)) : null;
+            row[`__ACT_HAS_DATA__${ai}`] = true;
         });
 
         // Weighted criteria
@@ -3877,6 +4008,61 @@ function pond_computeResults() {
     });
 
     return { rows, criteria };
+}
+
+function showPondBreakdown(studentKey, actIdx) {
+    const acts = ponderacionState.actividades.filter(a => a.loaded);
+    if (!acts[actIdx]) return;
+    const act = acts[actIdx];
+    const result = act.resultados.find(r => (r.Alumno||'').trim().toLowerCase() === studentKey);
+    const studentName = result ? result.Alumno : studentKey;
+    const modalBody = document.getElementById('pondBreakdownModalBody');
+    if (!modalBody) return;
+
+    const actCriteria = pond_getActivityCriteria(act);
+    // Compute grade from criteria if Calificación is missing
+    let grade = result ? (result['Calificación'] ?? null) : null;
+    if ((grade === null || grade === undefined) && result) {
+        const vals = actCriteria.map(c => parseFloat(result[c])).filter(v => !isNaN(v));
+        grade = vals.length > 0 ? parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2)) : null;
+    }
+    const gradeColor = v => `hsl(${Math.min(10, Math.max(0, v)) * 12}, 80%, 70%)`;
+
+    let html = `<div class="mb-3">
+        <h6 class="fw-bold"><i class="bi bi-person-fill me-1" style="color:#0d6efd;"></i>${escapeHtml(studentName)}</h6>
+        <h6 class="text-muted" style="font-size:0.9rem;"><i class="bi bi-layers-half me-1" style="color:#00bcd4;"></i>${escapeHtml(act.nombre)} <span class="badge bg-info text-dark ms-1">${act.peso}%</span></h6>
+    </div>`;
+
+    if (!result) {
+        html += `<div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-2"></i>No se encontraron datos para este alumno en esta actividad.</div>`;
+    } else if (!actCriteria.length) {
+        html += `<div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-2"></i>Esta actividad no contiene criterios TEC reconocibles.</div>`;
+    } else {
+        html += `<div class="table-responsive"><table class="table table-bordered table-hover table-sm pond-breakdown-table">
+            <thead class="table-light"><tr><th>Criterio</th><th>Nota</th></tr></thead><tbody>`;
+        actCriteria.forEach(c => {
+            const v = result[c];
+            const fbg = criteriaFamilyBg(c, 'pond');
+            if (v === null || v === undefined) {
+                html += `<tr><td${fbg ? ` style="background-color:${fbg};"`:''}>${c}</td><td class="text-muted">—</td></tr>`;
+            } else {
+                const numV = parseFloat(v);
+                html += `<tr><td${fbg ? ` style="background-color:${fbg};"`:''}>${c}</td><td style="background:${gradeColor(numV)};font-weight:600;">${numV.toFixed(2)}</td></tr>`;
+            }
+        });
+        html += '</tbody></table></div>';
+
+        if (grade !== null && grade !== undefined) {
+            const numG = parseFloat(grade);
+            html += `<div class="mt-3 p-3 rounded-3 text-center" style="background:${gradeColor(numG)}; border:2px solid rgba(0,0,0,0.08);">
+                <strong style="font-size:1.1rem;">Calificación en esta actividad: ${numG.toFixed(2)}</strong>
+            </div>`;
+        }
+    }
+
+    modalBody.innerHTML = html;
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('pondBreakdownModal'));
+    modal.show();
 }
 
 function pond_renderResults() {
@@ -3931,9 +4117,13 @@ function pond_renderResults() {
             let html = `<td><strong>${escapeHtml(row.Alumno)}</strong></td>`;
             if (showActs) acts.forEach((a, ai) => {
                 const v = row[`__ACT__${ai}`];
-                html += v===null||v===undefined
-                    ? `<td class="text-muted">—</td>`
-                    : `<td style="background:${gradeColor(v)}">${typeof v==='number'?v.toFixed(2):v}</td>`;
+                const studentKey = row.Alumno.toLowerCase();
+                if (v===null||v===undefined) {
+                    html += `<td class="pond-act-cell-clickable text-center" style="background:#e8f5e9;" data-student-key="${studentKey}" data-act-idx="${ai}" title="Clic para ver desglose por criterio"><i class="bi bi-eye-fill" style="color:#00897b;font-size:1rem;"></i></td>`;
+                } else {
+                    const displayVal = typeof v==='number' ? v.toFixed(2) : v;
+                    html += `<td class="pond-act-cell-clickable text-center" style="background:${gradeColor(v)}" data-student-key="${studentKey}" data-act-idx="${ai}" title="Clic para ver desglose por criterio">${displayVal}</td>`;
+                }
             });
             criteria.forEach(c => {
                 const v = row[c];
@@ -3950,6 +4140,14 @@ function pond_renderResults() {
             }
             tr.innerHTML = html;
             tbody.appendChild(tr);
+        });
+        // Click events for breakdown modal
+        tbody.querySelectorAll('.pond-act-cell-clickable').forEach(cell => {
+            cell.addEventListener('click', function() {
+                const sk = this.dataset.studentKey;
+                const ai = parseInt(this.dataset.actIdx);
+                showPondBreakdown(sk, ai);
+            });
         });
     }
 }

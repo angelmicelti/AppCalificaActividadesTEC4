@@ -3160,8 +3160,9 @@ function renderExamGradeTable() {
         const label = getQuestionLabel(q);
         const hasDesc = q.description && q.description.trim();
         const titleTxt = hasDesc ? `${label} · max ${q.maxScore}\n${q.description}\n\n(Clic para editar)` : `${label} · max ${q.maxScore}\n(Clic para editar)`;
+        const copyBtn = `<button class="copy-col-btn" data-question="${qIdx}" title="Copiar nota del primer alumno a todos"><i class="bi bi-arrow-down-short"></i></button>`;
         return `<th class="exam-q-th-clickable" data-qidx="${qIdx}" title="${titleTxt.replace(/"/g,'&quot;')}">
-            ${label}<span class="q-desc-dot">${hasDesc ? '📝 max '+q.maxScore : '✎ max '+q.maxScore}</span>
+            ${copyBtn}${label}<span class="q-desc-dot">${hasDesc ? '📝 max '+q.maxScore : '✎ max '+q.maxScore}</span>
         </th>`;
     }).join('') + '</tr>';
     // click en encabezado → modal descripción
@@ -3171,7 +3172,8 @@ function renderExamGradeTable() {
     tbody.innerHTML = '';
     examState.students.forEach((student, sIdx) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
+        const copyRowBtn = `<button class="copy-row-btn" data-student="${sIdx}" data-app="exam" title="Copiar nota de la primera pregunta a las demás"><i class="bi bi-arrow-right-short"></i></button>`;
+        tr.innerHTML = `<td><div class="d-flex align-items-center gap-1">${copyRowBtn}<strong class="text-nowrap">${escapeHtml(student.fullName)}</strong></div></td>`;
         examState.questions.forEach((q, qIdx) => {
             const td = document.createElement('td'); td.style.minWidth='80px';
             td.innerHTML = `<input type="text" inputmode="decimal" class="form-control form-control-sm grade-text-input exam-score-input" data-student="${sIdx}" data-question="${qIdx}" data-max="${q.maxScore}" value="${formatGradeDisplay(examState.scores[sIdx]?.[qIdx]??0)}" placeholder="0">`;
@@ -3187,6 +3189,55 @@ function renderExamGradeTable() {
             val = Math.min(Math.max(val,0),max); this.value = formatGradeDisplay(val);
             if (!examState.scores[sIdx]) examState.scores[sIdx]=[];
             examState.scores[sIdx][qIdx]=val;
+        });
+    });
+    // Copy row: first question → rest for same student (exam)
+    tbody.querySelectorAll('.copy-row-btn[data-app="exam"]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const sIdx = parseInt(this.dataset.student);
+            const firstInput = tbody.querySelector(`.exam-score-input[data-student="${sIdx}"][data-question="0"]`);
+            if (!firstInput) return;
+            const val = parseGradeInput(firstInput.value);
+            examState.questions.forEach((q, qIdx) => {
+                if (qIdx === 0) return;
+                const clampedVal = Math.min(Math.max(val,0),q.maxScore);
+                if (!examState.scores[sIdx]) examState.scores[sIdx]=[];
+                examState.scores[sIdx][qIdx] = clampedVal;
+                const inp = tbody.querySelector(`.exam-score-input[data-student="${sIdx}"][data-question="${qIdx}"]`);
+                if (inp) { inp.value = formatGradeDisplay(clampedVal); removeMaxWarning(inp); inp.classList.remove('input-max-exceeded'); }
+            });
+            const max0 = examState.questions[0].maxScore;
+            const clamped0 = Math.min(Math.max(val,0),max0);
+            firstInput.value = formatGradeDisplay(clamped0);
+            firstInput.classList.remove('input-max-exceeded');
+            removeMaxWarning(firstInput);
+            if (!examState.scores[sIdx]) examState.scores[sIdx]=[];
+            examState.scores[sIdx][0] = clamped0;
+        });
+    });
+    // Copy column: first student → rest for same question (exam)
+    thead.querySelectorAll('.copy-col-btn[data-question]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const qIdx = parseInt(this.dataset.question);
+            const firstInput = tbody.querySelector(`.exam-score-input[data-student="0"][data-question="${qIdx}"]`);
+            if (!firstInput) return;
+            const val = parseGradeInput(firstInput.value);
+            const max = examState.questions[qIdx].maxScore;
+            const clampedVal = Math.min(Math.max(val,0),max);
+            examState.students.forEach((s, sIdx) => {
+                if (sIdx === 0) return;
+                if (!examState.scores[sIdx]) examState.scores[sIdx]=[];
+                examState.scores[sIdx][qIdx] = clampedVal;
+                const inp = tbody.querySelector(`.exam-score-input[data-student="${sIdx}"][data-question="${qIdx}"]`);
+                if (inp) { inp.value = formatGradeDisplay(clampedVal); removeMaxWarning(inp); inp.classList.remove('input-max-exceeded'); }
+            });
+            firstInput.value = formatGradeDisplay(clampedVal);
+            firstInput.classList.remove('input-max-exceeded');
+            removeMaxWarning(firstInput);
+            if (!examState.scores[0]) examState.scores[0]=[];
+            examState.scores[0][qIdx] = clampedVal;
         });
     });
 }
@@ -3559,8 +3610,9 @@ function inst_renderEvaluation() {
     const showGrade=document.getElementById('inst_showGradeColumn').checked;
     document.getElementById('inst_evalThead').innerHTML='<tr><th>ALUMNADO</th>'+instrumentState.instruments.map((inst,i)=>{
         const hasDesc = inst.description && inst.description.trim();
+        const copyBtn = `<button class="copy-col-btn" data-instr="${i}" title="Copiar nota del primer alumno a todos"><i class="bi bi-arrow-down-short"></i></button>`;
         return `<th class="inst-header-clickable" data-instr-idx="${i}" title="${escapeHtml(hasDesc ? inst.description + '\n\n' : '')}Clic para editar nombre y descripción" style="white-space:nowrap;min-width:110px;vertical-align:middle;">`+
-            `<span style="display:block;font-size:0.85rem;font-weight:700;color:#0b4b6b;">${escapeHtml(inst.name)}</span>`+
+            `${copyBtn}<span style="display:block;font-size:0.85rem;font-weight:700;color:#0b4b6b;">${escapeHtml(inst.name)}</span>`+
             `<span class="inst-desc-indicator">${hasDesc ? '📝' : '✎'}</span></th>`;
     }).join('')+usedCriteria.map(c=>{
         const custom = instrumentState.criteriaDescriptions && instrumentState.criteriaDescriptions[c] ? ' criteria-th-custom' : '';
@@ -3570,7 +3622,9 @@ function inst_renderEvaluation() {
     }).join('')+(showGrade?'<th>Calificación</th>':'')+'</tr>';
     const tbody=document.getElementById('inst_evalTbody'); tbody.innerHTML='';
     instrumentState.students.forEach((student,sIdx)=>{
-        const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${escapeHtml(student.fullName)}</strong></td>`;
+        const tr=document.createElement('tr');
+        const copyRowBtn = `<button class="copy-row-btn" data-student="${sIdx}" data-app="inst" title="Copiar nota del primer instrumento a los demás"><i class="bi bi-arrow-right-short"></i></button>`;
+        tr.innerHTML=`<td><div class="d-flex align-items-center gap-1">${copyRowBtn}<strong class="text-nowrap">${escapeHtml(student.fullName)}</strong></div></td>`;
         instrumentState.instruments.forEach((_,i)=>{
             const td=document.createElement('td');
             td.style.cssText='text-align:center;vertical-align:middle;padding:4px;';
@@ -3611,6 +3665,54 @@ function inst_renderEvaluation() {
         inst_syncPesosBadge(); inst_updateAllCriteria();
     }));
     inst_updateAllCriteria();
+    // Copy row: first instrument → rest for same student (inst)
+    document.querySelectorAll('.copy-row-btn[data-app="inst"]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const sIdx = parseInt(this.dataset.student);
+            const firstInput = document.querySelector(`.inst-grade-input[data-student="${sIdx}"][data-instr="0"]`);
+            if (!firstInput) return;
+            const val = parseGradeInput(firstInput.value);
+            const clampedVal = Math.min(Math.max(val,0),10);
+            instrumentState.instruments.forEach((_, i) => {
+                if (i === 0) return;
+                if (!instrumentState.evalScores[sIdx]) instrumentState.evalScores[sIdx]=[];
+                instrumentState.evalScores[sIdx][i] = clampedVal;
+                const inp = document.querySelector(`.inst-grade-input[data-student="${sIdx}"][data-instr="${i}"]`);
+                if (inp) { inp.value = formatGradeDisplay(clampedVal); removeMaxWarning(inp); inp.classList.remove('input-max-exceeded'); }
+            });
+            firstInput.value = formatGradeDisplay(clampedVal);
+            firstInput.classList.remove('input-max-exceeded');
+            removeMaxWarning(firstInput);
+            if (!instrumentState.evalScores[sIdx]) instrumentState.evalScores[sIdx]=[];
+            instrumentState.evalScores[sIdx][0] = clampedVal;
+            inst_updateAllCriteria();
+        });
+    });
+    // Copy column: first student → rest for same instrument (inst)
+    document.querySelectorAll('.copy-col-btn[data-instr]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const iIdx = parseInt(this.dataset.instr);
+            const firstInput = document.querySelector(`.inst-grade-input[data-student="0"][data-instr="${iIdx}"]`);
+            if (!firstInput) return;
+            const val = parseGradeInput(firstInput.value);
+            const clampedVal = Math.min(Math.max(val,0),10);
+            instrumentState.students.forEach((s, sIdx) => {
+                if (sIdx === 0) return;
+                if (!instrumentState.evalScores[sIdx]) instrumentState.evalScores[sIdx]=[];
+                instrumentState.evalScores[sIdx][iIdx] = clampedVal;
+                const inp = document.querySelector(`.inst-grade-input[data-student="${sIdx}"][data-instr="${iIdx}"]`);
+                if (inp) { inp.value = formatGradeDisplay(clampedVal); removeMaxWarning(inp); inp.classList.remove('input-max-exceeded'); }
+            });
+            firstInput.value = formatGradeDisplay(clampedVal);
+            firstInput.classList.remove('input-max-exceeded');
+            removeMaxWarning(firstInput);
+            if (!instrumentState.evalScores[0]) instrumentState.evalScores[0]=[];
+            instrumentState.evalScores[0][iIdx] = clampedVal;
+            inst_updateAllCriteria();
+        });
+    });
 }
 
 function inst_getExportRows(includeGrade) {
@@ -4011,7 +4113,7 @@ function pond_computeResults() {
 }
 
 function showPondBreakdown(studentKey, actIdx) {
-    const acts = ponderacionState.actividades.filter(a => a.loaded);
+    const acts = ponderacionState.actividades.filter(a => a.loaded && a.resultados?.length);
     if (!acts[actIdx]) return;
     const act = acts[actIdx];
     const result = act.resultados.find(r => (r.Alumno||'').trim().toLowerCase() === studentKey);
@@ -4090,7 +4192,7 @@ function pond_renderResults() {
 
     const showGrade = document.getElementById('pond_showGradeColumn')?.checked !== false;
     const showActs  = document.getElementById('pond_showActivityCols')?.checked !== false;
-    const acts = ponderacionState.actividades.filter(a => a.loaded);
+    const acts = ponderacionState.actividades.filter(a => a.loaded && a.resultados?.length);
     const gradeColor = v => `hsl(${Math.min(10, Math.max(0, v)) * 12}, 80%, 70%)`;
 
     // Header

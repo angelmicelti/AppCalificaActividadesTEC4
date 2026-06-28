@@ -1873,6 +1873,78 @@
             border-color: inherit;
         }
 
+        /* Tarjeta hijo (calificaciones anidadas bajo configuración) */
+        .fb-activity-card.fb-child-card {
+            margin-left: 28px;
+            border-left: 4px solid #198754;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            padding: 8px 14px;
+        }
+        .fb-activity-card.fb-child-card:hover {
+            border-color: #198754;
+            box-shadow: 0 4px 12px rgba(25,135,84,0.15);
+        }
+        .fb-activity-card.fb-child-card .fb-act-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #198754, #22c55e);
+            font-size: 0.85rem;
+        }
+        .fb-activity-card.fb-child-card .fb-act-name {
+            font-size: 0.88rem;
+        }
+        .fb-activity-card.fb-child-card .fb-act-meta {
+            font-size: 0.72rem;
+        }
+        /* Botón expandir/replegar configuración */
+        .fb-expand-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            background: #fff8e1;
+            color: #ff9800;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+        .fb-expand-toggle:hover {
+            background: #ffc107;
+            color: #fff;
+        }
+        .fb-expand-toggle.expanded {
+            transform: rotate(90deg);
+        }
+        /* Contenedor de calificaciones hijo */
+        .fb-children-container {
+            margin-left: 28px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            display: none;
+        }
+        .fb-children-container.expanded {
+            display: block;
+        }
+        /* Badge de clase/grupo */
+        .fb-class-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border: 1px solid #a5b4fc;
+            padding: 1px 8px;
+            border-radius: 50px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
         /* Formulario de login/registro */
         .fb-auth-form .form-control {
             margin-bottom: 10px;
@@ -6984,6 +7056,18 @@ const FB_APP_LABELS = {
     rubricas: 'Evaluación de rúbricas'
 };
 
+// Extrae el nombre del grupo/clase de la app indicada (para etiquetar registros en la nube)
+function fb_getClassName(app) {
+    try {
+        if (app === 'exam') return examState.course || '';
+        if (app === 'test') return testState.course || '';
+        if (app === 'generic') return genericState.course || '';
+        if (app === 'instrumentos') return instrumentState.clase || '';
+        if (app === 'rubricas') return rubricState.groupName || '';
+    } catch(e) {}
+    return '';
+}
+
 // === AUTENTICACIÓN ===
 
 // Crea o actualiza el perfil de usuario en la DB.
@@ -7323,6 +7407,10 @@ function fb_renderActivities() {
 
     const isAdmin = fbCurrentUser && fbCurrentUser.role === 'admin';
     filtered.forEach(a => {
+        // Wrapper para config + sus hijos scores
+        const wrapper = document.createElement('div');
+        wrapper.style.marginBottom = '4px';
+
         const card = document.createElement('div');
         card.className = 'fb-activity-card';
         const appLabel = a.appLabel || FB_APP_LABELS[a.app] || a.app || '?';
@@ -7330,19 +7418,27 @@ function fb_renderActivities() {
         const created = a.createdAt ? new Date(a.createdAt).toLocaleDateString('es-ES') : '—';
         const criteriaCount = a.data?.config?.globalCriteria?.length || a.data?.globalCriteria?.length || a.data?.criteria?.length || 0;
         const studentCount = a.data?.config?.students?.length || a.data?.students?.length || a.data?.evalName ? (a.data?.students?.length || 0) : 0;
+        const className = a.className || '';
         // Comprobar si hay calificaciones vinculadas (mismo configId)
         const configId = fb_getConfigFingerprintForRecord(a);
-        const hasScores = configId && fbAllActivities.some(s => s.kind === 'scores' && s.app === a.app && s.configId === configId);
+        const linkedScores = configId ? fbAllActivities.filter(s => s.kind === 'scores' && s.app === a.app && s.configId === configId) : [];
+        const hasScores = linkedScores.length > 0;
         const completoBadge = hasScores
             ? ' <span class="badge bg-success ms-1" style="font-size:0.65em;">COMPLETO</span>'
             : '';
+        const classBadge = className ? `<span class="fb-class-badge"><i class="bi bi-mortarboard"></i> ${escapeHtml(className)}</span>` : '';
+        const expandBtn = hasScores
+            ? `<button class="fb-expand-toggle" title="Mostrar/ocultar calificaciones vinculadas"><i class="bi bi-chevron-right"></i></button>`
+            : '<div style="width:30px; flex-shrink:0;"></div>';
 
         card.innerHTML = `
+            ${expandBtn}
             <div class="fb-act-icon"><i class="bi bi-${a.app === 'rubricas' ? 'grid-1x2' : (a.app === 'exam' ? 'pencil-square' : (a.app === 'test' ? 'calculator' : (a.app === 'instrumentos' ? 'grid-3x3-gap' : (a.app === 'ponderacion' ? 'layers-half' : 'check2-circle'))))}"></i></div>
             <div class="fb-act-body">
                 <div class="fb-act-name">
                     ${escapeHtml(a.name || 'Sin nombre')}${completoBadge}
                     <span class="badge bg-secondary" style="font-size:0.7em;">${escapeHtml(appLabel)}</span>
+                    ${classBadge}
                 </div>
                 <div class="fb-act-meta">
                     <i class="bi bi-person"></i> ${escapeHtml(a.createdByName || 'Desconocido')}
@@ -7350,6 +7446,7 @@ function fb_renderActivities() {
                     · <i class="bi bi-arrow-clockwise"></i> Actualizada ${updated}
                     ${criteriaCount > 0 ? `· <i class="bi bi-check2-square"></i> ${criteriaCount} criterios` : ''}
                     ${studentCount > 0 ? `· <i class="bi bi-people"></i> ${studentCount} alumnos` : ''}
+                    ${hasScores ? `· <i class="bi bi-clipboard-check"></i> ${linkedScores.length} calif.` : ''}
                 </div>
             </div>
             <div class="fb-act-actions">
@@ -7362,7 +7459,66 @@ function fb_renderActivities() {
         card.querySelector('.load-btn').addEventListener('click', () => fb_loadActivity(a));
         card.querySelector('.rename-btn').addEventListener('click', () => fb_openRenameModal(a));
         card.querySelector('.delete-btn').addEventListener('click', () => fb_deleteActivity(a));
-        list.appendChild(card);
+        wrapper.appendChild(card);
+
+        // Si tiene calificaciones vinculadas, crear contenedor hijo expandible
+        if (hasScores) {
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'fb-children-container';
+
+            linkedScores.forEach(s => {
+                const childCard = document.createElement('div');
+                childCard.className = 'fb-activity-card fb-child-card';
+                const sUpdated = s.updatedAt ? new Date(s.updatedAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+                const sCreated = s.createdAt ? new Date(s.createdAt).toLocaleDateString('es-ES') : '—';
+                const sClassName = s.className || '';
+                const sClassBadge = sClassName ? `<span class="fb-class-badge"><i class="bi bi-mortarboard"></i> ${escapeHtml(sClassName)}</span>` : '';
+                const sStudentCount = s.data?.scores?.students?.length || 0;
+
+                childCard.innerHTML = `
+                    <div class="fb-act-icon"><i class="bi bi-clipboard-check"></i></div>
+                    <div class="fb-act-body">
+                        <div class="fb-act-name">
+                            ${escapeHtml(s.name || 'Calificaciones')}
+                            ${sClassBadge}
+                        </div>
+                        <div class="fb-act-meta">
+                            <i class="bi bi-person"></i> ${escapeHtml(s.createdByName || 'Desconocido')}
+                            · <i class="bi bi-calendar"></i> ${sCreated}
+                            · <i class="bi bi-arrow-clockwise"></i> ${sUpdated}
+                            ${sStudentCount > 0 ? `· <i class="bi bi-people"></i> ${sStudentCount} alumnos` : ''}
+                        </div>
+                    </div>
+                    <div class="fb-act-actions">
+                        <button class="fb-act-action-btn load-btn" title="Cargar estas calificaciones"><i class="bi bi-cloud-arrow-down"></i> Cargar calif.</button>
+                        <button class="fb-act-action-btn rename-btn" ${isAdmin ? '' : 'disabled'} title="${isAdmin ? 'Renombrar' : 'Solo admin'}"><i class="bi bi-pencil"></i></button>
+                        <button class="fb-act-action-btn delete-btn" ${isAdmin ? '' : 'disabled'} title="${isAdmin ? 'Eliminar' : 'Solo admin'}"><i class="bi bi-trash3"></i></button>
+                    </div>
+                `;
+                childCard.querySelector('.load-btn').addEventListener('click', () => {
+                    try {
+                        fb_applyScores(a.app, s.data);
+                        alert(`✅ Calificaciones "${s.name}" cargadas correctamente.`);
+                    } catch(e) { alert('Error al cargar calificaciones: ' + e.message); }
+                });
+                childCard.querySelector('.rename-btn').addEventListener('click', () => fb_openRenameModal(s));
+                childCard.querySelector('.delete-btn').addEventListener('click', () => fb_deleteActivity(s).then(() => fb_renderActivities()));
+                childrenContainer.appendChild(childCard);
+            });
+
+            wrapper.appendChild(childrenContainer);
+
+            // Listener del botón expandir
+            const toggle = card.querySelector('.fb-expand-toggle');
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    const isExpanded = childrenContainer.classList.toggle('expanded');
+                    toggle.classList.toggle('expanded', isExpanded);
+                });
+            }
+        }
+
+        list.appendChild(wrapper);
     });
 }
 
@@ -7466,6 +7622,7 @@ function fb_saveCurrentActivity() {
     const record = {
         name: name,
         kind: 'config',   // configuración (no calificaciones)
+        className: fb_getClassName(app),
         app: app,
         appLabel: FB_APP_LABELS[app] || app,
         data: data,
@@ -7567,13 +7724,65 @@ function fb_serializeAppState(app) {
 function fb_loadActivity(activity) {
     if (!activity || !activity.data) { alert('Actividad sin datos válidos.'); return; }
     const app = activity.app;
-    const confirmMsg = `¿Cargar la actividad "${activity.name}" en la app "${FB_APP_LABELS[app] || app}"?\n\nEsto reemplazará la configuración actual de esa app (alumnos, criterios, etc.). Las calificaciones actuales se conservarán si el número de alumnos coincide.`;
-    if (!confirm(confirmMsg)) return;
+    // Buscar calificaciones vinculadas a esta configuración
+    const configId = fb_getConfigFingerprintForRecord(activity);
+    const linkedScores = configId ? fbAllActivities.filter(s => s.kind === 'scores' && s.app === app && s.configId === configId) : [];
+    // Ordenar scores por updatedAt desc (más reciente primero)
+    linkedScores.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+    let loadScoresToo = false;
+    let chosenScores = null;
+    if (linkedScores.length > 0) {
+        // Hay calificaciones vinculadas: preguntar si cargar también
+        let msg = `¿Cargar la configuración "${activity.name}" en la app "${FB_APP_LABELS[app] || app}"?\n\n`;
+        msg += `Esta configuración tiene ${linkedScores.length} set(s) de calificaciones vinculada(s) en la nube`;
+        if (linkedScores.length === 1) {
+            msg += `:\n  • "${linkedScores[0].name}" (actualizada ${linkedScores[0].updatedAt ? new Date(linkedScores[0].updatedAt).toLocaleDateString('es-ES') : '—'})\n`;
+            msg += `\n¿Deseas cargar también las calificaciones?`;
+            loadScoresToo = confirm(msg);
+            if (loadScoresToo) chosenScores = linkedScores[0];
+        } else {
+            // Múltiples sets: listar y dejar elegir
+            msg += `:\n`;
+            linkedScores.forEach((s, i) => {
+                msg += `  ${i + 1}. "${s.name}" (${s.className || 'sin grupo'}) - actualizada ${s.updatedAt ? new Date(s.updatedAt).toLocaleDateString('es-ES') : '—'}\n`;
+            });
+            msg += `\nIntroduce el número del set de calificaciones a cargar (0 = solo configuración):`;
+            const input = prompt(msg, '1');
+            if (input !== null) {
+                const idx = parseInt(input) - 1;
+                if (idx >= 0 && idx < linkedScores.length) {
+                    loadScoresToo = true;
+                    chosenScores = linkedScores[idx];
+                }
+            } else {
+                return; // Cancelado
+            }
+        }
+    } else {
+        // Sin calificaciones vinculadas
+        const confirmMsg = `¿Cargar la configuración "${activity.name}" en la app "${FB_APP_LABELS[app] || app}"?\n\nEsto reemplazará la configuración actual de esa app (alumnos, criterios, etc.).`;
+        if (!confirm(confirmMsg)) return;
+    }
+
+    // 1. Aplicar configuración
     try {
         fb_applyAppState(app, activity.data);
-        alert(`✅ Actividad "${activity.name}" cargada en ${FB_APP_LABELS[app] || app}.\n\nPuedes ir a esa app para continuar el trabajo.`);
     } catch(e) {
-        alert('Error al cargar la actividad: ' + e.message);
+        alert('Error al cargar la configuración: ' + e.message);
+        return;
+    }
+
+    // 2. Si se solicitó, aplicar también las calificaciones
+    if (loadScoresToo && chosenScores) {
+        try {
+            fb_applyScores(app, chosenScores.data);
+            alert(`✅ Configuración "${activity.name}" + calificaciones "${chosenScores.name}" cargadas en ${FB_APP_LABELS[app] || app}.\n\nPuedes ir a esa app para continuar el trabajo.`);
+        } catch(e) {
+            alert(`⚠️ Configuración cargada, pero error al cargar calificaciones: ${e.message}\n\nPuedes cargar las calificaciones manualmente desde la pantalla de Calificación.`);
+        }
+    } else {
+        alert(`✅ Configuración "${activity.name}" cargada en ${FB_APP_LABELS[app] || app}.\n\nPuedes ir a esa app para continuar el trabajo.`);
     }
 }
 
@@ -7758,6 +7967,7 @@ function fb_saveFromApp(app) {
     const record = {
         name: trimmed,
         kind: 'config',   // configuración (no calificaciones)
+        className: fb_getClassName(app),
         app: app,
         appLabel: FB_APP_LABELS[app] || app,
         data: data,
@@ -8146,6 +8356,7 @@ function fb_saveScoresFromApp(app) {
         const cfgRecord = {
             name: cfgNameTrimmed,
             kind: 'config',
+            className: fb_getClassName(app),
             app: app,
             appLabel: FB_APP_LABELS[app] || app,
             data: fb_serializeAppState(app),
@@ -8191,6 +8402,7 @@ function _fb_doSaveScores(app, configId, configName, configRef) {
     const record = {
         name: trimmed,
         kind: 'scores',
+        className: fb_getClassName(app),
         app: app,
         appLabel: FB_APP_LABELS[app] || app,
         data: scoresData,

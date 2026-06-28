@@ -1935,15 +1935,22 @@
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            background: #e0e7ff;
-            color: #3730a3;
-            border: 1px solid #a5b4fc;
-            padding: 1px 8px;
+            padding: 2px 10px;
             border-radius: 50px;
-            font-size: 0.68rem;
+            font-size: 0.72rem;
             font-weight: 600;
             margin-left: 4px;
+            border: 1px solid transparent;
         }
+        /* Colores distintos por grupo para distinguishir visualmente */
+        .fb-class-badge.group-0 { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+        .fb-class-badge.group-1 { background: #dcfce7; color: #166534; border-color: #86efac; }
+        .fb-class-badge.group-2 { background: #fce7f3; color: #9d174d; border-color: #f9a8d4; }
+        .fb-class-badge.group-3 { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+        .fb-class-badge.group-4 { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
+        .fb-class-badge.group-5 { background: #ffedd5; color: #9a3412; border-color: #fdba74; }
+        .fb-class-badge.group-6 { background: #cffafe; color: #155e75; border-color: #67e8f9; }
+        .fb-class-badge.group-7 { background: #f1f5f9; color: #334155; border-color: #cbd5e1; }
 
         /* Formulario de login/registro */
         .fb-auth-form .form-control {
@@ -2095,14 +2102,17 @@
                                 <div id="fbCloudCollapseList" class="accordion-collapse collapse" aria-labelledby="fbCloudHeadingList" data-bs-parent="#fbCloudAccordion">
                                     <div class="accordion-body p-3">
                                         <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
-                                            <input type="text" id="fbCloudSearch" class="form-control form-control-sm" placeholder="Buscar por nombre o app..." style="max-width:300px;">
-                                            <select id="fbCloudFilterApp" class="form-select form-select-sm" style="max-width:200px;">
+                                            <input type="text" id="fbCloudSearch" class="form-control form-control-sm" placeholder="Buscar por nombre o app..." style="max-width:260px;">
+                                            <select id="fbCloudFilterApp" class="form-select form-select-sm" style="max-width:180px;">
                                                 <option value="">Todas las apps</option>
                                                 <option value="exam">Examen por preguntas</option>
                                                 <option value="test">Examen tipo test</option>
                                                 <option value="generic">Actividad por criterios</option>
                                                 <option value="instrumentos">Actividad por instrumentos</option>
                                                 <option value="rubricas">Evaluación de rúbricas</option>
+                                            </select>
+                                            <select id="fbCloudFilterGroup" class="form-select form-select-sm" style="max-width:180px;">
+                                                <option value="">Todos los grupos</option>
                                             </select>
                                             <span class="text-muted small ms-auto" id="fbCloudLastUpdate"></span>
                                         </div>
@@ -7388,13 +7398,39 @@ function fb_renderActivities() {
     const configActivities = fbAllActivities.filter(a => (a.kind || 'config') === 'config');
     if (countBadge) countBadge.textContent = configActivities.length;
 
+    // Poblar dinámicamente el selector de grupos
+    const groupSelect = document.getElementById('fbCloudFilterGroup');
+    if (groupSelect) {
+        const currentGroupVal = groupSelect.value;
+        const groups = [...new Set(configActivities.map(a => a.className || '').filter(c => c))].sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
+        groupSelect.innerHTML = '<option value="">Todos los grupos</option>' +
+            groups.map(g => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join('');
+        // Restaurar selección anterior si sigue siendo válida
+        if (currentGroupVal && groups.includes(currentGroupVal)) {
+            groupSelect.value = currentGroupVal;
+        }
+    }
+
+    // Mapa de grupo → índice de color (para asignar colores consistentes)
+    const groupColors = {};
+    let groupColorIdx = 0;
+    configActivities.forEach(a => {
+        const cn = a.className || '';
+        if (cn && !(cn in groupColors)) {
+            groupColors[cn] = groupColorIdx % 8; // 8 colores disponibles
+            groupColorIdx++;
+        }
+    });
+
     // Aplicar filtros
     const search = (document.getElementById('fbCloudSearch')?.value || '').toLowerCase().trim();
     const filterApp = document.getElementById('fbCloudFilterApp')?.value || '';
+    const filterGroup = document.getElementById('fbCloudFilterGroup')?.value || '';
     const filtered = configActivities.filter(a => {
         if (filterApp && a.app !== filterApp) return false;
+        if (filterGroup && (a.className || '') !== filterGroup) return false;
         if (search) {
-            const hay = ((a.name || '') + ' ' + (a.appLabel || '') + ' ' + (a.createdByName || '')).toLowerCase();
+            const hay = ((a.name || '') + ' ' + (a.appLabel || '') + ' ' + (a.createdByName || '') + ' ' + (a.className || '')).toLowerCase();
             if (!hay.includes(search)) return false;
         }
         return true;
@@ -7419,6 +7455,7 @@ function fb_renderActivities() {
         const criteriaCount = a.data?.config?.globalCriteria?.length || a.data?.globalCriteria?.length || a.data?.criteria?.length || 0;
         const studentCount = a.data?.config?.students?.length || a.data?.students?.length || a.data?.evalName ? (a.data?.students?.length || 0) : 0;
         const className = a.className || '';
+        const groupColorClass = className ? `group-${groupColors[className] || 0}` : '';
         // Comprobar si hay calificaciones vinculadas (mismo configId)
         const configId = fb_getConfigFingerprintForRecord(a);
         const linkedScores = configId ? fbAllActivities.filter(s => s.kind === 'scores' && s.app === a.app && s.configId === configId) : [];
@@ -7426,7 +7463,7 @@ function fb_renderActivities() {
         const completoBadge = hasScores
             ? ' <span class="badge bg-success ms-1" style="font-size:0.65em;">COMPLETO</span>'
             : '';
-        const classBadge = className ? `<span class="fb-class-badge"><i class="bi bi-mortarboard"></i> ${escapeHtml(className)}</span>` : '';
+        const classBadge = className ? `<span class="fb-class-badge ${groupColorClass}"><i class="bi bi-mortarboard"></i> ${escapeHtml(className)}</span>` : '';
         const expandBtn = hasScores
             ? `<button class="fb-expand-toggle" title="Mostrar/ocultar calificaciones vinculadas"><i class="bi bi-chevron-right"></i></button>`
             : '<div style="width:30px; flex-shrink:0;"></div>';
@@ -7436,9 +7473,10 @@ function fb_renderActivities() {
             <div class="fb-act-icon"><i class="bi bi-${a.app === 'rubricas' ? 'grid-1x2' : (a.app === 'exam' ? 'pencil-square' : (a.app === 'test' ? 'calculator' : (a.app === 'instrumentos' ? 'grid-3x3-gap' : (a.app === 'ponderacion' ? 'layers-half' : 'check2-circle'))))}"></i></div>
             <div class="fb-act-body">
                 <div class="fb-act-name">
-                    ${escapeHtml(a.name || 'Sin nombre')}${completoBadge}
+                    ${escapeHtml(a.name || 'Sin nombre')}
                     <span class="badge bg-secondary" style="font-size:0.7em;">${escapeHtml(appLabel)}</span>
                     ${classBadge}
+                    ${completoBadge}
                 </div>
                 <div class="fb-act-meta">
                     <i class="bi bi-person"></i> ${escapeHtml(a.createdByName || 'Desconocido')}
@@ -7471,8 +7509,9 @@ function fb_renderActivities() {
                 childCard.className = 'fb-activity-card fb-child-card';
                 const sUpdated = s.updatedAt ? new Date(s.updatedAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—';
                 const sCreated = s.createdAt ? new Date(s.createdAt).toLocaleDateString('es-ES') : '—';
-                const sClassName = s.className || '';
-                const sClassBadge = sClassName ? `<span class="fb-class-badge"><i class="bi bi-mortarboard"></i> ${escapeHtml(sClassName)}</span>` : '';
+                const sClassName = s.className || className || '';
+                const sGroupColorClass = sClassName ? `group-${groupColors[sClassName] || 0}` : '';
+                const sClassBadge = sClassName ? `<span class="fb-class-badge ${sGroupColorClass}"><i class="bi bi-mortarboard"></i> ${escapeHtml(sClassName)}</span>` : '';
                 const sStudentCount = s.data?.scores?.students?.length || 0;
 
                 childCard.innerHTML = `
@@ -9316,6 +9355,7 @@ window.onload = function() {
     });
     document.getElementById('fbCloudSearch')?.addEventListener('input', fb_renderActivities);
     document.getElementById('fbCloudFilterApp')?.addEventListener('change', fb_renderActivities);
+    document.getElementById('fbCloudFilterGroup')?.addEventListener('change', fb_renderActivities);
 
     // Inicializar UI de Firebase (estado inicial: sin sesión)
     fb_updateAccountUI();

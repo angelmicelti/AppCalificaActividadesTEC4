@@ -2,10 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b4b6b">
+    <meta name="format-detection" content="telephone=no">
     <title>EVALUACIÓN TEC4 · INTEGRADA · V12.0</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
@@ -2017,6 +2019,367 @@
             display: flex;
             gap: 6px;
             flex-shrink: 0;
+        }
+
+        /* ====================================================================
+           MEJORAS DE USABILIDAD Y RESPONSIVIDAD — ANDROID / MÓVIL
+           ==================================================================== */
+
+        /* Body: usar env(safe-area-inset-*) para notch y padding dinámico */
+        body {
+            padding-left: max(10px, env(safe-area-inset-left));
+            padding-right: max(10px, env(safe-area-inset-right));
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        /* Container: menos padding en móvil */
+        @media (max-width: 768px) {
+            .container-custom {
+                padding: 12px 10px !important;
+                border-radius: 14px !important;
+            }
+            .section-card {
+                padding: 14px 12px !important;
+                border-radius: 12px !important;
+                margin-bottom: 14px !important;
+            }
+            .section-title {
+                font-size: 1.05rem !important;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .section-title i {
+                font-size: 1.4rem !important;
+            }
+            h1 {
+                font-size: 1.15rem !important;
+            }
+            /* Cabecera: botones más compactos */
+            .app-switcher {
+                gap: 4px !important;
+            }
+            .app-switcher .btn {
+                font-size: 0.72rem !important;
+                padding: 0.35rem 0.6rem !important;
+                white-space: nowrap;
+            }
+            .fb-account-btn {
+                font-size: 0.75rem !important;
+                padding: 4px 10px !important;
+            }
+            /* Home cards: menos padding, texto más pequeño */
+            .home-card {
+                padding: 16px 12px !important;
+            }
+            .home-card i {
+                font-size: 2.8rem !important;
+            }
+            .home-card h3 {
+                font-size: 1.1rem !important;
+            }
+            .home-card p {
+                font-size: 0.82rem !important;
+                line-height: 1.45 !important;
+            }
+            .home-card .btn-lg {
+                font-size: 0.9rem !important;
+                padding: 0.5rem 1rem !important;
+            }
+        }
+
+        /* === TARJETAS DE ACTIVIDADES EN LA NUBE === */
+        /* En móvil las tarjetas deben apilar verticalmente, no horizontal */
+        @media (max-width: 768px) {
+            .fb-activity-card {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 6px !important;
+                padding: 10px 12px !important;
+            }
+            .fb-activity-card .fb-act-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+                align-self: flex-start;
+            }
+            .fb-activity-card .fb-act-body {
+                width: 100%;
+            }
+            .fb-activity-card .fb-act-name {
+                font-size: 0.88rem !important;
+                flex-wrap: wrap;
+                gap: 4px;
+                word-break: break-word;
+                overflow-wrap: break-word;
+            }
+            .fb-activity-card .fb-act-meta {
+                font-size: 0.72rem !important;
+                line-height: 1.5;
+                word-break: break-word;
+                overflow-wrap: break-word;
+            }
+            .fb-activity-card .fb-act-actions {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            .fb-activity-card .fb-act-action-btn {
+                font-size: 0.72rem !important;
+                padding: 4px 8px !important;
+            }
+            /* Tarjetas hijo: menos indentación */
+            .fb-activity-card.fb-child-card {
+                margin-left: 12px !important;
+                padding: 8px 10px !important;
+            }
+            .fb-children-container {
+                margin-left: 12px !important;
+            }
+            /* Badges más pequeños */
+            .fb-class-badge {
+                font-size: 0.65rem !important;
+                padding: 1px 6px !important;
+            }
+            .fb-act-name .badge {
+                font-size: 0.62rem !important;
+            }
+            /* Botón expandir más grande táctil */
+            .fb-expand-toggle {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* === ACORDEÓN DE LA NUBE === */
+        @media (max-width: 768px) {
+            #fbCloudAccordion .accordion-button {
+                font-size: 0.88rem !important;
+                padding: 10px 12px !important;
+                flex-wrap: wrap;
+                gap: 4px;
+                text-align: left;
+                line-height: 1.4;
+                display: flex;
+                align-items: center;
+            }
+            #fbCloudAccordion .accordion-button::after {
+                flex-shrink: 0;
+            }
+            #fbCloudAccordion .accordion-body {
+                padding: 10px 8px !important;
+            }
+            /* Filtros apilados verticalmente */
+            #fbCloudCollapseList .d-flex.flex-wrap {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+            #fbCloudSearch,
+            #fbCloudFilterApp,
+            #fbCloudFilterGroup {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            /* Cabecera del acordeón de nube: forzar wrap del título */
+            #fbCloudAccordion .accordion-button > * {
+                white-space: normal !important;
+                word-break: break-word;
+            }
+            /* Indicador de sync: ocultar texto, solo punto */
+            #fbCloudSyncIndicator {
+                font-size: 0 !important;
+                padding: 3px 6px !important;
+            }
+            #fbCloudSyncIndicator .pulse-dot {
+                width: 8px;
+                height: 8px;
+            }
+            /* Cabecera del acordeón (título + sync + refresh) */
+            .card.p-3 .d-flex.just-content-between {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+        }
+        @media (max-width: 480px) {
+            /* Pantallas muy pequeñas: ocultar texto de botones, solo iconos */
+            #fbCloudSyncIndicator {
+                display: none !important;
+            }
+            .fb-act-action-btn {
+                padding: 4px 6px !important;
+            }
+            .fb-act-action-btn i {
+                margin: 0 !important;
+            }
+        }
+
+        /* === MODALES: FULLSCREEN EN MÓVIL === */
+        @media (max-width: 768px) {
+            .modal-dialog {
+                margin: 0 !important;
+                max-width: 100% !important;
+                height: 100% !important;
+            }
+            .modal-dialog.modal-dialog-centered {
+                margin: 0 !important;
+            }
+            .modal-content {
+                border-radius: 0 !important;
+                height: 100% !important;
+                max-height: 100% !important;
+            }
+            .modal-header {
+                padding: 10px 14px !important;
+                flex-wrap: wrap;
+            }
+            .modal-header .modal-title {
+                font-size: 1rem !important;
+            }
+            .modal-body {
+                padding: 12px 10px !important;
+                font-size: 0.88rem;
+            }
+            .modal-footer {
+                padding: 8px 10px !important;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .modal-footer .btn {
+                font-size: 0.82rem !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+            /* Modal xl: scroll horizontal evitado, usar fullscreen */
+            .modal-xl .modal-body {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* === TABLAS: SCROLL HORIZONTAL SUAVE === */
+        @media (max-width: 768px) {
+            .table-responsive {
+                -webkit-overflow-scrolling: touch;
+                overflow-x: auto;
+            }
+            table {
+                font-size: 0.78rem !important;
+            }
+            th, td {
+                padding: 4px 6px !important;
+                white-space: nowrap;
+            }
+            .student-score {
+                width: 44px !important;
+                padding: 4px !important;
+                font-size: 0.78rem !important;
+            }
+            /* Selectores de calificación más compactos */
+            select.form-select-sm, select.form-select {
+                font-size: 0.8rem !important;
+                padding: 4px 6px !important;
+            }
+            /* Inputs más grandes táctiles */
+            input[type="text"], input[type="number"], input[type="password"] {
+                font-size: 16px !important; /* evita zoom en iOS/Android */
+                min-height: 36px;
+            }
+            .form-control {
+                font-size: 16px !important;
+            }
+        }
+
+        /* === BOTONES: ÁREAS TÁCTILES MÁS GRANDES === */
+        @media (max-width: 768px) {
+            .btn {
+                min-height: 36px;
+                font-size: 0.85rem;
+            }
+            .btn-sm {
+                min-height: 32px;
+                font-size: 0.78rem;
+                padding: 0.3rem 0.6rem !important;
+            }
+            .btn-lg {
+                min-height: 44px;
+                font-size: 0.95rem;
+                padding: 0.6rem 1.2rem !important;
+            }
+        }
+
+        /* === FORMULARIOS: LABELS Y CAMPOS === */
+        @media (max-width: 768px) {
+            .form-label {
+                font-size: 0.85rem !important;
+                margin-bottom: 4px;
+            }
+            .row.g-3 {
+                --bs-gutter-y: 0.75rem;
+            }
+        }
+
+        /* === PESTAÑAS DE NAVEGACIÓN INTERNA === */
+        @media (max-width: 768px) {
+            .btn-group .btn {
+                font-size: 0.72rem !important;
+                padding: 0.35rem 0.5rem !important;
+                white-space: nowrap;
+            }
+            /* Pestañas de coevaluación de rúbricas */
+            .rubric-coeval-tab {
+                max-width: 140px !important;
+                font-size: 0.8rem !important;
+                padding: 6px 10px !important;
+            }
+        }
+
+        /* === TARJETAS DE ACTIVIDADES PREDEFINIDAS === */
+        @media (max-width: 768px) {
+            .predefined-tasks-grid {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+            .predefined-task-card {
+                padding: 10px 12px !important;
+            }
+            .predefined-task-name {
+                font-size: 0.92rem !important;
+            }
+            .predefined-task-criteria {
+                max-height: 80px !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        /* === SCROLL SUAVE EN TODO EL DOCUMENTO === */
+        * {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Evitar selección accidental de texto en botones */
+        button, .btn, .fb-expand-toggle, .fb-act-action-btn {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* === TOOLTIP: más legible en móvil === */
+        @media (max-width: 768px) {
+            .tooltip-inner {
+                font-size: 0.8rem !important;
+                max-width: 220px !important;
+            }
+        }
+
+        /* === PANTALLA DE BIENVENIDA === */
+        @media (max-width: 768px) {
+            #intro-overlay {
+                font-size: 1.5rem !important;
+            }
+            #intro-overlay .intro-subtitle {
+                font-size: 0.85rem !important;
+            }
         }
     </style>
 </head>
